@@ -5,78 +5,29 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_backgroud"
     tools:context=".MainActivity">
 
-    <View
-        android:id="@+id/viewRetangulo"
-        android:layout_width="300dp"
-        android:layout_height="250dp"
-        android:layout_margin="16dp"
-        android:layout_marginTop="56dp"
-        android:background="@drawable/rectangule"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:navGraph = "@navigation/main_graph"/>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:fontFamily="@font/AnekKannada"
-        android:text="Seja bem-vindo \na AllService"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/viewRetangulo"
-        app:layout_constraintStart_toStartOf="@+id/viewRetangulo"
-        app:layout_constraintTop_toTopOf="@+id/viewRetangulo"
-        app:lineHeight="20sp" />
-
-    <Button
-        android:id="@+id/buttonCadastre"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:backgroundTint="@color/purple_300"
-        android:drawableLeft="@drawable/iclock"
-        android:fontFamily="@font/AnekKannada"
-        android:text="Cadastre-se"
-        android:textSize="15dp"
-        app:cornerRadius="8dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/textView"
-        app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <Button
-        android:id="@+id/buttonLogin"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="1dp"
-        android:backgroundTint="@color/purple_300"
-        android:drawableLeft="@drawable/iclogin"
-        android:fontFamily="@font/AnekKannada"
-        android:text="Login"
-        android:textSize="15dp"
-        app:cornerRadius="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/buttonCadastre"
-        app:layout_constraintStart_toStartOf="@+id/buttonCadastre"
-        app:layout_constraintTop_toBottomOf="@+id/buttonCadastre"
-        />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="120dp"
-        android:layout_marginTop="132dp"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/purple_200"
+        android:paddingTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo"
-        />
+        app:titleTextColor="@color/black" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
