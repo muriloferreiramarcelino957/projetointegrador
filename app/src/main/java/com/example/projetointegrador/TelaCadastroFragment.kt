@@ -6,14 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.example.projetointegrador.databinding.FragmentABinding
+import com.example.projetointegrador.databinding.TelaCadastroBinding
 
 
-class FragmentA : Fragment() {
+class TelaCadastroFragment : Fragment() {
 
-    private var _binding: FragmentABinding? = null
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private var _binding: TelaCadastroBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -21,8 +19,7 @@ class FragmentA : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
-        _binding = FragmentABinding.inflate(inflater, container, false)
+        _binding = TelaCadastroBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -32,10 +29,10 @@ class FragmentA : Fragment() {
     }
 
     private fun initListeners(){
-        binding.buttonCadastre.setOnClickListener{
-        findNavController().navigate(R.id.action_fragmentA_to_fragmentB) }
+        binding.backButton.setOnClickListener {
+            findNavController().navigateUp()
+        }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

@@ -3,18 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_graph"
-    app:startDestination="@id/fragmentA">
-
+    app:startDestination="@id/telaInicialFragment">
     <fragment
-        android:id="@+id/fragmentA"
-        android:name="com.example.projetointegrador.FragmentA"
-        tools:layout="@layout/fragment_a" >
+        android:id="@+id/telaInicialFragment"
+        android:name="com.example.projetointegrador.TelaInicialFragment"
+        android:label="TelaInicialFragment" >
         <action
-            android:id="@+id/action_fragmentA_to_fragmentB"
-            app:destination="@id/fragmentB" />
+            android:id="@+id/action_telaInicialFragment_to_telaLoginFragment"
+            app:destination="@id/telaLoginFragment" />
+        <action
+            android:id="@+id/action_telaInicialFragment_to_telaCadastroFragment"
+            app:destination="@id/telaCadastroFragment" />
     </fragment>
     <fragment
-        android:id="@+id/fragmentB"
-        android:name="com.example.projetointegrador.FragmentB"
-        tools:layout="@layout/fragment_b" />
+        android:id="@+id/telaLoginFragment"
+        android:name="com.example.projetointegrador.TelaLoginFragment"
+        android:label="TelaLoginFragment" />
+    <fragment
+        android:id="@+id/telaCadastroFragment"
+        android:name="com.example.projetointegrador.TelaCadastroFragment"
+        android:label="tela_cadastro"
+        tools:layout="@layout/tela_cadastro" />
 </navigation>
