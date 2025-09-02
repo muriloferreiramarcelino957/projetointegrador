@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/gradient_backgroud"
+    tools:context=".registro.recuperacao.Recuperacao1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:fontFamily="@font/anekkannadabold"
+        android:text="Recuperação de senha"
+        android:textColor="@color/white"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/editTextTextNovaSenha"
+        app:layout_constraintVertical_bias="1.15"/>
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="45dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@android:color/white"
+        android:contentDescription="Voltar" />
+
+
+    <EditText
+        android:id="@+id/editTextTextNovaSenha"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rectangule2"
+        android:drawableLeft="@drawable/ic_key"
+        android:drawablePadding="8dp"
+        android:ems="17"
+        android:fontFamily="@font/interregular"
+        android:hint="Nova Senha"
+        android:inputType="textPassword"
+        android:padding="5dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.385" />
+
+    <EditText
+        android:id="@+id/editTextTextRepitaSenha"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rectangule2"
+        android:drawableLeft="@drawable/ic_key"
+        android:drawablePadding="8dp"
+        android:ems="17"
+        android:fontFamily="@font/interregular"
+        android:hint="Repita a senha"
+        android:inputType="textPassword"
+        android:padding="5dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextTextNovaSenha"
+        app:layout_constraintVertical_bias="0"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="230dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/white"
+        android:fontFamily="@font/anekkannadaregular"
+        android:text="Registrar nova senha"
+        android:textColor="@color/black"
+        android:textSize="19sp"
+        app:cornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextRepitaSenha"
+        app:layout_constraintVertical_bias="0.025"/>
+
+    <ImageView
+        android:id="@+id/ball1"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:src="@drawable/ic_ball_not_pressed"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/ball2"
+        app:layout_constraintHorizontal_bias="0.978"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/button"
+        app:layout_constraintVertical_bias="0.95" />
+
+    <ImageView
+        android:id="@+id/ball2"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:src="@drawable/ic_ball_not_pressed"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/button"
+        app:layout_constraintVertical_bias="0.95" />
+
+    <ImageView
+        android:id="@+id/ball3"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:src="@drawable/ic_ball_pressed"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintHorizontal_bias="0.022"
+        app:layout_constraintStart_toEndOf="@id/ball2"
+        app:layout_constraintTop_toTopOf="@id/button"
+        app:layout_constraintVertical_bias="0.95"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

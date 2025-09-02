@@ -1,21 +1,18 @@
-package com.example.projetointegrador
+package com.example.projetointegrador.registro.login
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-// CORREÇÃO 1: Importar a classe de Binding correta, gerada a partir do seu XML.
+import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.TelaLoginBinding
-
 
 class TelaLoginFragment : Fragment() {
 
-    // CORREÇÃO 2: O tipo da variável _binding deve ser a classe gerada, não a classe do Fragment.
     private var _binding: TelaLoginBinding? = null
 
-    // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -36,6 +33,9 @@ class TelaLoginFragment : Fragment() {
     private fun initListeners(){
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
+        }
+        binding.forgotPasswordText.setOnClickListener {
+            findNavController().navigate(R.id.action_telaLoginFragment_to_recuperacao1)
         }
     }
 

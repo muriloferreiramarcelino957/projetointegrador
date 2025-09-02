@@ -1,4 +1,4 @@
-package com.example.projetointegrador
+package com.example.projetointegrador.registro.recuperacao
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,20 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.example.projetointegrador.databinding.TelaCadastroBinding
+import com.example.projetointegrador.R
+import com.example.projetointegrador.databinding.FragmentRecuperacao2Binding
+import com.example.projetointegrador.databinding.FragmentRecuperacao3Binding
 
+class Recuperacao3 : Fragment() {
 
-class TelaCadastroFragment : Fragment() {
-
-    private var _binding: TelaCadastroBinding? = null
+    private var _binding : FragmentRecuperacao3Binding? = null
     private val binding get() = _binding!!
-
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = TelaCadastroBinding.inflate(inflater, container, false)
+    ): View? {
+        _binding = FragmentRecuperacao3Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -27,12 +26,12 @@ class TelaCadastroFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
     }
-
     private fun initListeners(){
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
