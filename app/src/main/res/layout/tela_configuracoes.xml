@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9F8FF">
+
+    <!-- Barra superior -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="#5A0275"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+
+        <!-- Menu -->
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_menu"
+            />
+        <!-- Lupa -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/ic_search"
+            />
+        <!-- Nome do app -->
+
+
+        <!-- Ícones lado direito -->
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:gravity="center"
+
+            android:src="@drawable/logo"
+            android:textColor="@android:color/white"
+
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_notification"
+             />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_settings"
+             />
+
+        <ImageView
+            android:layout_width="37dp"
+            android:layout_height="42dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_person"
+            />
+    </LinearLayout>
+
+    <!-- Sub barra -->
+    <LinearLayout
+        android:id="@+id/subBar"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Configurações"
+            android:textColor="@color/black"
+            android:textSize="36sp"
+            android:layout_marginStart="8dp"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/filters"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subBar">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+
+            android:src="@drawable/ic_moon"
+            android:textColor="#000000"
+            android:textSize="10sp" />
+
+        <TextView
+            android:layout_width="177dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="Tema escuro"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <Switch
+            android:id="@+id/switchTema"
+            android:layout_width="50dp"
+            android:layout_height="48dp"
+            android:textSize="24sp"
+
+            />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
