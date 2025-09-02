@@ -19,7 +19,11 @@
             android:id="@+id/telaCadastroFragment"
             android:name="com.example.projetointegrador.registro.cadastro.TelaCadastroFragment"
             android:label="tela_cadastro"
-            tools:layout="@layout/tela_cadastro" />
+            tools:layout="@layout/tela_cadastro" >
+            <action
+                android:id="@+id/action_telaCadastroFragment_to_telaCadastro2"
+                app:destination="@id/telaCadastro2" />
+        </fragment>
         <fragment
             android:id="@+id/telaLoginFragment"
             android:name="com.example.projetointegrador.registro.login.TelaLoginFragment"
@@ -63,5 +67,13 @@
                 android:name="com.example.projetointegrador.registro.recuperacao.Recuperacao3"
                 android:label="Recuperacao3" />
         </navigation>
+        <activity
+            android:id="@+id/configuracoesActivity"
+            android:name="com.example.projetointegrador.ConfiguracoesActivity"
+            android:label="ConfiguracoesActivity" />
+        <fragment
+            android:id="@+id/telaCadastro2"
+            android:name="com.example.projetointegrador.registro.cadastro.TelaCadastro2"
+            android:label="TelaCadastro2" />
     </navigation>
 </navigation>
