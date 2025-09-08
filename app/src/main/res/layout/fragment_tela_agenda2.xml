@@ -307,7 +307,7 @@
 
         <!-- Informações à direita -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
@@ -323,29 +323,29 @@
                     android:layout_width="20dp"
                     android:layout_height="28dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_calendar"
-                    />
+                    android:src="@drawable/ic_calendar" />
 
                 <TextView
                     android:id="@+id/eventDateTime"
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="8dp"
                     android:text="22 maio 2025 - 9:10"
-                    android:textSize="16sp"
                     android:textColor="#333333"
-                    android:layout_marginBottom="8dp" />
+                    android:textSize="16sp" />
             </LinearLayout>
             <!-- Tipo de evento -->
+
             <TextView
                 android:id="@+id/eventType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Faxina"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 android:textColor="#333333"
-                android:layout_marginBottom="8dp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <!-- Localização -->
             <LinearLayout
@@ -358,21 +358,28 @@
                     android:layout_width="20dp"
                     android:layout_height="28dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_location"
-                    />
+                    android:src="@drawable/ic_location" />
 
                 <TextView
                     android:id="@+id/eventLocation"
                     android:layout_width="match_parent"
                     android:layout_height="28dp"
                     android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="8dp"
                     android:text="Jardim do Centro"
-                    android:textSize="16sp"
                     android:textColor="#333333"
-                    android:layout_marginBottom="8dp" />
+                    android:textSize="16sp" />
             </LinearLayout>
 
         </LinearLayout>
+        <ImageView
+            android:id="@+id/arrow_forward"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_arrow_rightc"
+            android:layout_marginEnd="16dp" />
     </LinearLayout>
 
         <!-- Item 2 -->
@@ -467,6 +474,14 @@
                 </LinearLayout>
 
             </LinearLayout>
+            <ImageView
+                android:id="@+id/arrow_forward2"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_arrow_rightc"
+                android:layout_marginEnd="16dp" />
         </LinearLayout>
         <!-- Item 3 -->
 
@@ -558,7 +573,14 @@
                 </LinearLayout>
 
             </LinearLayout>
-
+            <ImageView
+                android:id="@+id/arrow_forward3"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_arrow_rightc"
+                android:layout_marginEnd="16dp" />
         </LinearLayout>
 
 
