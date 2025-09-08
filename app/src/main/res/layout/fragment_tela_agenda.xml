@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:ignore="MissingConstraints">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:background="#5A0275"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+
+        <!-- Menu -->
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_menu"
+            />
+        <!-- Lupa -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/ic_search"
+            />
+        <!-- Nome do app -->
+
+
+        <!-- Ícones lado direito -->
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:gravity="center"
+
+            android:src="@drawable/logo"
+            android:textColor="@android:color/white"
+
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_notification"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_settings"
+            />
+
+        <ImageView
+            android:layout_width="37dp"
+            android:layout_height="42dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_person"
+            />
+    </LinearLayout>
+
+    <!-- Perfil -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="top">
+
+        <ImageView
+            android:id="@+id/btn_arrow_back"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_left_arrow"
+            app:tint="@color/black"
+            />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_image_perfil"
+            android:layout_marginEnd="12dp"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button"
+            android:scaleType="centerCrop" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/txtNome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seu Hélio"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/status_online"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="● online"
+                android:textSize="12sp"
+                android:textColor="@android:color/holo_green_dark" />
+
+            <TextView
+                android:id="@+id/txtRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="★ 5"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Tags de serviço -->
+        <TextView
+            android:id="@+id/servicos_tags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_servicos_tag"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_marginTop="20dp"
+            android:text="Fáxina | Hidráulica | Elétrica"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Card do calendário -->
+
+
+    <!-- Horários -->
+
+    <CalendarView
+        android:id="@+id/card_calendar"
+        android:layout_width="400dp"
+        android:layout_height="294dp"
+        android:dateTextAppearance="@style/CalendarTextAppearance"
+        android:focusedMonthDateColor="@color/cal_current_month"
+
+        android:maxDate="05/31/2025"
+        android:minDate="05/01/2025"
+        android:selectedWeekBackgroundColor="@color/cal_selected_week"
+        android:shownWeekCount="6"
+        android:unfocusedMonthDateColor="@color/cal_other_month"
+        android:weekDayTextAppearance="@style/CalendarDayTextAppearance"
+        android:weekNumberColor="@color/black"
+        android:weekSeparatorLineColor="@color/cal_divider"
+        tools:layout_editor_absoluteX="10dp"
+        tools:layout_editor_absoluteY="160dp" />
+
+    <TextView
+        android:id="@+id/tv_times_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Horários disponíveis"
+        android:textSize="18sp"
+        android:layout_marginLeft="10dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/card_calendar"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="5dp"/>
+
+    <LinearLayout
+        android:id="@+id/ll_times"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_times_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/btn_time1"
+            style="@style/TimeOption"
+            android:text="10:00"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/border_calendar"
+            />
+
+        <TextView
+            android:id="@+id/btn_time2"
+            style="@style/TimeOptionSelected"
+            android:text="11:00"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            />
+
+        <TextView
+            android:id="@+id/btn_time3"
+            style="@style/TimeOption"
+            android:layout_marginRight="12dp"
+            android:text="12:00"
+            android:background="@drawable/border_calendar"/>
+
+    </LinearLayout>
+
+    <!-- Tipos de serviço -->
+    <TextView
+        android:id="@+id/tv_service_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tipo de serviço"
+        android:layout_marginLeft="10dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/ll_times"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <LinearLayout
+        android:id="@+id/ll_services"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_service_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/btn_faxina"
+            style="@style/ServiceOption"
+            android:text="Fáxina"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/border_calendar"/>
+
+        <TextView
+            android:id="@+id/btn_hidraulica"
+            style="@style/TimeOptionSelected"
+            android:text="Hidráulica"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/btn_eletrica"
+            style="@style/ServiceOption"
+            android:text="Elétrica"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/border_calendar"/>
+    </LinearLayout>
+
+    <!-- Confirmação -->
+    <LinearLayout
+        android:id="@+id/ll_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/ll_services"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tv_selected_time"
+            android:layout_width="130dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="80dp"
+            android:gravity="center"
+            android:text="11:00*"
+            android:background="@drawable/border_calendar"
+            />
+
+        <Button
+            android:id="@+id/btn_confirm"
+            android:layout_marginRight="30dp"
+            android:layout_height="match_parent"
+            android:text="Confirmar"
+            style="@style/TimeOptionSelected"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/white"
+
+            />
+    </LinearLayout>
+
+    <!-- Rodapé -->
+    <TextView
+        android:id="@+id/tv_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="*A duração do atendimento por padrão é 1 hora."
+        android:textSize="17sp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintTop_toBottomOf="@id/ll_confirm"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

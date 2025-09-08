@@ -8,4 +8,8 @@
     <color name="dark_purple">#2A0A47</color>
     <color name="light_purple">#8A2BE2</color>
     <color name="light_purple_pressed">#A95BFF</color>
+    <color name="cal_selected_week">#E3F2FD</color>
+    <color name="cal_current_month">#000000</color>
+    <color name="cal_other_month">#999999</color>
+    <color name="cal_divider">#DDDDDD</color>
 </resources>
