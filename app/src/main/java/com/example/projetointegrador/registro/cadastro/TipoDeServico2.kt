@@ -1,9 +1,7 @@
 package com.example.projetointegrador.registro.cadastro
 
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputFilter
-import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View

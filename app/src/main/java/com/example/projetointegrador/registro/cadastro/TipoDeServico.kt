@@ -42,14 +42,6 @@ class TipoDeServico1Fragment : Fragment() {
 
         // Valor p/ hora: apenas 3 dígitos numéricos (XML já limita; reforço via filtro)
         binding.editValorHora.filters = arrayOf(InputFilter.LengthFilter(3))
-        binding.editValorHora.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val valorFloat = s?.toString()?.toFloatOrNull() ?: 0f
-                // Use 'valorFloat' quando precisar
-            }
-        })
 
         setupTimeInput(binding.inputHorario1)
         setupTimeInput(binding.inputHorario2)
