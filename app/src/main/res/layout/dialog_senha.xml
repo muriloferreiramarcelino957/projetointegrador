@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Concluido com sucesso!"
+        android:text="Senha alterada com sucesso!"
         android:textSize="18sp"
         android:fontFamily="@font/anekkannadabold"
         android:textColor="#000000"

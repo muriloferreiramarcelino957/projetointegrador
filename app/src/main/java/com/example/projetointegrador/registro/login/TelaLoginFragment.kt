@@ -37,6 +37,9 @@ class TelaLoginFragment : Fragment() {
         binding.forgotPasswordText.setOnClickListener {
             findNavController().navigate(R.id.action_telaLoginFragment_to_recuperacao1)
         }
+        binding.loginButton.setOnClickListener {
+            findNavController().navigate(R.id.action_telaLoginFragment_to_navigation)
+        }
     }
 
     override fun onDestroyView() {

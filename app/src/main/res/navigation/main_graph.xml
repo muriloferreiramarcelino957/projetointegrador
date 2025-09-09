@@ -31,6 +31,9 @@
             <action
                 android:id="@+id/action_telaLoginFragment_to_recuperacao1"
                 app:destination="@id/recuperacao" />
+            <action
+                android:id="@+id/action_telaLoginFragment_to_navigation"
+                app:destination="@id/navigation" />
         </fragment>
         <fragment
             android:id="@+id/telaInicialFragment"
@@ -65,12 +68,12 @@
             <fragment
                 android:id="@+id/recuperacao3"
                 android:name="com.example.projetointegrador.registro.recuperacao.Recuperacao3"
-                android:label="Recuperacao3" />
+                android:label="Recuperacao3" >
+                <action
+                    android:id="@+id/action_recuperacao3_to_telaLoginFragment"
+                    app:destination="@id/telaLoginFragment" />
+            </fragment>
         </navigation>
-        <fragment
-            android:id="@+id/configuracoesActivity"
-            android:name="com.example.projetointegrador.TelaConfiguracoesFragment"
-            android:label="ConfiguracoesActivity" />
         <fragment
             android:id="@+id/telaCadastro2"
             android:name="com.example.projetointegrador.registro.cadastro.TelaCadastro2"
@@ -82,84 +85,77 @@
         <fragment
             android:id="@+id/tipoDeServico1Fragment"
             android:name="com.example.projetointegrador.registro.cadastro.TipoDeServico1Fragment"
-            android:label="TipoDeServico1Fragment" />
-    </navigation>
-
-    <navigation
-        android:id="@+id/nav_graph"
-        app:startDestination="@id/telaPerfilFragment">
-
-        <fragment
-            android:id="@+id/telaPerfilFragment"
-            android:name="com.example.projetointegrador.TelaPerfilFragment"
-            android:label="Perfil"
-            tools:layout="@layout/fragment_tela_perfil">
+            android:label="TipoDeServico1Fragment" >
             <action
-                android:id="@+id/action_telaPerfilFragment_to_telaAgendaFragment"
-                app:destination="@id/telaAgendaFragment" />
-            <action
-                android:id="@+id/action_telaPerfilFragment_to_telaConfiguracoesFragment"
-                app:destination="@id/telaConfiguracoesFragment" />
-            <action
-                android:id="@+id/action_telaPerfilFragment_to_telaNotificacaoFragment"
-                app:destination="@id/telaNotificacaoFragment" />
-
+                android:id="@+id/action_tipoDeServico1Fragment_to_tipoDeServico2"
+                app:destination="@id/tipoDeServico2" />
         </fragment>
         <fragment
-            android:id="@+id/telaConfiguracoesFragment"
-            android:name="com.example.projetointegrador.TelaConfiguracoesFragment"
-            android:label="Configuracoes"
-            tools:layout="@layout/fragment_tela_configuracoes" />
-        <fragment
-            android:id="@+id/telaAgendaFragment"
-            android:name="com.example.projetointegrador.TelaAgendaFragment"
-            android:label="Agenda"
-            tools:layout="@layout/fragment_tela_agenda" />
-        <fragment
-            android:id="@+id/telaNotificacaoFragment"
-            android:name="com.example.projetointegrador.TelaNotificacaoFragment"
-            android:label="Notificacao"
-            tools:layout="@layout/fragment_tela_notificacao" />
-    </navigation>
-
-    <navigation
-        android:id="@+id/nav_graph2"
-        app:startDestination="@id/telaAgendaFragment">
-
-        <fragment
-            android:id="@+id/telaAgendaFragment"
-            android:name="com.example.projetointegrador.TelaAgendaFragment"
-            android:label="Agenda"
-            tools:layout="@layout/fragment_tela_agenda">
-        <action
-            android:id="@+id/action_telaAgendaFragment_to_telaAgenda2Fragment"
-            app:destination="@id/telaAgenda2Fragment" />
-        </fragment>
-        <fragment
-            android:id="@+id/telaAgenda2Fragment"
-            android:name="com.example.projetointegrador.TelaAgenda2Fragment"
-            android:label="Agenda2"
-            tools:layout="@layout/fragment_tela_agenda2" />
-    </navigation>
-
-    <navigation
-        android:id="@+id/nav_graph3"
-        app:startDestination="@id/telaAgenda2Fragment">
-
-        <fragment
-            android:id="@+id/telaAgendaFragment"
-            android:name="com.example.projetointegrador.TelaAgenda2Fragment"
-            android:label="Agenda"
-            tools:layout="@layout/fragment_tela_agenda2">
+            android:id="@+id/tipoDeServico3"
+            android:name="com.example.projetointegrador.registro.cadastro.TipoDeServico3"
+            android:label="TipoDeServico3" >
             <action
-                android:id="@+id/action_telaAgenda2Fragment_to_telaAgenda3Fragment"
-                app:destination="@id/telaAgenda3Fragment" />
+                android:id="@+id/action_tipoDeServico3_to_navigation"
+                app:destination="@id/navigation" />
         </fragment>
         <fragment
-            android:id="@+id/telaAgenda3Fragment"
-            android:name="com.example.projetointegrador.TelaAgenda3Fragment"
-            android:label="Agenda2"
-            tools:layout="@layout/fragment_tela_agenda3" />
+            android:id="@+id/tipoDeServico2"
+            android:name="com.example.projetointegrador.registro.cadastro.TipoDeServico2"
+            android:label="TipoDeServico2" >
+            <action
+                android:id="@+id/action_tipoDeServico2_to_tipoDeServico3"
+                app:destination="@id/tipoDeServico3" />
+        </fragment>
+        <navigation android:id="@+id/navigation"
+            app:startDestination="@id/telaPerfilFragment">
+            <fragment
+                android:id="@+id/telaNotificacaoFragment"
+                android:name="com.example.projetointegrador.TelaNotificacaoFragment"
+                android:label="Notificacao"
+                tools:layout="@layout/fragment_tela_notificacao" />
+            <fragment
+                android:id="@+id/telaAgendaFragment"
+                android:name="com.example.projetointegrador.TelaAgendaFragment"
+                android:label="Agenda"
+                tools:layout="@layout/fragment_tela_agenda" >
+                <action
+                    android:id="@+id/action_telaAgendaFragment_to_telaAgenda2Fragment"
+                    app:destination="@id/telaAgenda2Fragment" />
+            </fragment>
+            <fragment
+                android:id="@+id/telaConfiguracoesFragment"
+                android:name="com.example.projetointegrador.TelaConfiguracoesFragment"
+                android:label="Configuracoes"
+                tools:layout="@layout/fragment_tela_configuracoes" />
+            <fragment
+                android:id="@+id/telaPerfilFragment"
+                android:name="com.example.projetointegrador.TelaPerfilFragment"
+                android:label="Perfil"
+                tools:layout="@layout/fragment_tela_perfil">
+                <action
+                    android:id="@+id/action_telaPerfilFragment_to_telaAgendaFragment"
+                    app:destination="@id/telaAgendaFragment" />
+                <action
+                    android:id="@+id/action_telaPerfilFragment_to_telaConfiguracoesFragment"
+                    app:destination="@id/telaConfiguracoesFragment" />
+                <action
+                    android:id="@+id/action_telaPerfilFragment_to_telaNotificacaoFragment"
+                    app:destination="@id/telaNotificacaoFragment" />
+
+            </fragment>
+            <fragment
+                android:id="@+id/telaAgenda2Fragment"
+                android:name="com.example.projetointegrador.TelaAgenda2Fragment"
+                android:label="TelaAgenda2Fragment" >
+                <action
+                    android:id="@+id/action_telaAgenda2Fragment_to_telaAgenda3Fragment"
+                    app:destination="@id/telaAgenda3Fragment2" />
+            </fragment>
+            <fragment
+                android:id="@+id/telaAgenda3Fragment2"
+                android:name="com.example.projetointegrador.TelaAgenda3Fragment"
+                android:label="TelaAgenda3Fragment" />
+        </navigation>
     </navigation>
 
 </navigation>

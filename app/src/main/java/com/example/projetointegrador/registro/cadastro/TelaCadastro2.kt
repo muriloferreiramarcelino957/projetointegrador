@@ -18,10 +18,6 @@ class TelaCadastro2 : Fragment() {
 
     private var _binding: FragmentTelaCadastro2Binding? = null
     private val binding get() = _binding!!
-    private val opcoesUF = arrayListOf("Selecione um estado", "1", "2", "3")
-    private val opcoesTipoLogradouro = arrayListOf("Selecione um tipo de logradouro", "Avenida", "Rua", "Alameda")
-    private var opcaoSelecionadaUF: String = ""
-    private var opcaoSelecionadaTipoLogradouro: String = ""
 
 
     override fun onCreateView(
@@ -35,29 +31,8 @@ class TelaCadastro2 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
-        configurarSpinner(binding.spinnerUF, opcoesUF){uf ->
-            opcaoSelecionadaUF = uf
-        }
-        configurarSpinner(binding.spinnerTipoLogradouro, opcoesTipoLogradouro){tipoLogradouro ->
-            opcaoSelecionadaTipoLogradouro = tipoLogradouro
-        }
     }
 
-    private fun configurarSpinner(spinner: android.widget.Spinner, itens: List<String>,onSelected: (String) -> Unit){
-    val adapter = ArrayAdapter(binding.root.context,android.R.layout.simple_spinner_item,itens)
-
-    spinner.adapter = adapter
-    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-        override fun onItemSelected(parent: AdapterView<*>?,view: View?,position: Int,id: Long){
-            onSelected(if (position > 0) itens[position] else "")
-        }
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-            onSelected("")
-        }
-    }
-
-
-}
     private fun initListeners(){
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()

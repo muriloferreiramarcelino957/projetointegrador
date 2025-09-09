@@ -4,35 +4,40 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.FragmentTipoDeServico1Binding
+import com.example.projetointegrador.databinding.FragmentTipoDeServico2Binding
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.util.Locale
 
-class TipoDeServico1Fragment : Fragment() {
 
-    private var _binding: FragmentTipoDeServico1Binding? = null
+class TipoDeServico2 : Fragment() {
+
+    private var _binding: FragmentTipoDeServico2Binding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentTipoDeServico1Binding.inflate(inflater, container, false)
+    ): View? {
+        _binding = FragmentTipoDeServico2Binding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
+
+        binding.backButton.setOnClickListener {
+            findNavController().navigateUp()
+        }
 
         val tipos = listOf("Tipo de serviço 1", "Fáxina", "Hidraúlica", "Elétrica")
         binding.autoTipoServico.setAdapter(
@@ -81,12 +86,12 @@ class TipoDeServico1Fragment : Fragment() {
             findNavController().navigateUp()
         }
         binding.btnProximo.setOnClickListener {
-            findNavController().navigate(R.id.action_tipoDeServico1Fragment_to_tipoDeServico2)
+            findNavController().navigate(R.id.action_tipoDeServico2_to_tipoDeServico3)
         }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }

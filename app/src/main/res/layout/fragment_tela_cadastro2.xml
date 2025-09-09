@@ -67,8 +67,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo"/>
 
-    <Spinner
-        android:id="@+id/spinnerTipoLogradouro"
+    <EditText
+        android:id="@+id/editTextTipoLogradouro"
         android:layout_width="260dp"
         android:layout_height="40dp"
         android:background="@drawable/rectangule2"
@@ -104,7 +104,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerTipoLogradouro" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTipoLogradouro" />
 
     <EditText
         android:id="@+id/editTextTextNumero"
@@ -169,17 +169,19 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextTextBairro" />
 
 
-    <Spinner
-        android:id="@+id/spinnerUF"
+    <EditText
+        android:id="@+id/editTextUF"
         android:layout_width="260dp"
         android:layout_height="40dp"
         android:background="@drawable/rectangule2"
-        android:drawableLeft="@drawable/ic_cidade"
+        android:drawableLeft="@drawable/ic_estado"
         android:drawablePadding="8dp"
-        android:hint="Cidade"
+        android:ems="13"
+        android:hint="UF"
         android:fontFamily="@font/anekkannadaregular"
         android:padding="5dp"
         android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:textSize="12sp"
         android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -201,6 +203,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerUF"/>
+        app:layout_constraintTop_toBottomOf="@+id/editTextUF"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
