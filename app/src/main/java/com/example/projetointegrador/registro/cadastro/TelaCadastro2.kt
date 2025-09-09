@@ -62,6 +62,9 @@ class TelaCadastro2 : Fragment() {
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
+        binding.button.setOnClickListener {
+            findNavController().navigate(R.id.action_telaCadastro2_to_tipoDeServico1Fragment)
+        }
     }
 
     override fun onDestroyView() {
