@@ -2,7 +2,7 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
@@ -14,47 +14,76 @@
 
         <!-- Top Bar -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/topBar"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
             android:background="#5A0275"
+            android:orientation="horizontal"
             android:padding="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+
+            <!-- Menu -->
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_menu" />
+                android:id="@+id/ic_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_menu"
+                />
+            <!-- Lupa -->
+            <ImageView
+                android:id="@+id/ic_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/ic_search"
+                />
+            <!-- Nome do app -->
+
+
+            <!-- Ícones lado direito -->
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="12dp"
-                android:src="@drawable/ic_search" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="64dp"
                 android:layout_weight="1"
+                android:gravity="center"
+
                 android:src="@drawable/logo"
-                android:scaleType="centerInside" />
+                android:textColor="@android:color/white"
+
+                />
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_notification" />
+                android:id="@+id/ic_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_notification"
+                />
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:id="@+id/ic_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginStart="12dp"
-                android:src="@drawable/ic_settings" />
+                android:src="@drawable/ic_settings"
+                />
 
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:id="@+id/ic_person"
+                android:layout_width="37dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginStart="12dp"
-                android:src="@drawable/ic_person" />
+                android:src="@drawable/ic_person"
+                />
         </LinearLayout>
 
         <!-- Perfil -->
@@ -121,85 +150,85 @@
         <!-- Info localização e cadastro -->
 
 
-            <!-- Info localização e cadastro -->
+        <!-- Info localização e cadastro -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="top"
+            android:layout_marginTop="-12dp">
+
+            <!-- Bloco com calendário e localização -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:gravity="top"
-                android:layout_marginTop="-12dp">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <!-- Bloco com calendário e localização -->
+                <!-- Linha: ícone + texto calendário -->
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <!-- Linha: ícone + texto calendário -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="4dp">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/ic_calendar"
-                            android:contentDescription="Ícone de calendário"
-                            android:layout_marginEnd="6dp"/>
-
-                        <TextView
-                            android:id="@+id/txtDesde"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Na AllService desde abril de 2025"
-                            android:textSize="12sp"/>
-                    </LinearLayout>
-
-                    <!-- Linha: ícone + texto localização -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/ic_location"
-                            android:contentDescription="Ícone de localização"
-                            android:layout_marginEnd="6dp"/>
-
-                        <TextView
-                            android:id="@+id/txtLocal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Jardim Camburi, Vitória - ES"
-                            android:textSize="12sp"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Média de avaliação -->
-                <TextView
-                    android:id="@+id/rating_media"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginRight="50dp"
-                    android:text="Média\n★ 5"
-                    android:textAlignment="center"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="4dp">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_calendar"
+                        android:contentDescription="Ícone de calendário"
+                        android:layout_marginEnd="6dp"/>
+
+                    <TextView
+                        android:id="@+id/txtDesde"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Na AllService desde abril de 2025"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+
+                <!-- Linha: ícone + texto localização -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_location"
+                        android:contentDescription="Ícone de localização"
+                        android:layout_marginEnd="6dp"/>
+
+                    <TextView
+                        android:id="@+id/txtLocal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jardim Camburi, Vitória - ES"
+                        android:textSize="12sp"/>
+                </LinearLayout>
             </LinearLayout>
 
+            <!-- Média de avaliação -->
+            <TextView
+                android:id="@+id/rating_media"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="50dp"
+                android:text="Média\n★ 5"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-            <!-- Nível de Cadastro -->
+
+        <!-- Nível de Cadastro -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -277,26 +306,33 @@
             android:padding="16dp"
             android:gravity="center">
 
-            <View
+            <ImageView
                 android:layout_width="0dp"
-                android:layout_height="80dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@android:color/darker_gray"
-                android:layout_marginEnd="4dp" />
+                android:src="@drawable/ic_image_prestador1"
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="80dp"
-                android:layout_weight="1"
-                android:background="@android:color/darker_gray"
-                android:layout_marginHorizontal="4dp" />
+                android:layout_marginEnd="4dp"
 
-            <View
+                />
+
+            <ImageView
                 android:layout_width="0dp"
-                android:layout_height="80dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@android:color/darker_gray"
-                android:layout_marginStart="4dp" />
+                android:layout_marginHorizontal="4dp"
+                android:src="@drawable/ic_image_prestador2"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/darker_gray"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_image_prestador3"
+                />
         </LinearLayout>
 
         <!-- Quantidade de serviços -->
