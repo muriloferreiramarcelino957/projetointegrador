@@ -5,13 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.FragmentTelaCadastro2Binding
-import com.example.projetointegrador.databinding.TelaCadastroBinding
 
 
 class TelaCadastro2 : Fragment() {

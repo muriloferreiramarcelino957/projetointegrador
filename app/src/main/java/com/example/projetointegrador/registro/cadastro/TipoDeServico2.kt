@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
-import com.example.projetointegrador.databinding.FragmentTipoDeServico1Binding
 import com.example.projetointegrador.databinding.FragmentTipoDeServico2Binding
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -50,10 +49,6 @@ class TipoDeServico2 : Fragment() {
         binding.editValorHora.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val valorFloat = s?.toString()?.toFloatOrNull() ?: 0f
-                // Use 'valorFloat' quando precisar
-            }
         })
 
         setupTimeInput(binding.inputHorario1)
