@@ -47,10 +47,6 @@ class TipoDeServico3 : Fragment() {
 
         // Valor p/ hora: apenas 3 dígitos numéricos (XML já limita; reforço via filtro)
         binding.editValorHora.filters = arrayOf(InputFilter.LengthFilter(3))
-        binding.editValorHora.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
-        })
 
         setupTimeInput(binding.inputHorario1)
         setupTimeInput(binding.inputHorario2)
