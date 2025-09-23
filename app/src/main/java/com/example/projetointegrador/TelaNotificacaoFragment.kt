@@ -24,13 +24,16 @@ class TelaNotificacaoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initListeners()
+    }
 
+    private fun initListeners() {
         // Botão de voltar
         binding.btnVoltar.setOnClickListener {
             findNavController().navigateUp()
         }
 
-        // Exemplo de ação no botão "Marcar todas como lidas"
+        // Botão "Marcar todas como lidas"
         binding.btnMarcarComoLidas.setOnClickListener {
             Toast.makeText(requireContext(), "Notificações marcadas como lidas!", Toast.LENGTH_SHORT).show()
         }

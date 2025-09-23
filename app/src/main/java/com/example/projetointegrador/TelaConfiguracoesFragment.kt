@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.databinding.FragmentTelaConfiguracoesBinding
 
 class TelaConfiguracoesFragment : Fragment() {
@@ -23,14 +24,18 @@ class TelaConfiguracoesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initListeners()
+    }
 
-        // Comportamento do switch de tema escuro
+    private fun initListeners() {
         binding.switchTema.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
+            AppCompatDelegate.setDefaultNightMode(
+                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES
+                else AppCompatDelegate.MODE_NIGHT_NO
+            )
+        }
+        binding.btnEditProfile.setOnClickListener {
+            findNavController().navigate(R.id.action_telaConfiguracoesFragment_to_telaEditarPerfil)
         }
     }
 

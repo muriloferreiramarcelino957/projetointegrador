@@ -4,42 +4,50 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.projetointegrador.databinding.FragmentTelaAgenda2Binding
 
 class TelaAgenda2Fragment : Fragment() {
+
+    private var _binding: FragmentTelaAgenda2Binding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_tela_agenda2, container, false)
+    ): View {
+        _binding = FragmentTelaAgenda2Binding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initListeners()
+    }
+
+    private fun initListeners() {
         // Botão de voltar
-        val btnArrowBack: ImageView = view.findViewById(R.id.btn_arrow_back)
-        btnArrowBack.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+        binding.btnArrowBack.setOnClickListener {
+            findNavController().navigateUp()
         }
 
         // Setas de "ver mais" dos agendamentos
-        val arrowForward1: ImageView = view.findViewById(R.id.arrow_forward)
-        val arrowForward2: ImageView = view.findViewById(R.id.arrow_forward2)
-        val arrowForward3: ImageView = view.findViewById(R.id.arrow_forward3)
+        val arrowButtons = listOf(
+            binding.arrowForward,
+            binding.arrowForward2,
+            binding.arrowForward3
+        )
 
-        // Clique nas setas - exemplo com Toast, você pode substituir por navegação real
-        arrowForward1.setOnClickListener {
-            findNavController().navigate(R.id.action_telaAgenda2Fragment_to_telaAgenda3Fragment)
+        for (arrow in arrowButtons) {
+            arrow.setOnClickListener {
+                findNavController().navigate(R.id.action_telaAgenda2Fragment_to_telaAgenda3Fragment)
+            }
         }
+    }
 
-        arrowForward2.setOnClickListener {
-            findNavController().navigate(R.id.action_telaAgenda2Fragment_to_telaAgenda3Fragment)
-        }
-
-        arrowForward3.setOnClickListener {
-            findNavController().navigate(R.id.action_telaAgenda2Fragment_to_telaAgenda3Fragment)
-        }
-
-        return view
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

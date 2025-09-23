@@ -126,7 +126,11 @@
                 android:id="@+id/telaConfiguracoesFragment"
                 android:name="com.example.projetointegrador.TelaConfiguracoesFragment"
                 android:label="Configuracoes"
-                tools:layout="@layout/fragment_tela_configuracoes" />
+                tools:layout="@layout/fragment_tela_configuracoes" >
+                <action
+                    android:id="@+id/action_telaConfiguracoesFragment_to_telaEditarPerfil"
+                    app:destination="@id/telaEditarPerfil" />
+            </fragment>
             <fragment
                 android:id="@+id/telaPerfilFragment"
                 android:name="com.example.projetointegrador.TelaPerfilFragment"
@@ -155,6 +159,10 @@
                 android:id="@+id/telaAgenda3Fragment2"
                 android:name="com.example.projetointegrador.TelaAgenda3Fragment"
                 android:label="TelaAgenda3Fragment" />
+            <fragment
+                android:id="@+id/telaEditarPerfil"
+                android:name="com.example.projetointegrador.TelaEditarPerfil"
+                android:label="TelaEditarPerfil" />
         </navigation>
     </navigation>
 
