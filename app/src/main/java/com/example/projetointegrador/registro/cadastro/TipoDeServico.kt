@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
@@ -66,12 +67,65 @@ class TipoDeServico1Fragment : Fragment() {
         editText.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) openPicker.onClick(editText) }
     }
 
+    private fun checkInputs(): Int {
+        if (binding.autoTipoServico.text.toString().isEmpty()){
+            binding.autoTipoServico.error = "Insira um tipo de serviço"
+            return 1
+        } else{
+            binding.autoTipoServico.error = null
+        }
+        if (binding.editValorHora.text.toString().isEmpty()){
+            binding.editValorHora.error = "Insira um valor para o serviço prestado"
+            return 1
+        } else{
+            binding.editValorHora.error = null
+        }
+        if (binding.inputHorario1.text.toString().isEmpty()){
+            binding.inputHorario1.error = "Insira um horário"
+            return 1
+        } else{
+            binding.inputHorario1.error = null
+        }
+        if (binding.inputHorario2.text.toString().isEmpty()){
+            binding.inputHorario2.error = "Insira um horário"
+            return 1
+        } else{
+            binding.inputHorario2.error = null
+        }
+        if (binding.inputHorario3.text.toString().isEmpty()){
+            binding.inputHorario3.error = "Insira um horário"
+            return 1
+        } else{
+            binding.inputHorario3.error = null
+        }
+
+        val horarios = setOf(
+            binding.inputHorario1.text.toString().trim(),
+            binding.inputHorario2.text.toString().trim(),
+            binding.inputHorario3.text.toString().trim())
+        if (horarios.size < 3){
+            binding.inputHorario1.error = "Insira um horário distinto"
+            binding.inputHorario2.error = "Insira um horário distinto"
+            binding.inputHorario3.error = "Insira um horário distinto"
+            return 2
+        } else{
+            binding.inputHorario1.error = null
+            binding.inputHorario2.error = null
+            binding.inputHorario3.error = null
+        }
+        return 0
+    }
+
     private fun initListeners(){
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
         binding.btnProximo.setOnClickListener {
-            findNavController().navigate(R.id.action_tipoDeServico1Fragment_to_tipoDeServico2)
+            when (checkInputs()) {
+                0 -> findNavController().navigate(R.id.action_tipoDeServico1Fragment_to_tipoDeServico2)
+                1 -> Toast.makeText(requireContext(), "Existem campos vazios", Toast.LENGTH_SHORT).show()
+                2 -> Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

@@ -37,8 +37,9 @@ class TelaCadastro2 : Fragment() {
             findNavController().navigateUp()
         }
         binding.btnCadastrar.setOnClickListener {
-            val flag = FlagPrestadorBinding.inflate(layoutInflater, container, false)
+            val flag = FlagPrestadorBinding.inflate(layoutInflater)
             val overlay = flag.root
+            overlay.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             val root = binding.root
             root.addView(overlay)
 
