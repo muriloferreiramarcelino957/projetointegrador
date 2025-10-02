@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
+import com.example.projetointegrador.databinding.FlagPrestadorBinding
 import com.example.projetointegrador.databinding.FragmentTelaCadastro2Binding
 
 
@@ -33,8 +36,19 @@ class TelaCadastro2 : Fragment() {
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.button.setOnClickListener {
-            findNavController().navigate(R.id.action_telaCadastro2_to_tipoDeServico1Fragment)
+        binding.btnCadastrar.setOnClickListener {
+            val flag = FlagPrestadorBinding.inflate(layoutInflater, container, false)
+            val overlay = flag.root
+            val root = binding.root
+            root.addView(overlay)
+
+            flag.btnSim.setOnClickListener {
+                findNavController().navigate(R.id.tipoDeServico1Fragment)
+            }
+            flag.btnNao.setOnClickListener {
+                Toast.makeText(requireContext(), "Ir para tela principal", Toast.LENGTH_SHORT).show()
+                root.removeView(overlay)
+            }
         }
     }
 

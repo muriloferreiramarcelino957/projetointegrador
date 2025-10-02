@@ -190,12 +190,12 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextCidade" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnCadastrar"
         android:layout_width="180dp"
         android:layout_height="55dp"
         android:backgroundTint="@color/white"
         android:fontFamily="@font/anekkannadaregular"
-        android:text="Continuar"
+        android:text="Cadastrar"
         android:textColor="@color/purple_300"
         android:textSize="21sp"
         app:cornerRadius="8dp"
