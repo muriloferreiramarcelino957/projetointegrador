@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.databinding.FragmentTelaPerfilBinding
+import com.google.firebase.Firebase
 
 class TelaPerfilFragment : Fragment() {
 
@@ -25,6 +26,7 @@ class TelaPerfilFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
+        Firebase
     }
 
     private fun initListeners() {

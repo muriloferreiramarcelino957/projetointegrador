@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "308585236629",
+    "firebase_url": "https://allservices-56584-default-rtdb.firebaseio.com",
+    "project_id": "allservices-56584",
+    "storage_bucket": "allservices-56584.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:308585236629:android:6d258cc002b38c9cd8739c",
+        "android_client_info": {
+          "package_name": "com.example.projetointegrador"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRQhOTGTxKgs07EOh7MZAElfgz09AOAoU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
