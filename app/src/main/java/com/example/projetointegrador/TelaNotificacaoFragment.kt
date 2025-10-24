@@ -7,18 +7,18 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.projetointegrador.databinding.FragmentTelaNotificacaoBinding
+import com.example.projetointegrador.databinding.TelaDeNotificacoesBinding
 
 class TelaNotificacaoFragment : Fragment() {
 
-    private var _binding: FragmentTelaNotificacaoBinding? = null
+    private var _binding: TelaDeNotificacoesBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTelaNotificacaoBinding.inflate(inflater, container, false)
+        _binding = TelaDeNotificacoesBinding.inflate(inflater, container, false)
         return binding.root
     }
 

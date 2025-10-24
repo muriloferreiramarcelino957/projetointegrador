@@ -9,11 +9,11 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.projetointegrador.databinding.FragmentTelaAgendaBinding
+import com.example.projetointegrador.databinding.TelaDeAgendaBinding
 
 class TelaAgendaFragment : Fragment() {
 
-    private var _binding: FragmentTelaAgendaBinding? = null
+    private var _binding: TelaDeAgendaBinding? = null
     private val binding get() = _binding!!
 
     private var selectedDate: String? = null
@@ -24,7 +24,7 @@ class TelaAgendaFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTelaAgendaBinding.inflate(inflater, container, false)
+        _binding = TelaDeAgendaBinding.inflate(inflater, container, false)
         return binding.root
     }
 

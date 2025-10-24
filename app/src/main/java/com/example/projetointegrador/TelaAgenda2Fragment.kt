@@ -6,18 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.projetointegrador.databinding.FragmentTelaAgenda2Binding
+import com.example.projetointegrador.databinding.TelaDeAgenda2Binding
 
 class TelaAgenda2Fragment : Fragment() {
 
-    private var _binding: FragmentTelaAgenda2Binding? = null
+    private var _binding: TelaDeAgenda2Binding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTelaAgenda2Binding.inflate(inflater, container, false)
+        _binding = TelaDeAgenda2Binding.inflate(inflater, container, false)
         return binding.root
     }
 

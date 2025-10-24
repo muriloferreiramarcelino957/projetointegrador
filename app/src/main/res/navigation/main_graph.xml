@@ -8,7 +8,7 @@
         android:id="@+id/splashFragment"
         android:name="com.example.projetointegrador.splash.SplashFragment"
         android:label="fragment_splash"
-        tools:layout="@layout/fragment_splash" >
+        tools:layout="@layout/tela_de_splash" >
         <action
             android:id="@+id/action_splashFragment_to_telaInicialFragment"
             app:destination="@id/app" />
@@ -60,7 +60,7 @@
                 android:id="@+id/recuperacao1"
                 android:name="com.example.projetointegrador.registro.recuperacao.Recuperacao1"
                 android:label="fragment_recuperacao1"
-                tools:layout="@layout/fragment_recuperacao1">
+                tools:layout="@layout/tela_de_recuperacao">
                 <action
                     android:id="@+id/action_recuperacao1_to_recuperacao2"
                     app:destination="@id/recuperacao2" />
@@ -112,12 +112,12 @@
                 android:id="@+id/telaNotificacaoFragment"
                 android:name="com.example.projetointegrador.TelaNotificacaoFragment"
                 android:label="Notificacao"
-                tools:layout="@layout/fragment_tela_notificacao" />
+                tools:layout="@layout/tela_de_notificacoes" />
             <fragment
                 android:id="@+id/telaAgendaFragment"
                 android:name="com.example.projetointegrador.TelaAgendaFragment"
                 android:label="Agenda"
-                tools:layout="@layout/fragment_tela_agenda" >
+                tools:layout="@layout/tela_de_agenda" >
                 <action
                     android:id="@+id/action_telaAgendaFragment_to_telaAgenda2Fragment"
                     app:destination="@id/telaAgenda2Fragment" />
@@ -126,7 +126,7 @@
                 android:id="@+id/telaConfiguracoesFragment"
                 android:name="com.example.projetointegrador.TelaConfiguracoesFragment"
                 android:label="Configuracoes"
-                tools:layout="@layout/fragment_tela_configuracoes" >
+                tools:layout="@layout/tela_de_configuracoes" >
                 <action
                     android:id="@+id/action_telaConfiguracoesFragment_to_telaEditarPerfil"
                     app:destination="@id/telaEditarPerfil" />
@@ -135,7 +135,7 @@
                 android:id="@+id/telaPerfilFragment"
                 android:name="com.example.projetointegrador.TelaPerfilFragment"
                 android:label="Perfil"
-                tools:layout="@layout/fragment_tela_perfil">
+                tools:layout="@layout/tela_de_perfil">
                 <action
                     android:id="@+id/action_telaPerfilFragment_to_telaAgendaFragment"
                     app:destination="@id/telaAgendaFragment" />

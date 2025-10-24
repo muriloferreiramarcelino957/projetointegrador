@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
-import com.example.projetointegrador.databinding.FragmentTipoDeServico2Binding
+import com.example.projetointegrador.databinding.TelaTipoDeServico2Binding
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.util.Locale
@@ -18,14 +18,14 @@ import java.util.Locale
 
 class TipoDeServico2 : Fragment() {
 
-    private var _binding: FragmentTipoDeServico2Binding? = null
+    private var _binding: TelaTipoDeServico2Binding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentTipoDeServico2Binding.inflate(inflater, container, false)
+        _binding = TelaTipoDeServico2Binding.inflate(inflater, container, false)
         return binding.root
     }
 

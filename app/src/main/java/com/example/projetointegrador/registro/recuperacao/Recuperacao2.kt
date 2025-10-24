@@ -7,20 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
-import com.example.projetointegrador.databinding.FragmentRecuperacao1Binding
-import com.example.projetointegrador.databinding.FragmentRecuperacao2Binding
+import com.example.projetointegrador.databinding.TelaDeRecuperacao2Binding
 
 
 class Recuperacao2 : Fragment() {
 
-    private var _binding : FragmentRecuperacao2Binding? = null
+    private var _binding : TelaDeRecuperacao2Binding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentRecuperacao2Binding.inflate(inflater, container, false)
+        _binding = TelaDeRecuperacao2Binding.inflate(inflater, container, false)
         return binding.root
     }
 

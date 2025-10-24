@@ -7,19 +7,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.projetointegrador.databinding.FragmentTelaPerfilBinding
+import com.example.projetointegrador.databinding.TelaDePerfilBinding
 import com.google.firebase.Firebase
 
 class TelaPerfilFragment : Fragment() {
 
-    private var _binding: FragmentTelaPerfilBinding? = null
+    private var _binding: TelaDePerfilBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTelaPerfilBinding.inflate(inflater, container, false)
+        _binding = TelaDePerfilBinding.inflate(inflater, container, false)
         return binding.root
     }
 

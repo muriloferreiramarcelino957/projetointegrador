@@ -10,12 +10,12 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.FlagPrestadorBinding
-import com.example.projetointegrador.databinding.FragmentTelaCadastro2Binding
+import com.example.projetointegrador.databinding.TelaDeCadastro2Binding
 
 
 class TelaCadastro2 : Fragment() {
 
-    private var _binding: FragmentTelaCadastro2Binding? = null
+    private var _binding: TelaDeCadastro2Binding? = null
     private val binding get() = _binding!!
 
 
@@ -23,7 +23,7 @@ class TelaCadastro2 : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentTelaCadastro2Binding.inflate(inflater, container, false)
+        _binding = TelaDeCadastro2Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -44,7 +44,7 @@ class TelaCadastro2 : Fragment() {
             root.addView(overlay)
 
             flag.btnSim.setOnClickListener {
-                findNavController().navigate(R.id.tipoDeServico1Fragment)
+                findNavController().navigate(R.id.action_telaCadastro2_to_tipoDeServico1Fragment)
             }
             flag.btnNao.setOnClickListener {
                 Toast.makeText(requireContext(), "Ir para tela principal", Toast.LENGTH_SHORT).show()

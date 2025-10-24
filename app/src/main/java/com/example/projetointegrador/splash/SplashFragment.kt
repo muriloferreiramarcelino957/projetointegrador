@@ -9,12 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
-import com.example.projetointegrador.databinding.FragmentSplashBinding
+import com.example.projetointegrador.databinding.TelaDeSplashBinding
 
 
 class SplashFragment : Fragment() {
 
-    private var _binding : FragmentSplashBinding? = null
+    private var _binding : TelaDeSplashBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -22,7 +22,7 @@ class SplashFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSplashBinding.inflate(inflater, container, false)
+        _binding = TelaDeSplashBinding.inflate(inflater, container, false)
         return binding.root
     }
 
