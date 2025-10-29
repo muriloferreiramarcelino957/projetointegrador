@@ -9,18 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
-import com.example.projetointegrador.databinding.FragmentRecuperacao3Binding
+import com.example.projetointegrador.databinding.TelaDeRecuperacao3Binding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class Recuperacao3 : Fragment() {
 
-    private var _binding : FragmentRecuperacao3Binding? = null
+    private var _binding : TelaDeRecuperacao3Binding? = null
     private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentRecuperacao3Binding.inflate(inflater, container, false)
+        _binding = TelaDeRecuperacao3Binding.inflate(inflater, container, false)
         return binding.root
     }
 

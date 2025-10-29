@@ -7,18 +7,18 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.projetointegrador.databinding.FragmentTelaEditarPerfilBinding
+import com.example.projetointegrador.databinding.TelaDeEditarPerfilBinding
 
 class TelaEditarPerfil : Fragment() {
 
-    private var _binding: FragmentTelaEditarPerfilBinding? = null
+    private var _binding: TelaDeEditarPerfilBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTelaEditarPerfilBinding.inflate(inflater, container, false)
+        _binding = TelaDeEditarPerfilBinding.inflate(inflater, container, false)
         return binding.root
     }
 

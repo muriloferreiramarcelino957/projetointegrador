@@ -7,18 +7,18 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.projetointegrador.databinding.FragmentTelaConfiguracoesBinding
+import com.example.projetointegrador.databinding.TelaDeConfiguracoesBinding
 
 class TelaConfiguracoesFragment : Fragment() {
 
-    private var _binding: FragmentTelaConfiguracoesBinding? = null
+    private var _binding: TelaDeConfiguracoesBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentTelaConfiguracoesBinding.inflate(inflater, container, false)
+        _binding = TelaDeConfiguracoesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
