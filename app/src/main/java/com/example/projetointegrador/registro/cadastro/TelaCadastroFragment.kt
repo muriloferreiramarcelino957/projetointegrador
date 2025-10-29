@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.TelaCadastroBinding
+import com.google.firebase.Firebase
 
 class TelaCadastroFragment : Fragment() {
 
     private var _binding: TelaCadastroBinding? = null
     private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
