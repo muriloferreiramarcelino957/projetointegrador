@@ -57,35 +57,22 @@ class TelaCadastroFragment : Fragment() {
                 return@setOnClickListener
             }
 
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val uid = auth.currentUser?.uid ?: ""
-                        val user = User(uid, username, email, birthdate, cpf)
-
-                        database.child("usuarios").child(uid).setValue(user)
-                            .addOnSuccessListener {
-                                Toast.makeText(requireContext(), "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                                findNavController().navigate(R.id.telaCadastro2)
-                            }
-                            .addOnFailureListener { e ->
-                                Log.e("TelaCadastroFragment", "Database error: ${e.message}")
-                                Toast.makeText(requireContext(), "Não foi possível salvar os dados. Tente novamente.", Toast.LENGTH_LONG).show()
-                            }
-                    } else {
-                        val exception = task.exception
-                        val errorMessage = when (exception) {
-                            is FirebaseAuthWeakPasswordException -> "A senha deve ter no mínimo 8 caracteres."
-                            is FirebaseAuthInvalidCredentialsException -> "E-mail inválido."
-                            is FirebaseAuthUserCollisionException -> "Este e-mail já está em uso."
-                            else -> "Erro ao cadastrar. Tente novamente."
-                        }
-                        Log.e("TelaCadastroFragment", "Auth error: ${exception?.message}")
-                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
-                    }
-                }
-        }
+            val userParcial = User(
+                nomeUsuario = username,
+                email = email,
+                dataNascimento = birthdate,
+                cpf = cpf,
+                cep = "",
+                tipoLogradouro = "",
+                descLogradouro = "",
+                numero = 0,
+                bairro = "",
+                cidade = "",
+                estado = ""
+            )
+            val action = TelaCadastroFragmentDirections.actionTelaCadastroFragmentToTelaCadastro2(userParcial)
+            findNavController().navigate(action)
+    }
     }
 
     override fun onDestroyView() {

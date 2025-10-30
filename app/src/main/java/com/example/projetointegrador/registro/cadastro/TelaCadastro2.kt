@@ -8,15 +8,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.FlagPrestadorBinding
 import com.example.projetointegrador.databinding.TelaDeCadastro2Binding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 
 class TelaCadastro2 : Fragment() {
 
     private var _binding: TelaDeCadastro2Binding? = null
     private val binding get() = _binding!!
+    private lateinit var auth: FirebaseAuth
+    private lateinit var database: DatabaseReference
+    private val args by navArgs<TelaCadastro2Args>()
 
 
     override fun onCreateView(
@@ -24,6 +31,9 @@ class TelaCadastro2 : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = TelaDeCadastro2Binding.inflate(inflater, container, false)
+        auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance().reference
+        val user = args.user
         return binding.root
     }
 
@@ -37,6 +47,30 @@ class TelaCadastro2 : Fragment() {
             findNavController().navigateUp()
         }
         binding.btnCadastrar.setOnClickListener {
+            val cep = binding.editTextTextCEP.text.toString().trim()
+            val tipoLogradouro = binding.editTextTipoLogradouro.text.toString().trim()
+            val descLogradouro = binding.editTextTextDescricaoLogradouro.text.toString().trim()
+            val numero = binding.editTextTextNumero.text.toString().trim()
+            val bairro = binding.editTextTextBairro.text.toString().trim()
+            val cidade = binding.editTextCidade.text.toString().trim()
+            val estado = binding.editTextUF.text.toString().trim()
+
+            if (cep.isEmpty() || tipoLogradouro.isEmpty() || descLogradouro.isEmpty() || numero.isEmpty() || bairro.isEmpty() || cidade.isEmpty() || estado.isEmpty()) {
+                Toast.makeText(requireContext(), "Preencha todos os campos.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val user = FirebaseAuth.getInstance().currentUser?.uid
+
+                .addOnSuccessListener {
+                    Toast.makeText(requireContext(), "Dados salvos com sucesso!", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(requireContext(), "Erro ao salvar: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+
+
+
             val flag = FlagPrestadorBinding.inflate(layoutInflater)
             val overlay = flag.root
             overlay.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
