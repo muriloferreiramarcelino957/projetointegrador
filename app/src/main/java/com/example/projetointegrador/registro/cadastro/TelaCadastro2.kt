@@ -60,14 +60,12 @@ class TelaCadastro2 : Fragment() {
                 return@setOnClickListener
             }
 
-            val user = FirebaseAuth.getInstance().currentUser?.uid
+            val user = args.user
+                user?.cep = cep
+                user?.tipoLogradouro = tipoLogradouro
+                user?.descLogradouro = descLogradouro
+                user?.numero = numero
 
-                .addOnSuccessListener {
-                    Toast.makeText(requireContext(), "Dados salvos com sucesso!", Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Erro ao salvar: ${it.message}", Toast.LENGTH_SHORT).show()
-                }
 
 
 
