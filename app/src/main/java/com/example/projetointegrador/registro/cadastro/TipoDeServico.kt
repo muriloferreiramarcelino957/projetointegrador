@@ -39,7 +39,6 @@ class TipoDeServico1Fragment : Fragment() {
         )
         binding.autoTipoServico.setOnClickListener { binding.autoTipoServico.showDropDown() }
 
-        // Valor p/ hora: apenas 3 dígitos numéricos (XML já limita; reforço via filtro)
         binding.editValorHora.filters = arrayOf(InputFilter.LengthFilter(3))
 
         setupTimeInput(binding.inputHorario1)
@@ -121,10 +120,32 @@ class TipoDeServico1Fragment : Fragment() {
             findNavController().navigateUp()
         }
         binding.btnProximo.setOnClickListener {
-            when (checkInputs()) {
-                0 -> findNavController().navigate(R.id.action_tipoDeServico1Fragment_to_tipoDeServico2)
-                1 -> Toast.makeText(requireContext(), "Existem campos vazios", Toast.LENGTH_SHORT).show()
-                2 -> Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT).show()
+            if (checkInputs() == 0) {
+                val tipo = TiposServico(
+                    tipoServico1 = binding.autoTipoServico.text.toString(),
+                    valorServico1 = binding.editValorHora.text.toString().toDouble(),
+                    horarioServico1_1 = binding.inputHorario1.text.toString(),
+                    horarioServico1_2 = binding.inputHorario2.text.toString(),
+                    horarioServico1_3 = binding.inputHorario3.text.toString(),
+                    tipoServico2 = "",
+                    valorServico2 = 0.0,
+                    horarioServico2_1 = "",
+                    horarioServico2_2 = "",
+                    horarioServico2_3 = "",
+                    tipoServico3 = "",
+                    valorServico3 = 0.0,
+                    horarioServico3_1 = "",
+                    horarioServico3_2 = "",
+                    horarioServico3_3 = "",
+                )
+                val action = TipoDeServico1FragmentDirections.actionTipoDeServico1FragmentToTipoDeServico2(tipo)
+                findNavController().navigate(action)
+            } else if (checkInputs() == 1){
+                    Toast.makeText(requireContext(), "Existem campos vazios", Toast.LENGTH_SHORT).show()
+            } else if (checkInputs() == 2) {
+                    Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Erro desconhecido", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -192,12 +192,12 @@
 
     <!-- Botão principal -->
     <Button
-        android:id="@+id/btnProximo"
+        android:id="@+id/btnCadastrar"
         android:layout_width="230dp"
         android:layout_height="50dp"
         android:backgroundTint="@color/white"
         android:fontFamily="@font/anekkannadaregular"
-        android:text="Próximo"
+        android:text="Cadastrar"
         android:textColor="@color/black"
         android:textSize="19sp"
         app:cornerRadius="10dp"
@@ -216,7 +216,7 @@
         app:layout_constraintEnd_toStartOf="@id/ball2"
         app:layout_constraintHorizontal_bias="0.978"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnProximo"
+        app:layout_constraintTop_toTopOf="@id/btnCadastrar"
         app:layout_constraintVertical_bias="0.95" />
 
     <ImageView
@@ -227,7 +227,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnProximo"
+        app:layout_constraintTop_toTopOf="@id/btnCadastrar"
         app:layout_constraintVertical_bias="0.95" />
 
     <ImageView
@@ -239,7 +239,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.022"
         app:layout_constraintStart_toEndOf="@id/ball2"
-        app:layout_constraintTop_toTopOf="@id/btnProximo"
+        app:layout_constraintTop_toTopOf="@id/btnCadastrar"
         app:layout_constraintVertical_bias="0.95"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

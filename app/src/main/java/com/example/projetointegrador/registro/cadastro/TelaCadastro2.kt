@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.projetointegrador.R
@@ -33,7 +32,6 @@ class TelaCadastro2 : Fragment() {
         _binding = TelaDeCadastro2Binding.inflate(inflater, container, false)
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
-        val user = args.user
         return binding.root
     }
 
@@ -47,44 +45,81 @@ class TelaCadastro2 : Fragment() {
             findNavController().navigateUp()
         }
         binding.btnCadastrar.setOnClickListener {
-            val cep = binding.editTextTextCEP.text.toString().trim()
-            val tipoLogradouro = binding.editTextTipoLogradouro.text.toString().trim()
-            val descLogradouro = binding.editTextTextDescricaoLogradouro.text.toString().trim()
-            val numero = binding.editTextTextNumero.text.toString().trim()
-            val bairro = binding.editTextTextBairro.text.toString().trim()
-            val cidade = binding.editTextCidade.text.toString().trim()
-            val estado = binding.editTextUF.text.toString().trim()
+            mostrarFlag()
+        }
+    }
 
-            if (cep.isEmpty() || tipoLogradouro.isEmpty() || descLogradouro.isEmpty() || numero.isEmpty() || bairro.isEmpty() || cidade.isEmpty() || estado.isEmpty()) {
-                Toast.makeText(requireContext(), "Preencha todos os campos.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+
+    private fun criarConta(onSuccess: () -> Unit) {
+        var resultado = false
+        val cep = binding.editTextTextCEP.text.toString().trim()
+        val tipoLogradouro = binding.editTextTipoLogradouro.text.toString().trim()
+        val descLogradouro = binding.editTextTextDescricaoLogradouro.text.toString().trim()
+        val numero = binding.editTextTextNumero.text.toString().trim()
+        val bairro = binding.editTextTextBairro.text.toString().trim()
+        val cidade = binding.editTextCidade.text.toString().trim()
+        val estado = binding.editTextUF.text.toString().trim()
+
+        if (cep.isEmpty() || tipoLogradouro.isEmpty() || descLogradouro.isEmpty() || numero.isEmpty() || bairro.isEmpty() || cidade.isEmpty() || estado.isEmpty()) {
+            Toast.makeText(requireContext(), "Preencha todos os campos.", Toast.LENGTH_SHORT).show()
+            return@criarConta
+        }
+
+        val user = args.user!!
+        user.cep = cep
+        user.tipoLogradouro = tipoLogradouro
+        user.descLogradouro = descLogradouro
+        user.numero = numero
+        user.bairro = bairro
+        user.cidade = cidade
+        user.estado = estado
+
+        binding.btnCadastrar.isEnabled = false
+
+
+        auth.createUserWithEmailAndPassword(user.email , user.senha)
+            .addOnSuccessListener { task ->
+                val uid = task.user?.uid
+                if (uid == null) {
+                    Toast.makeText(requireContext(), "Erro ao criar usuário.", Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
+                database.child("usuarios").child(uid).setValue(user)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Usuário cadastrado com sucesso.", Toast.LENGTH_SHORT).show()
+                        binding.btnCadastrar.isEnabled = true
+                        onSuccess()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(requireContext(), "Ocorreu um erro no cadastro. Erro {$e.message}", Toast.LENGTH_SHORT).show()
+                        binding.btnCadastrar.isEnabled = true
+                    }
             }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Ocorreu um erro no cadastro. Erro {$e.message}", Toast.LENGTH_SHORT).show()
+                binding.btnCadastrar.isEnabled = true
+            }
+    }
+    private fun mostrarFlag(){
+        val flag = FlagPrestadorBinding.inflate(layoutInflater)
+        val overlay = flag.root
+        overlay.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        val root = binding.root
+        root.addView(overlay)
 
-            val user = args.user
-                user?.cep = cep
-                user?.tipoLogradouro = tipoLogradouro
-                user?.descLogradouro = descLogradouro
-                user?.numero = numero
-
-
-
-
-            val flag = FlagPrestadorBinding.inflate(layoutInflater)
-            val overlay = flag.root
-            overlay.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            val root = binding.root
-            root.addView(overlay)
-
-            flag.btnSim.setOnClickListener {
+        flag.btnSim.setOnClickListener {
+            args.user!!.prestador = true
+            criarConta(){
                 findNavController().navigate(R.id.action_telaCadastro2_to_tipoDeServico1Fragment)
             }
-            flag.btnNao.setOnClickListener {
+        }
+        flag.btnNao.setOnClickListener {
+            criarConta(){
                 Toast.makeText(requireContext(), "Ir para tela principal", Toast.LENGTH_SHORT).show()
                 root.removeView(overlay)
             }
         }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

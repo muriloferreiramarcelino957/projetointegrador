@@ -9,10 +9,14 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.TelaTipoDeServico3Binding
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import java.util.Locale
 
 
@@ -20,12 +24,16 @@ class TipoDeServico3 : Fragment() {
 
     private var _binding: TelaTipoDeServico3Binding? = null
     private val binding get() = _binding!!
-
+    private lateinit var auth: FirebaseAuth
+    private val args by navArgs<TipoDeServico3Args>()
+    private lateinit var database: DatabaseReference
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = TelaTipoDeServico3Binding.inflate(inflater, container, false)
+        auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance().reference
         return binding.root
     }
 
@@ -125,15 +133,40 @@ class TipoDeServico3 : Fragment() {
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.btnProximo.setOnClickListener {
-            when (checkInputs()) {
-                0 -> findNavController().navigate(R.id.action_tipoDeServico1Fragment_to_tipoDeServico2)
-                1 -> Toast.makeText(requireContext(), "Existem campos vazios", Toast.LENGTH_SHORT).show()
-                2 -> Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT).show()
+        binding.btnCadastrar.setOnClickListener {
+            binding.btnCadastrar.isEnabled = false
+            if (checkInputs() == 0) {
+                val tipos = args.tiposervico!!
+                tipos.tipoServico3 = binding.autoTipoServico.text.toString()
+                tipos.valorServico3 = binding.editValorHora.text.toString().toDouble()
+                tipos.horarioServico3_1 = binding.inputHorario1.text.toString()
+                tipos.horarioServico3_2 = binding.inputHorario2.text.toString()
+                tipos.horarioServico3_3 = binding.inputHorario3.text.toString()
+                inserirTipos(tipos){
+                    findNavController().navigate(R.id.action_tipoDeServico3_to_navigation)
+                }
+            } else if (checkInputs() == 1){
+                Toast.makeText(requireContext(), "Existem campos vazios", Toast.LENGTH_SHORT).show()
+            } else if (checkInputs() == 2) {
+                Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Erro desconhecido", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
+    private fun inserirTipos(tiposServico: TiposServico, onSuccess: () -> Unit{
+        val uid = auth.currentUser!!.uid
+        database.child("usuarios").child(uid).setValue(tiposServico)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Usuário cadastrado com sucesso.", Toast.LENGTH_SHORT).show()
+                binding.btnCadastrar.isEnabled = true
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Ocorreu um erro no cadastro. Erro {$e.message}", Toast.LENGTH_SHORT).show()
+                binding.btnCadastrar.isEnabled = true
+            }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

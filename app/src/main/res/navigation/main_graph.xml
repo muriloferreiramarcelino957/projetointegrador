@@ -101,6 +101,10 @@
             <action
                 android:id="@+id/action_tipoDeServico3_to_navigation"
                 app:destination="@id/navigation" />
+            <argument
+                android:name="tiposervico"
+                app:argType="com.example.projetointegrador.registro.cadastro.TiposServico"
+                app:nullable="true" />
         </fragment>
         <fragment
             android:id="@+id/tipoDeServico2"
@@ -109,6 +113,10 @@
             <action
                 android:id="@+id/action_tipoDeServico2_to_tipoDeServico3"
                 app:destination="@id/tipoDeServico3" />
+            <argument
+                android:name="tiposervico"
+                app:argType="com.example.projetointegrador.registro.cadastro.TiposServico"
+                app:nullable="true" />
         </fragment>
         <navigation android:id="@+id/navigation"
             app:startDestination="@id/telaPerfilFragment">

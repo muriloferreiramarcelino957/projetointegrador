@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.TelaTipoDeServico2Binding
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -20,7 +21,7 @@ class TipoDeServico2 : Fragment() {
 
     private var _binding: TelaTipoDeServico2Binding? = null
     private val binding get() = _binding!!
-
+    private val args by navArgs<TipoDeServico2Args>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -125,10 +126,21 @@ class TipoDeServico2 : Fragment() {
             findNavController().navigateUp()
         }
         binding.btnProximo.setOnClickListener {
-            when (checkInputs()) {
-                0 -> findNavController().navigate(R.id.action_tipoDeServico1Fragment_to_tipoDeServico2)
-                1 -> Toast.makeText(requireContext(), "Existem campos vazios", Toast.LENGTH_SHORT).show()
-                2 -> Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT).show()
+            if (checkInputs() == 0) {
+                val tipos = args.tiposervico!!
+                tipos.tipoServico2 = binding.autoTipoServico.text.toString()
+                tipos.valorServico2 = binding.editValorHora.text.toString().toDouble()
+                tipos.horarioServico2_1 = binding.inputHorario1.text.toString()
+                tipos.horarioServico2_2 = binding.inputHorario2.text.toString()
+                tipos.horarioServico2_3 = binding.inputHorario3.text.toString()
+                val action = TipoDeServico2Directions.actionTipoDeServico2ToTipoDeServico3(tipos)
+                findNavController().navigate(action)
+            } else if (checkInputs() == 1){
+                Toast.makeText(requireContext(), "Existem campos vazios", Toast.LENGTH_SHORT).show()
+            } else if (checkInputs() == 2) {
+                Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Erro desconhecido", Toast.LENGTH_SHORT).show()
             }
         }
     }

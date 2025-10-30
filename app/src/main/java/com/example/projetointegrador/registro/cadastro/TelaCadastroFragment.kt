@@ -1,29 +1,18 @@
 package com.example.projetointegrador.registro.cadastro
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.TelaCadastroBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 
 class TelaCadastroFragment : Fragment() {
 
     private var _binding: TelaCadastroBinding? = null
     private val binding get() = _binding!!
-    private lateinit var auth: FirebaseAuth
-    private lateinit var database: DatabaseReference
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,8 +20,6 @@ class TelaCadastroFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = TelaCadastroBinding.inflate(inflater, container, false)
-        auth = FirebaseAuth.getInstance()
-        database = FirebaseDatabase.getInstance().reference
         return binding.root
     }
 
@@ -62,13 +49,15 @@ class TelaCadastroFragment : Fragment() {
                 email = email,
                 dataNascimento = birthdate,
                 cpf = cpf,
+                senha = password,
                 cep = "",
                 tipoLogradouro = "",
                 descLogradouro = "",
-                numero = 0,
+                numero = "",
                 bairro = "",
                 cidade = "",
-                estado = ""
+                estado = "",
+                prestador = false
             )
             val action = TelaCadastroFragmentDirections.actionTelaCadastroFragmentToTelaCadastro2(userParcial)
             findNavController().navigate(action)
