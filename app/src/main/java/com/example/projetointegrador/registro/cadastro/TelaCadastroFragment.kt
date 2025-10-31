@@ -33,36 +33,45 @@ class TelaCadastroFragment : Fragment() {
             findNavController().navigateUp()
         }
         binding.button.setOnClickListener {
-            val username = binding.editTextTextNome.text.toString().trim()
-            val email = binding.editTextTextEmail.text.toString().trim()
-            val password = binding.editTextTextSenha.text.toString().trim()
-            val birthdate = binding.editTextTextNascimento.text.toString().trim()
-            val cpf = binding.editTextTextCPF.text.toString().trim()
-
-            if (username.isEmpty() || email.isEmpty() || password.isEmpty() || birthdate.isEmpty() || cpf.isEmpty()) {
-                Toast.makeText(requireContext(), "Preencha todos os campos.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val userParcial = User(
-                nomeUsuario = username,
-                email = email,
-                dataNascimento = birthdate,
-                cpf = cpf,
-                senha = password,
-                cep = "",
-                logradouro = "",
-                numero = "",
-                bairro = "",
-                cidade = "",
-                estado = "",
-                prestador = false
-            )
-            val action = TelaCadastroFragmentDirections.actionTelaCadastroFragmentToTelaCadastro2(userParcial)
-            findNavController().navigate(action)
-    }
+            mandarDados()
+        }
     }
 
+    private fun verificaInputs(){
+        val nome = binding.editTextTextNome.text.toString()
+        if (nome.length < 4){
+            Toast.makeText(requireContext(), "O nome precisa ter no mínimo 4 caracteres",Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun mandarDados(){
+        val username = binding.editTextTextNome.text.toString().trim()
+        val email = binding.editTextTextEmail.text.toString().trim()
+        val password = binding.editTextTextSenha.text.toString().trim()
+        val birthdate = binding.editTextTextNascimento.text.toString().trim()
+        val cpf = binding.editTextTextCPF.text.toString().trim()
+
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || birthdate.isEmpty() || cpf.isEmpty()) {
+            Toast.makeText(requireContext(), "Preencha todos os campos.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val userParcial = User(
+            nomeUsuario = username,
+            email = email,
+            dataNascimento = birthdate,
+            cpf = cpf,
+            senha = password,
+            cep = "",
+            logradouro = "",
+            numero = "",
+            bairro = "",
+            cidade = "",
+            estado = "",
+            prestador = false
+        )
+        val action = TelaCadastroFragmentDirections.actionTelaCadastroFragmentToTelaCadastro2(userParcial)
+        findNavController().navigate(action)
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
