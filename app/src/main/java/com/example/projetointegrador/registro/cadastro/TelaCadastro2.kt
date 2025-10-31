@@ -1,11 +1,13 @@
 package com.example.projetointegrador.registro.cadastro
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.projetointegrador.R
@@ -14,6 +16,11 @@ import com.example.projetointegrador.databinding.TelaDeCadastro2Binding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 class TelaCadastro2 : Fragment() {
@@ -23,7 +30,12 @@ class TelaCadastro2 : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
     private val args by navArgs<TelaCadastro2Args>()
+    val retrofit = Retrofit.Builder()
+        .baseUrl("https://viacep.com.br/ws/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
+    val service = retrofit.create(ViaCepService::class.java)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,31 +56,64 @@ class TelaCadastro2 : Fragment() {
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
+        binding.editTextTextCEP.doOnTextChanged(){ cep, _, _, _ ->
+            if (cep?.length == 8) {
+                consultaCep(cep.toString().trim())
+            }
+        }
         binding.btnCadastrar.setOnClickListener {
             mostrarFlag()
         }
     }
 
+    interface ViaCepService {
+        @GET("{cep}/json/")
+        fun buscaEndereco(@Path("cep") cep: String): Call<EnderecoViaCep>
+    }
 
+    fun consultaCep(cep: String) {
+        val call = service.buscaEndereco(cep.replace("\\D".toRegex(), ""))
+        call.enqueue(object : retrofit2.Callback<EnderecoViaCep> {
+            override fun onResponse(
+                call: retrofit2.Call<EnderecoViaCep>,
+                response: retrofit2.Response<EnderecoViaCep>
+            ) {
+                if (response.isSuccessful) {
+                    val endereco = response.body()
+                    if (endereco?.erro == true) {
+                        Toast.makeText(context, "CEP não encontrado.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        binding.editTextTextDescricaoLogradouro.setText(endereco?.logradouro)
+                        binding.editTextTextBairro.setText(endereco?.bairro)
+                        binding.editTextCidade.setText(endereco?.localidade)
+                        binding.editTextUF.setText(endereco?.uf)
+                    }
+                } else {
+                    Toast.makeText(context, "Erro na resposta do servidor.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<EnderecoViaCep>, t: Throwable) {
+                Toast.makeText(context, "Falha na requisição: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
     private fun criarConta(onSuccess: () -> Unit) {
-        var resultado = false
         val cep = binding.editTextTextCEP.text.toString().trim()
-        val tipoLogradouro = binding.editTextTipoLogradouro.text.toString().trim()
         val descLogradouro = binding.editTextTextDescricaoLogradouro.text.toString().trim()
         val numero = binding.editTextTextNumero.text.toString().trim()
         val bairro = binding.editTextTextBairro.text.toString().trim()
         val cidade = binding.editTextCidade.text.toString().trim()
         val estado = binding.editTextUF.text.toString().trim()
 
-        if (cep.isEmpty() || tipoLogradouro.isEmpty() || descLogradouro.isEmpty() || numero.isEmpty() || bairro.isEmpty() || cidade.isEmpty() || estado.isEmpty()) {
+        if (cep.isEmpty() || descLogradouro.isEmpty() || numero.isEmpty() || bairro.isEmpty() || cidade.isEmpty() || estado.isEmpty()) {
             Toast.makeText(requireContext(), "Preencha todos os campos.", Toast.LENGTH_SHORT).show()
             return@criarConta
         }
 
         val user = args.user!!
         user.cep = cep
-        user.tipoLogradouro = tipoLogradouro
-        user.descLogradouro = descLogradouro
+        user.logradouro = descLogradouro
         user.numero = numero
         user.bairro = bairro
         user.cidade = cidade
@@ -96,7 +141,8 @@ class TelaCadastro2 : Fragment() {
                     }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Ocorreu um erro no cadastro. Erro {$e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Ocorreu um erro no cadastro.", Toast.LENGTH_SHORT).show()
+                Log.e("CATS","Erro {$e.message}")
                 binding.btnCadastrar.isEnabled = true
             }
     }

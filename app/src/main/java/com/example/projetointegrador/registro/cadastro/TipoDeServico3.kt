@@ -154,9 +154,9 @@ class TipoDeServico3 : Fragment() {
             }
         }
     }
-    private fun inserirTipos(tiposServico: TiposServico, onSuccess: () -> Unit{
+    private fun inserirTipos(tiposServico: TiposServico, onSuccess: () -> Unit){
         val uid = auth.currentUser!!.uid
-        database.child("usuarios").child(uid).setValue(tiposServico)
+        database.child("usuarios").child(uid).child("serviços").setValue(tiposServico)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Usuário cadastrado com sucesso.", Toast.LENGTH_SHORT).show()
                 binding.btnCadastrar.isEnabled = true
