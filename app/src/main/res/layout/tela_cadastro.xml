@@ -117,7 +117,7 @@
         android:drawablePadding="8dp"
         android:ems="17"
         android:hint="Data de nascimento"
-        android:inputType="date"
+        android:inputType="none"
         android:fontFamily="@font/interregular"
         android:padding="5dp"
         android:textColor="@color/white"
@@ -128,7 +128,8 @@
         app:layout_constraintEnd_toEndOf="@+id/editTextTextSenha"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/editTextTextSenha"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextCPF" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextCPF"
+        android:focusable="false"/>
 
     <EditText
         android:id="@+id/editTextTextSenha"
