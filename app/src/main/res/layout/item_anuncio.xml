@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="220dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_marginEnd="12dp"
+    android:background="@drawable/bg_card">
+
+    <ImageView
+        android:id="@+id/ivAnuncio"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:background="#E0E0E0" />
+
+    <TextView
+        android:id="@+id/tvTitulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Serviço Exemplo"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/tvPreco"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="R$ 0,00"
+        android:textColor="#5A0275"
+        android:textStyle="bold" />
+
+</LinearLayout>

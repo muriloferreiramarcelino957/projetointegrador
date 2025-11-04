@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:background="#5A0275"
+        android:orientation="horizontal"
+        android:padding="8dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <!-- Menu -->
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_menu" />
+        <!-- Lupa -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/ic_search" />
+        <!-- Nome do app -->
+
+
+        <!-- Ícones lado direito -->
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:gravity="center"
+
+            android:src="@drawable/logo"
+            android:textColor="@android:color/white"
+
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_notification" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_settings" />
+
+        <ImageView
+            android:layout_width="37dp"
+            android:layout_height="42dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_person" />
+    </LinearLayout>
+    <!-- Barra de busca -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_search_bar"
+        android:paddingHorizontal="8dp"
+        android:elevation="2dp">
+
+        <!-- Seta de voltar -->
+        <ImageView
+            android:id="@+id/btnVoltar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Voltar"
+            app:tint="#5A0275" />
+
+        <!-- Ícone de busca -->
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_search"
+            android:tint="#5A0275" />
+
+        <!-- Campo de texto -->
+        <EditText
+            android:id="@+id/etBuscarPrestador"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:hint="Busque aqui pelo prestador"
+            android:background="@null"
+            android:textColor="#000"
+            android:textSize="14sp" />
+
+        <!-- Botão de filtros -->
+        <Button
+            android:id="@+id/btnFiltros"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Filtros"
+            android:textColor="#5A0275"
+            android:textSize="14sp"
+            android:background="@drawable/bg_filtro_btn" />
+    </LinearLayout>
+
+    <!-- Título -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Prestadores de Serviço"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#001F4D"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Lista -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPrestadores"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="8dp"
+        android:overScrollMode="never" />
+
+</LinearLayout>
