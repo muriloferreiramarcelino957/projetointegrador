@@ -23,7 +23,6 @@ class FragmentTelaPrincipal : Fragment() {
     private lateinit var prestadorAdapter: PrestadorAdapter
     private lateinit var rvPrestadores: RecyclerView
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,7 +34,7 @@ class FragmentTelaPrincipal : Fragment() {
         buscarPrestadores()
         return binding.root
     }
-    
+
     private fun setupNavigationBar() {
         TopNavigationBarHelper.setupNavigationBar(binding.root, this)
     }
@@ -43,10 +42,9 @@ class FragmentTelaPrincipal : Fragment() {
     private fun setupRecyclerView() {
         rvPrestadores = binding.rvPrestadores
         prestadorAdapter = PrestadorAdapter()
-
         rvPrestadores.apply {
             adapter = prestadorAdapter
-            layoutManager = LinearLayoutManager(this@FragmentTelaPrincipal.requireContext())
+            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
@@ -72,18 +70,34 @@ class FragmentTelaPrincipal : Fragment() {
 
                 for (prestadorSnapshot in prestadoresSnapshot.children) {
                     val uid = prestadorSnapshot.key ?: continue
-                    
+
                     db.child("usuarios").child(uid)
                         .get()
                         .addOnSuccessListener { userSnapshot ->
-                            val user = userSnapshot.getValue(User::class.java)
-                            val prestadorInfo = prestadorSnapshot.child("info_prestador").getValue(Prestador::class.java)
-                            val tiposServico = prestadorSnapshot.child("info_serviços").getValue(TiposServico::class.java)
-                            
-                            if (user != null && prestadorInfo != null) {
-                                prestadores.add(PrestadorDisplay(user, prestadorInfo, tiposServico))
-                            }
-                            
+                            val user = userSnapshot.getValue(User::class.java) ?: User()
+                            val prestadorInfo = prestadorSnapshot.child("info_prestador")
+                                .getValue(Prestador::class.java) ?: Prestador()
+                            val tiposServico = prestadorSnapshot.child("info_serviços")
+                                .getValue(TiposServico::class.java) ?: TiposServico(
+                                tipoServico1 = TODO(),
+                                valorServico1 = TODO(),
+                                horarioServico1_1 = TODO(),
+                                horarioServico1_2 = TODO(),
+                                horarioServico1_3 = TODO(),
+                                tipoServico2 = TODO(),
+                                valorServico2 = TODO(),
+                                horarioServico2_1 = TODO(),
+                                horarioServico2_2 = TODO(),
+                                horarioServico2_3 = TODO(),
+                                tipoServico3 = TODO(),
+                                valorServico3 = TODO(),
+                                horarioServico3_1 = TODO(),
+                                horarioServico3_2 = TODO(),
+                                horarioServico3_3 = TODO()
+                            )
+
+                            prestadores.add(PrestadorDisplay(user, prestadorInfo, tiposServico))
+
                             synchronized(prestadores) {
                                 processedCount++
                                 if (processedCount == totalPrestadores) {
@@ -102,13 +116,17 @@ class FragmentTelaPrincipal : Fragment() {
                 }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Erro ao carregar prestadores: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Erro ao carregar prestadores: ${exception.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
     }
-    
+
     private fun updateTop3(prestadores: List<PrestadorDisplay>) {
         val top3Prestadores = prestadores
-            .sortedByDescending { it.prestador.notaMedia }
+            .sortedByDescending { it.prestador.notaMedia ?: 0.0 }
             .take(3)
         prestadorAdapter.atualizarLista(top3Prestadores)
     }
