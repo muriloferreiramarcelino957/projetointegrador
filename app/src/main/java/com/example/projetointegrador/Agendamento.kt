@@ -5,6 +5,7 @@ data class Agendamento(
     val hora: String = "",
     val tipoServico: String = "",
     val prestador: String = "",
-    val usuarioId: String = ""
+    val usuarioId: String = "",
+    val status: String = "",
 )
 

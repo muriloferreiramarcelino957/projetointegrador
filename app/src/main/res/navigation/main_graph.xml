@@ -186,11 +186,13 @@
                     android:id="@+id/action_fragmentTelaPrincipal_to_telaBuscaFragment"
                     app:destination="@id/telaBuscaFragment" />
             </fragment>
+
             <fragment
                 android:id="@+id/telaBuscaFragment"
                 android:name="com.seuprojeto.app.ui.TelaBuscaFragment"
                 android:label="TelaBuscaFragment" />
         </navigation>
+
     </navigation>
 
 </navigation>

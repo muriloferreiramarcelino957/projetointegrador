@@ -1,5 +1,6 @@
 package com.example.projetointegrador
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -98,11 +99,31 @@ class TelaAgendaFragment : Fragment() {
 
         binding.btnConfirm.setOnClickListener {
             if (selectedDate != null && selectedTime != null && selectedService != null) {
-                salvarAgendamentoNoFirebase()
+                mostrarPopupConfirmacao()
             } else {
                 Toast.makeText(requireContext(), "Selecione data, horário e serviço.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    /** 🔹 Exibe o pop-up de confirmação antes de salvar */
+    private fun mostrarPopupConfirmacao() {
+        val mensagem = """
+            Confirme seu agendamento:
+            
+            📅 Data: $selectedDate
+            ⏰ Horário: $selectedTime
+            🧰 Serviço: $selectedService
+        """.trimIndent()
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirmar Agendamento")
+            .setMessage(mensagem)
+            .setPositiveButton("Confirmar") { _, _ ->
+                salvarAgendamentoNoFirebase()
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun setupServiceButtons(snapshot: DataSnapshot) {
@@ -160,6 +181,7 @@ class TelaAgendaFragment : Fragment() {
         }
     }
 
+    /** 🔹 Salva o agendamento e atualiza o status do serviço */
     private fun salvarAgendamentoNoFirebase() {
         val uid = auth.currentUser?.uid ?: "anonimo"
         val agendamentoRef = database.child("agendamentos")
@@ -169,15 +191,49 @@ class TelaAgendaFragment : Fragment() {
             hora = selectedTime!!,
             tipoServico = selectedService!!,
             prestador = prestadorUid,
-            usuarioId = uid
+            usuarioId = uid,
+            status = "aguardando_confirmacao"
         )
 
         val id = agendamentoRef.push().key ?: return
 
         agendamentoRef.child(id).setValue(agendamento)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Agendamento confirmado!", Toast.LENGTH_LONG).show()
-                findNavController().navigate(R.id.action_telaAgendaFragment_to_telaAgenda2Fragment)
+                // 🔹 Atualiza o status do serviço escolhido no Firebase
+                val servicoIndex = when (selectedService) {
+                    binding.btnFaxina.text.toString() -> "1"
+                    binding.btnHidraulica.text.toString() -> "2"
+                    binding.btnEletrica.text.toString() -> "3"
+                    else -> null
+                }
+
+                if (servicoIndex != null) {
+                    val statusPath = "statusServico$servicoIndex"
+
+                    database.child("usuarios").child(prestadorUid)
+                        .child(statusPath)
+                        .setValue("aguardando_confirmacao")
+                        .addOnSuccessListener {
+                            Toast.makeText(
+                                requireContext(),
+                                "Agendamento confirmado! Aguardando aprovação do prestador.",
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                            // 🔹 Envia dados para a tela Agenda2
+                            val bundle = Bundle().apply {
+                                putString("data", selectedDate)
+                                putString("hora", selectedTime)
+                                putString("servico", selectedService)
+                                putString("localizacao", "Jardim do Centro") // pode ser puxado do Firebase depois
+                            }
+
+                            findNavController().navigate(R.id.action_telaAgendaFragment_to_telaAgenda2Fragment, bundle)
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(requireContext(), "Erro ao atualizar status do serviço.", Toast.LENGTH_SHORT).show()
+                        }
+                }
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "Erro ao salvar agendamento.", Toast.LENGTH_SHORT).show()
