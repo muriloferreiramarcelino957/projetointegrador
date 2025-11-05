@@ -126,6 +126,7 @@ class TelaCadastro2 : Fragment() {
             .addOnSuccessListener { task ->
                 val uid = task.user?.uid
                 if (uid == null) {
+                    binding.btnCadastrar.isEnabled = true
                     Toast.makeText(requireContext(), "Erro ao criar usuário.", Toast.LENGTH_SHORT).show()
                     return@addOnSuccessListener
                 }
@@ -136,14 +137,20 @@ class TelaCadastro2 : Fragment() {
                         onSuccess()
                     }
                     .addOnFailureListener { e ->
-                        Toast.makeText(requireContext(), "Ocorreu um erro no cadastro. Erro {$e.message}", Toast.LENGTH_SHORT).show()
                         binding.btnCadastrar.isEnabled = true
+                        Toast.makeText(requireContext(), "Erro ao salvar dados. Tente novamente.", Toast.LENGTH_SHORT).show()
+                        Log.e("Erro", "Erro ao salvar dados do usuário: ${e.message}")
+                        
+                        // Se falhar ao salvar dados, tenta deletar o usuário do Auth para evitar conta órfã
+                        task.user?.delete()?.addOnCompleteListener {
+                            Log.d("Cadastro", "Usuário órfão removido do Auth após falha ao salvar dados")
+                        }
                     }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Ocorreu um erro no cadastro.", Toast.LENGTH_SHORT).show()
-                Log.e("CATS","Erro {$e.message}")
                 binding.btnCadastrar.isEnabled = true
+                Toast.makeText(requireContext(), "Erro ao criar usuário: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("Cadastro", "Erro ao criar usuário no Auth: ${e.message}")
             }
     }
     private fun mostrarFlag(){

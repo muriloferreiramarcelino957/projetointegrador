@@ -1,7 +1,10 @@
 package com.example.projetointegrador.registro.cadastro
 
+import android.icu.text.DateFormat
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.InputFilter
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +20,7 @@ import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.projetointegrador.app.ui.Prestador
 import java.util.Locale
 
 
@@ -81,47 +85,48 @@ class TipoDeServico3 : Fragment() {
     }
 
     private fun checkInputs(): Int {
-        if (binding.autoTipoServico.text.toString().isEmpty()){
+        if (binding.autoTipoServico.text.toString().isEmpty()) {
             binding.autoTipoServico.error = "Insira um tipo de serviço"
             return 1
-        } else{
+        } else {
             binding.autoTipoServico.error = null
         }
-        if (binding.editValorHora.text.toString().isEmpty()){
+        if (binding.editValorHora.text.toString().isEmpty()) {
             binding.editValorHora.error = "Insira um valor para o serviço prestado"
             return 1
-        } else{
+        } else {
             binding.editValorHora.error = null
         }
-        if (binding.inputHorario1.text.toString().isEmpty()){
+        if (binding.inputHorario1.text.toString().isEmpty()) {
             binding.inputHorario1.error = "Insira um horário"
             return 1
-        } else{
+        } else {
             binding.inputHorario1.error = null
         }
-        if (binding.inputHorario2.text.toString().isEmpty()){
+        if (binding.inputHorario2.text.toString().isEmpty()) {
             binding.inputHorario2.error = "Insira um horário"
             return 1
-        } else{
+        } else {
             binding.inputHorario2.error = null
         }
-        if (binding.inputHorario3.text.toString().isEmpty()){
+        if (binding.inputHorario3.text.toString().isEmpty()) {
             binding.inputHorario3.error = "Insira um horário"
             return 1
-        } else{
+        } else {
             binding.inputHorario3.error = null
         }
 
         val horarios = setOf(
             binding.inputHorario1.text.toString().trim(),
             binding.inputHorario2.text.toString().trim(),
-            binding.inputHorario3.text.toString().trim())
-        if (horarios.size < 3){
+            binding.inputHorario3.text.toString().trim()
+        )
+        if (horarios.size < 3) {
             binding.inputHorario1.error = "Insira um horário distinto"
             binding.inputHorario2.error = "Insira um horário distinto"
             binding.inputHorario3.error = "Insira um horário distinto"
             return 2
-        } else{
+        } else {
             binding.inputHorario1.error = null
             binding.inputHorario2.error = null
             binding.inputHorario3.error = null
@@ -129,7 +134,7 @@ class TipoDeServico3 : Fragment() {
         return 0
     }
 
-    private fun initListeners(){
+    private fun initListeners() {
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -137,36 +142,61 @@ class TipoDeServico3 : Fragment() {
             binding.btnCadastrar.isEnabled = false
             if (checkInputs() == 0) {
                 val tipos = args.tiposervico!!
+                val prestador = Prestador(
+                    dataDeInicio = DateFormat.getDateInstance(DateFormat.SHORT)
+                        .format(Calendar.getInstance().time),
+                    notaMedia = 0.0,
+                    quantidadeAvaliacoes = 0
+                )
                 tipos.tipoServico3 = binding.autoTipoServico.text.toString()
                 tipos.valorServico3 = binding.editValorHora.text.toString().toDouble()
                 tipos.horarioServico3_1 = binding.inputHorario1.text.toString()
                 tipos.horarioServico3_2 = binding.inputHorario2.text.toString()
                 tipos.horarioServico3_3 = binding.inputHorario3.text.toString()
-                inserirTipos(tipos){
+                inserirTipos(tipos, prestador) {
                     findNavController().navigate(R.id.action_tipoDeServico3_to_navigation)
                 }
-            } else if (checkInputs() == 1){
+            } else if (checkInputs() == 1) {
                 Toast.makeText(requireContext(), "Existem campos vazios", Toast.LENGTH_SHORT).show()
             } else if (checkInputs() == 2) {
-                Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 Toast.makeText(requireContext(), "Erro desconhecido", Toast.LENGTH_SHORT).show()
             }
         }
     }
-    private fun inserirTipos(tiposServico: TiposServico, onSuccess: () -> Unit){
+
+    private fun inserirTipos(
+        tiposServico: TiposServico,
+        prestador: Prestador,
+        onSuccess: () -> Unit
+    ) {
         val uid = auth.currentUser!!.uid
-        database.child("usuarios").child(uid).child("serviços").setValue(tiposServico)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Usuário cadastrado com sucesso.", Toast.LENGTH_SHORT).show()
-                binding.btnCadastrar.isEnabled = true
-                onSuccess()
+
+        database.child("prestadores").child(uid).child("info_serviços").setValue(tiposServico)
+            .addOnSuccessListener { e ->
+                database.child("prestadores").child(uid).child("info_prestador").setValue(prestador)
+                .addOnSuccessListener { e ->
+                    Toast.makeText(requireContext(),"Usuário cadastrado com sucesso!",Toast.LENGTH_SHORT).show()
+                    binding.btnCadastrar.isEnabled = true
+                    onSuccess()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(requireContext(),"Ocorreu um erro no cadastro das informações do prestador.",Toast.LENGTH_SHORT).show()
+                    Log.e("Erro - Info Prestador", e.message.toString())
+                    binding.btnCadastrar.isEnabled = true
+                }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Ocorreu um erro no cadastro. Erro {$e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),"Ocorreu um erro no cadastro dos serviços.",Toast.LENGTH_SHORT).show()
+                Log.e("Erro - Info Servicos", e.message.toString())
                 binding.btnCadastrar.isEnabled = true
             }
+
+
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

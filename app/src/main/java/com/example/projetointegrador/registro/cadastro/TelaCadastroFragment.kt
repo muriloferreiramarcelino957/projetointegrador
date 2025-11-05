@@ -84,9 +84,9 @@ class TelaCadastroFragment : Fragment() {
             Toast.makeText(requireContext(), "O cadastro não é permitido para menores de 18 anos", Toast.LENGTH_SHORT).show()
             return
         }
-        if (!validarSenha(senha, senhaRepetida)){
-            return
-        }
+//        if (!validarSenha(senha, senhaRepetida)){
+//            return
+//        }
         mandarDados()
     }
 
@@ -128,7 +128,7 @@ class TelaCadastroFragment : Fragment() {
         }
         val regex = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!])\$")
         val apenasNormais = senha.matches(Regex("^[A-Za-z0-9@#\$%^&+=!]*\$"))
-        if (!apenasNormais || !regex.containsMatchIn(senha)){
+        if (!apenasNormais || !regex.containsMatchIn(senha)) {
             Toast.makeText(requireContext(), "A senha deve conter ao menos uma letra maiúscula, um número e um caractere especial", Toast.LENGTH_SHORT).show()
             return false
         }

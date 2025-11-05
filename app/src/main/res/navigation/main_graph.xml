@@ -119,7 +119,7 @@
                 app:nullable="true" />
         </fragment>
         <navigation android:id="@+id/navigation"
-            app:startDestination="@id/telaPerfilFragment">
+            app:startDestination="@id/fragmentTelaPrincipal">
             <fragment
                 android:id="@+id/telaNotificacaoFragment"
                 android:name="com.example.projetointegrador.TelaNotificacaoFragment"
@@ -175,6 +175,21 @@
                 android:id="@+id/telaEditarPerfil"
                 android:name="com.example.projetointegrador.TelaEditarPerfil"
                 android:label="TelaEditarPerfil" />
+            <fragment
+                android:id="@+id/fragmentTelaPrincipal"
+                android:name="com.projetointegrador.app.ui.FragmentTelaPrincipal"
+                android:label="FragmentTelaPrincipal" >
+                <action
+                    android:id="@+id/action_fragmentTelaPrincipal_to_telaPerfilFragment"
+                    app:destination="@id/telaPerfilFragment" />
+                <action
+                    android:id="@+id/action_fragmentTelaPrincipal_to_telaBuscaFragment"
+                    app:destination="@id/telaBuscaFragment" />
+            </fragment>
+            <fragment
+                android:id="@+id/telaBuscaFragment"
+                android:name="com.seuprojeto.app.ui.TelaBuscaFragment"
+                android:label="TelaBuscaFragment" />
         </navigation>
     </navigation>
 

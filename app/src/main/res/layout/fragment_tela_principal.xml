@@ -12,81 +12,24 @@
         android:orientation="vertical">
 
         <!-- Barra superior -->
-        <LinearLayout
+        <include
             android:id="@+id/topBar"
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:background="#5A0275"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <!-- Menu -->
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_menu" />
-            <!-- Lupa -->
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="15dp"
-                android:src="@drawable/ic_search" />
-            <!-- Nome do app -->
-
-
-            <!-- Ícones lado direito -->
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="64dp"
-                android:layout_weight="1"
-                android:gravity="center"
-
-                android:src="@drawable/logo"
-                android:textColor="@android:color/white"
-
-                />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_notification" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="12dp"
-                android:src="@drawable/ic_settings" />
-
-            <ImageView
-                android:layout_width="37dp"
-                android:layout_height="42dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="12dp"
-                android:src="@drawable/ic_person" />
-        </LinearLayout>
+            layout="@layout/item_top_navigation_bar" />
 
         <!-- Barra de busca -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="20dp">
 
             <EditText
+                android:id="@+id/searchInput"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@drawable/button_purple_background"
                 android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="8dp"
+                android:fontFamily="@font/anekkannadaregular"
                 android:hint="Busque aqui o seu prestador"
                 android:paddingStart="16dp"
                 android:textColorHint="#FFFFFF" />
@@ -114,19 +57,28 @@
                 android:layout_height="48dp"
                 android:layout_margin="4dp"
                 android:layout_columnWeight="1"
+                android:fontFamily="@font/anekkannadaregular"
+                android:background="@drawable/button_purple_background"
+                android:padding="10dp"
                 android:drawableStart="@drawable/ic_housekeeper"
                 android:text="Fáxina"
+                android:textAllCaps="false"
                 android:textColor="#FFFFFF"
-                android:backgroundTint="#5A0275" />
+                android:backgroundTint="#530081" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_margin="4dp"
                 android:layout_columnWeight="1"
+                android:textAllCaps="false"
                 android:text="Serviço elétrico"
+                android:background="@drawable/button_purple_background"
+                android:padding="10dp"
+                android:fontFamily="@font/anekkannadaregular"
+
                 android:textColor="#FFFFFF"
-                android:backgroundTint="#5A0275"
+                android:backgroundTint="#530081"
                 android:drawableStart="@drawable/ic_conflict" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -134,9 +86,13 @@
                 android:layout_height="48dp"
                 android:layout_margin="4dp"
                 android:layout_columnWeight="1"
+                android:textAllCaps="false"
+                android:background="@drawable/button_purple_background"
+                android:padding="10dp"
                 android:text="Hidráulica"
+                android:fontFamily="@font/anekkannadaregular"
                 android:textColor="#FFFFFF"
-                android:backgroundTint="#5A0275"
+                android:backgroundTint="#530081"
                 android:drawableStart="@drawable/ic_plumbing" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -145,175 +101,33 @@
                 android:layout_margin="4dp"
                 android:layout_columnWeight="1"
                 android:text="Jardinagem"
+                android:textAllCaps="false"
+                android:background="@drawable/button_purple_background"
+                android:padding="10dp"
+                android:fontFamily="@font/anekkannadaregular"
                 android:textColor="#FFFFFF"
-                android:backgroundTint="#5A0275"
-                android:drawableStart="@drawable/ic_yard_Work" />
+                android:backgroundTint="#530081"
+                android:drawableStart="@drawable/ic_jardinagem" />
         </GridLayout>
 
-        <!-- Prestadores -->
+        <!-- Prestadores mais bem avaliados -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:text="Prestadores mais bem avaliados"
+            android:fontFamily="@font/anekkannadabold"
             android:textColor="#000000"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="18sp"/>
 
-        <!-- Caio Silva -->
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPrestadores"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:gravity="center_vertical">
+            android:nestedScrollingEnabled="false"/>
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_person"
-                app:tint="#5A0275" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="Caio Silva"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:id="@+id/txtRating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="★ 5"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="Último acesso há 12 horas"
-                    android:textSize="13sp"
-                    android:textColor="#666666" />
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="Na AllService desde maio de 2024\nJardim Camburi, Vitória - ES"
-                    android:textSize="13sp"
-                    android:textColor="#444444" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Juliana -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_person"
-                app:tint="#5A0275" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="Juliana"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:id="@+id/txtRating2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="★ 5"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="Último acesso há 12 horas"
-                    android:textSize="13sp"
-                    android:textColor="#666666" />
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="Na AllService desde junho de 2022\nMata da Praia, Vitória - ES"
-                    android:textSize="13sp"
-                    android:textColor="#444444" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Regina Sá -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_person"
-                app:tint="#5A0275" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="Regina Sá"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:id="@+id/txtRating3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="★ 5"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="Último acesso há 12 horas"
-                    android:textSize="13sp"
-                    android:textColor="#666666" />
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="Na AllService desde dezembro de 2023\nColina de Laranjeiras, Serra - ES"
-                    android:textSize="13sp"
-                    android:textColor="#444444" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Anúncios -->
+        <!-- Título Anúncios -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -324,156 +138,13 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <HorizontalScrollView
+        <!-- RecyclerView horizontal para anúncios -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerAnuncios"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
-            android:scrollbars="none"
-            android:layout_marginTop="8dp">
+            android:overScrollMode="never" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <!-- Card 1 -->
-                <LinearLayout
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/bg_card">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:src="@drawable/ic_image1"
-                        android:scaleType="centerCrop" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="R$ 150,00"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:layout_marginTop="4dp"
-                        android:textColor="#000000" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Serviços Hidráulicos"
-                        android:textSize="14sp"
-                        android:textColor="#000000" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Qualidade AllService"
-                        android:textColor="#5A0275"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Vitória - ES | 18/05/2023, 16:53"
-                        android:textSize="12sp"
-                        android:textColor="#666666" />
-                </LinearLayout>
-
-                <!-- Card 2 -->
-                <LinearLayout
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/bg_card">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:src="@drawable/ic_image2"
-                        android:scaleType="centerCrop" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="R$ 200,00"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:layout_marginTop="4dp"
-                        android:textColor="#000000" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Serviços em Jardim"
-                        android:textSize="14sp"
-                        android:textColor="#000000" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Qualidade AllService"
-                        android:textColor="#5A0275"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Serra - ES | 12/02/2024, 13:53"
-                        android:textSize="12sp"
-                        android:textColor="#666666" />
-                </LinearLayout>
-
-                <!-- Card 3 -->
-                <LinearLayout
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/bg_card">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:src="@drawable/ic_image3"
-                        android:scaleType="centerCrop" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="R$ 250,00"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:layout_marginTop="4dp"
-                        android:textColor="#000000" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Manutenção"
-                        android:textSize="14sp"
-                        android:textColor="#000000" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Qualidade AllService"
-                        android:textColor="#5A0275"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:text="Vila Velha - ES | 07/04/2024, 09:15"
-                        android:textSize="12sp"
-                        android:textColor="#666666" />
-                </LinearLayout>
-            </LinearLayout>
-        </HorizontalScrollView>
     </LinearLayout>
 </ScrollView>
