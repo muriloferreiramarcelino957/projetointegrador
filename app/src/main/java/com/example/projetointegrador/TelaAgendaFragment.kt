@@ -28,7 +28,7 @@ class TelaAgendaFragment : Fragment() {
     private var selectedService: String? = null
 
     // UID fixo do prestador (pode ser trocado dinamicamente depois)
-    private val prestadorUid = "F0hKX7L3pnMkh0HMQ9cyuobcCuu2"
+    private val prestadorUid = "6kn4YRqQXiSE3CxFUy3Xt2GbKJb2"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
