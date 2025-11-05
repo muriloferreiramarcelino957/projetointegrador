@@ -85,6 +85,9 @@
                 android:name="user"
                 app:argType="com.example.projetointegrador.registro.cadastro.User"
                 app:nullable="true" />
+            <action
+                android:id="@+id/action_telaCadastro2_to_navigation"
+                app:destination="@id/navigation" />
         </fragment>
         <fragment
             android:id="@+id/tipoDeServico1Fragment"

@@ -168,7 +168,7 @@ class TelaCadastro2 : Fragment() {
         }
         flag.btnNao.setOnClickListener {
             criarConta(){
-                Toast.makeText(requireContext(), "Ir para tela principal", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_telaCadastro2_to_navigation)
                 root.removeView(overlay)
             }
         }
