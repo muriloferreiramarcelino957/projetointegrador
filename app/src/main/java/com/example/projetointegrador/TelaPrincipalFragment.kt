@@ -15,7 +15,6 @@ import com.example.projetointegrador.registro.cadastro.TiposServico
 import com.example.projetointegrador.registro.cadastro.User
 import com.google.firebase.database.FirebaseDatabase
 
-
 class FragmentTelaPrincipal : Fragment() {
 
     private var _binding: FragmentTelaPrincipalBinding? = null
@@ -79,21 +78,21 @@ class FragmentTelaPrincipal : Fragment() {
                                 .getValue(Prestador::class.java) ?: Prestador()
                             val tiposServico = prestadorSnapshot.child("info_serviços")
                                 .getValue(TiposServico::class.java) ?: TiposServico(
-                                tipoServico1 = TODO(),
-                                valorServico1 = TODO(),
-                                horarioServico1_1 = TODO(),
-                                horarioServico1_2 = TODO(),
-                                horarioServico1_3 = TODO(),
-                                tipoServico2 = TODO(),
-                                valorServico2 = TODO(),
-                                horarioServico2_1 = TODO(),
-                                horarioServico2_2 = TODO(),
-                                horarioServico2_3 = TODO(),
-                                tipoServico3 = TODO(),
-                                valorServico3 = TODO(),
-                                horarioServico3_1 = TODO(),
-                                horarioServico3_2 = TODO(),
-                                horarioServico3_3 = TODO()
+                                tipoServico1 = "",
+                                valorServico1 = 0.0,
+                                horarioServico1_1 = "",
+                                horarioServico1_2 = "",
+                                horarioServico1_3 = "",
+                                tipoServico2 = "",
+                                valorServico2 = 0.0,
+                                horarioServico2_1 = "",
+                                horarioServico2_2 = "",
+                                horarioServico2_3 = "",
+                                tipoServico3 = "",
+                                valorServico3 = 0.0,
+                                horarioServico3_1 = "",
+                                horarioServico3_2 = "",
+                                horarioServico3_3 = ""
                             )
 
                             prestadores.add(PrestadorDisplay(user, prestadorInfo, tiposServico))
