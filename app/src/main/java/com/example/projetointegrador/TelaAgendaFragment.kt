@@ -55,7 +55,7 @@ class TelaAgendaFragment : Fragment() {
                 return@addOnSuccessListener
             }
 
-            val nome = snapshot.child("info_prestador/nomeUsuario").value?.toString() ?: "Prestador"
+            val nome = snapshot.child("info_prestador/nome").value?.toString() ?: "Prestador"
 
             val tipo1 = snapshot.child("info_servicos/tipoServico1").value?.toString() ?: "Serviço 1"
             val tipo2 = snapshot.child("info_servicos/tipoServico2").value?.toString() ?: "Serviço 2"
