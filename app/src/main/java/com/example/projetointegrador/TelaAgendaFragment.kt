@@ -46,7 +46,7 @@ class TelaAgendaFragment : Fragment() {
         initListeners()
     }
 
-    /** 🔹 Carrega dados do prestador e serviços do Firebase */
+    /** 🔹 Carrega dados do prestador e serviços */
     private fun carregarDadosDoPrestador() {
         val prestadorRef = database.child("prestadores").child(prestadorUid)
         prestadorRef.get().addOnSuccessListener { snapshot ->
@@ -55,16 +55,15 @@ class TelaAgendaFragment : Fragment() {
                 return@addOnSuccessListener
             }
 
-            val nome = snapshot.child("info_prestador/nome").value?.toString() ?: "Prestador"
+            val nome = snapshot.child("info_prestador/nomeUsuario").value?.toString() ?: "Prestador"
 
-            val tipo1 = snapshot.child("info_serviços/tipoServico1").value?.toString() ?: "Serviço 1"
-            val tipo2 = snapshot.child("info_serviços/tipoServico2").value?.toString() ?: "Serviço 2"
-            val tipo3 = snapshot.child("info_serviços/tipoServico3").value?.toString() ?: "Serviço 3"
+            val tipo1 = snapshot.child("info_servicos/tipoServico1").value?.toString() ?: "Serviço 1"
+            val tipo2 = snapshot.child("info_servicos/tipoServico2").value?.toString() ?: "Serviço 2"
+            val tipo3 = snapshot.child("info_servicos/tipoServico3").value?.toString() ?: "Serviço 3"
 
-            // Horários do serviço 1 inicialmente
-            val h1 = snapshot.child("info_serviços/horarioServico1_1").value?.toString() ?: "--:--"
-            val h2 = snapshot.child("info_serviços/horarioServico1_2").value?.toString() ?: "--:--"
-            val h3 = snapshot.child("info_serviços/horarioServico1_3").value?.toString() ?: "--:--"
+            val h1 = snapshot.child("info_servicos/horarioServico1_1").value?.toString() ?: "--:--"
+            val h2 = snapshot.child("info_servicos/horarioServico1_2").value?.toString() ?: "--:--"
+            val h3 = snapshot.child("info_servicos/horarioServico1_3").value?.toString() ?: "--:--"
 
             // Atualiza UI
             binding.txtNome.text = nome
@@ -78,7 +77,6 @@ class TelaAgendaFragment : Fragment() {
             binding.btnTime2.text = h2
             binding.btnTime3.text = h3
 
-            // Inicialmente seleciona o primeiro serviço e nenhum horário
             selectedService = tipo1
             selectedTime = null
             binding.tvSelectedTime.text = "--:--*"
@@ -90,11 +88,10 @@ class TelaAgendaFragment : Fragment() {
         }
     }
 
-    /** 🔹 Inicializa listeners de calendário e botões */
+    /** 🔹 Inicializa listeners do calendário e botões */
     private fun initListeners() {
         binding.cardCalendar.setOnDateChangeListener { _, year, month, dayOfMonth ->
             selectedDate = "$dayOfMonth/${month + 1}/$year"
-            verificarConfirmButton()
         }
 
         binding.btnArrowBack.setOnClickListener {
@@ -102,20 +99,15 @@ class TelaAgendaFragment : Fragment() {
         }
 
         binding.btnConfirm.setOnClickListener {
-            if (selectedDate != null && selectedService != null && selectedTime != null) {
+            if (selectedDate != null && selectedTime != null && selectedService != null) {
                 mostrarPopupConfirmacao()
+            } else {
+                Toast.makeText(requireContext(), "Selecione data, horário e serviço.", Toast.LENGTH_SHORT).show()
             }
         }
-
-        verificarConfirmButton() // inicializa botão como desabilitado se necessário
     }
 
-    /** 🔹 Habilita ou desabilita botão confirmar */
-    private fun verificarConfirmButton() {
-        binding.btnConfirm.isEnabled = selectedDate != null && selectedService != null && selectedTime != null
-    }
-
-    /** 🔹 Mostra pop-up de confirmação */
+    /** 🔹 Pop-up de confirmação do agendamento */
     private fun mostrarPopupConfirmacao() {
         val mensagem = """
             Confirme seu agendamento:
@@ -128,6 +120,7 @@ class TelaAgendaFragment : Fragment() {
         AlertDialog.Builder(requireContext())
             .setTitle("Confirmar Agendamento")
             .setMessage(mensagem)
+            .setCancelable(false)
             .setPositiveButton("Confirmar") { _, _ ->
                 salvarAgendamentoNoFirebase()
             }
@@ -135,26 +128,23 @@ class TelaAgendaFragment : Fragment() {
             .show()
     }
 
-    /** 🔹 Configura seleção de serviço e atualiza horários */
+    /** 🔹 Configura os botões de serviços */
     private fun setupServiceButtons(snapshot: DataSnapshot) {
         val serviceButtons = listOf(binding.btnFaxina, binding.btnHidraulica, binding.btnEletrica)
-        serviceButtons.forEachIndexed { index, btn ->
+        for ((index, btn) in serviceButtons.withIndex()) {
             btn.setOnClickListener {
                 resetServiceButtons(serviceButtons)
                 btn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.purple_200))
                 btn.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
 
                 selectedService = btn.text.toString()
-
                 val i = index + 1
-                binding.btnTime1.text = snapshot.child("info_serviços/horarioServico${i}_1").value?.toString() ?: "--:--"
-                binding.btnTime2.text = snapshot.child("info_serviços/horarioServico${i}_2").value?.toString() ?: "--:--"
-                binding.btnTime3.text = snapshot.child("info_serviços/horarioServico${i}_3").value?.toString() ?: "--:--"
+                binding.btnTime1.text = snapshot.child("info_servicos/horarioServico${i}_1").value?.toString() ?: "--:--"
+                binding.btnTime2.text = snapshot.child("info_servicos/horarioServico${i}_2").value?.toString() ?: "--:--"
+                binding.btnTime3.text = snapshot.child("info_servicos/horarioServico${i}_3").value?.toString() ?: "--:--"
 
-
-                binding.tvSelectedTime.text = selectedTime
-
-                verificarConfirmButton()
+                selectedTime = null
+                binding.tvSelectedTime.text = "--:--*"
             }
         }
     }
@@ -166,18 +156,16 @@ class TelaAgendaFragment : Fragment() {
         }
     }
 
-    /** 🔹 Configura seleção de horários */
+    /** 🔹 Configura os botões de horários */
     private fun setupTimeButtons() {
         val timeButtons = listOf(binding.btnTime1, binding.btnTime2, binding.btnTime3)
-        timeButtons.forEach { btn ->
+        for (btn in timeButtons) {
             btn.setOnClickListener {
                 resetTimeButtons(timeButtons)
                 btn.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.purple_200))
                 btn.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
                 selectedTime = btn.text.toString()
                 binding.tvSelectedTime.text = "$selectedTime*"
-
-                verificarConfirmButton()
             }
         }
     }
@@ -191,8 +179,9 @@ class TelaAgendaFragment : Fragment() {
 
     /** 🔹 Salva agendamento no Firebase */
     private fun salvarAgendamentoNoFirebase() {
-        val uid = auth.currentUser?.uid ?: "anonimo"
-        val agendamentoRef = database.child("agendamentos")
+        val uid = auth.currentUser?.uid ?: return
+        val agendamentoRef = database.child("prestacoes") // ajustado para as regras
+
         val agendamento = Agendamento(
             data = selectedDate!!,
             hora = selectedTime!!,
@@ -201,11 +190,12 @@ class TelaAgendaFragment : Fragment() {
             usuarioId = uid,
             status = "aguardando_confirmacao"
         )
-        val id = agendamentoRef.push().key ?: return
 
+        val id = agendamentoRef.push().key ?: return
         agendamentoRef.child(id).setValue(agendamento)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Agendamento confirmado!", Toast.LENGTH_SHORT).show()
+
                 val bundle = Bundle().apply {
                     putString("data", selectedDate)
                     putString("hora", selectedTime)
@@ -213,8 +203,8 @@ class TelaAgendaFragment : Fragment() {
                 }
                 findNavController().navigate(R.id.action_telaAgendaFragment_to_telaAgenda2Fragment, bundle)
             }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Erro ao salvar agendamento.", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Erro ao salvar agendamento: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
 
