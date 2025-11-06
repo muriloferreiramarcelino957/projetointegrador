@@ -55,7 +55,7 @@ class TelaAgendaFragment : Fragment() {
                 return@addOnSuccessListener
             }
 
-            val nome = snapshot.child("nome").value?.toString() ?: "Prestador"
+            val nome = snapshot.child("info_prestador/nomeUsuario").value?.toString() ?: "Prestador"
 
             val tipo1 = snapshot.child("info_serviços/tipoServico1").value?.toString() ?: "Serviço 1"
             val tipo2 = snapshot.child("info_serviços/tipoServico2").value?.toString() ?: "Serviço 2"
@@ -192,7 +192,7 @@ class TelaAgendaFragment : Fragment() {
     /** 🔹 Salva agendamento no Firebase */
     private fun salvarAgendamentoNoFirebase() {
         val uid = auth.currentUser?.uid ?: "anonimo"
-        val agendamentoRef = database.child("agendamentos")
+        val agendamentoRef = database.child("prestacoes")
         val agendamento = Agendamento(
             data = selectedDate!!,
             hora = selectedTime!!,
