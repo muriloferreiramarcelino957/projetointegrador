@@ -190,9 +190,12 @@ class TelaAgendaFragment : Fragment() {
     }
 
     /** 🔹 Salva agendamento no Firebase */
+    /** 🔹 Salva agendamento no Firebase e navega para TelaAgenda2Fragment usando SafeArgs */
     private fun salvarAgendamentoNoFirebase() {
         val uid = auth.currentUser?.uid ?: "anonimo"
-        val agendamentoRef = database.child("prestacoes")
+        val agendamentoRef = database.child("prestacoes") // ou "agendamentos", conforme sua regra
+
+        // Cria o objeto de agendamento
         val agendamento = Agendamento(
             data = selectedDate!!,
             hora = selectedTime!!,
@@ -201,22 +204,26 @@ class TelaAgendaFragment : Fragment() {
             usuarioId = uid,
             status = "aguardando_confirmacao"
         )
+
         val id = agendamentoRef.push().key ?: return
 
         agendamentoRef.child(id).setValue(agendamento)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Agendamento confirmado!", Toast.LENGTH_SHORT).show()
-                val bundle = Bundle().apply {
-                    putString("data", selectedDate)
-                    putString("hora", selectedTime)
-                    putString("servico", selectedService)
-                }
-                findNavController().navigate(R.id.action_telaAgendaFragment_to_telaAgenda2Fragment, bundle)
+
+                // SafeArgs: cria ação com argumentos
+                val action = TelaAgendaFragmentDirections
+                    .actionTelaAgendaFragmentToTelaAgenda2Fragment(
+                        selectedDate!!, selectedTime!!, selectedService!!
+                    )
+                findNavController().navigate(action)
+
             }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Erro ao salvar agendamento.", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Erro ao salvar agendamento: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

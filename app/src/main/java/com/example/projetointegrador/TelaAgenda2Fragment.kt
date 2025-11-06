@@ -1,4 +1,4 @@
-package com.projetointegrador.app.ui.agenda
+package com.example.projetointegrador
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.TelaDeAgenda2Binding
 import com.google.firebase.database.*
 

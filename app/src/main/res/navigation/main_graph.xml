@@ -163,6 +163,15 @@
                 android:id="@+id/telaAgenda2Fragment"
                 android:name="com.example.projetointegrador.TelaAgenda2Fragment"
                 android:label="TelaAgenda2Fragment" >
+                <argument
+                    android:name="data"
+                    app:argType="string" />
+                <argument
+                    android:name="hora"
+                    app:argType="string" />
+                <argument
+                    android:name="servico"
+                    app:argType="string" />
                 <action
                     android:id="@+id/action_telaAgenda2Fragment_to_telaAgenda3Fragment"
                     app:destination="@id/telaAgenda3Fragment2" />
