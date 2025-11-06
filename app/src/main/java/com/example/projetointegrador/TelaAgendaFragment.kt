@@ -138,11 +138,17 @@ class TelaAgendaFragment : Fragment() {
                 btn.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
 
                 selectedService = btn.text.toString()
-                val i = index + 1
-                binding.btnTime1.text = snapshot.child("info_servicos/horarioServico${i}_1").value?.toString() ?: "--:--"
-                binding.btnTime2.text = snapshot.child("info_servicos/horarioServico${i}_2").value?.toString() ?: "--:--"
-                binding.btnTime3.text = snapshot.child("info_servicos/horarioServico${i}_3").value?.toString() ?: "--:--"
 
+                val i = index + 1
+                val h1 = snapshot.child("info_servicos/horarioServico${i}_1").value?.toString() ?: "--:--"
+                val h2 = snapshot.child("info_servicos/horarioServico${i}_2").value?.toString() ?: "--:--"
+                val h3 = snapshot.child("info_servicos/horarioServico${i}_3").value?.toString() ?: "--:--"
+
+                binding.btnTime1.text = h1
+                binding.btnTime2.text = h2
+                binding.btnTime3.text = h3
+
+                // Reseta a seleção de horário
                 selectedTime = null
                 binding.tvSelectedTime.text = "--:--*"
             }
@@ -180,7 +186,7 @@ class TelaAgendaFragment : Fragment() {
     /** 🔹 Salva agendamento no Firebase */
     private fun salvarAgendamentoNoFirebase() {
         val uid = auth.currentUser?.uid ?: return
-        val agendamentoRef = database.child("prestacoes") // ajustado para as regras
+        val agendamentoRef = database.child("prestacoes")
 
         val agendamento = Agendamento(
             data = selectedDate!!,
