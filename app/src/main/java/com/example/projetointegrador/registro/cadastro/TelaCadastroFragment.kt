@@ -66,6 +66,10 @@ class TelaCadastroFragment : Fragment() {
         val dataDeNascimento = binding.editTextTextNascimento.text.toString().trim()
         val senha = binding.editTextTextSenha.text?.toString()?.trim().orEmpty()
         val senhaRepetida = binding.editTextTextRepitaSenha.text?.toString()?.trim().orEmpty()
+        if (nome.isEmpty() || email.isEmpty() || cpf.isEmpty() || dataDeNascimento.isEmpty() || senha.isEmpty() || senhaRepetida.isEmpty()) {
+            Toast.makeText(requireContext(), "Preencha todos os campos.", Toast.LENGTH_SHORT).show()
+            return
+        }
         if (nome.length < 4) {
             Toast.makeText(requireContext(), "O nome precisa ter no mínimo 4 caracteres", Toast.LENGTH_SHORT).show()
             return
@@ -84,9 +88,9 @@ class TelaCadastroFragment : Fragment() {
             Toast.makeText(requireContext(), "O cadastro não é permitido para menores de 18 anos", Toast.LENGTH_SHORT).show()
             return
         }
-//        if (!validarSenha(senha, senhaRepetida)){
-//            return
-//        }
+        if (!validarSenha(senha, senhaRepetida)){
+            return
+        }
         mandarDados()
     }
 
@@ -126,7 +130,13 @@ class TelaCadastroFragment : Fragment() {
             Toast.makeText(requireContext(), "A senha precisa ter no mínimo 8 caracteres", Toast.LENGTH_SHORT).show()
             return false
         }
-        val regex = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!])\$")
+        for (char in senha){
+            if (char.toString() ==  " "){
+                Toast.makeText(requireContext(), "A senha não pode conter espaços", Toast.LENGTH_SHORT).show()
+                return false
+            }
+        }
+        val regex = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).+\$")
         val apenasNormais = senha.matches(Regex("^[A-Za-z0-9@#\$%^&+=!]*\$"))
         if (!apenasNormais || !regex.containsMatchIn(senha)) {
             Toast.makeText(requireContext(), "A senha deve conter ao menos uma letra maiúscula, um número e um caractere especial", Toast.LENGTH_SHORT).show()
