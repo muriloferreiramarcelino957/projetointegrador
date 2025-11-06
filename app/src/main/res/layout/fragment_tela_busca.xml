@@ -36,7 +36,7 @@
             android:layout_height="20dp"
             android:layout_marginStart="8dp"
             android:src="@drawable/ic_search"
-            android:tint="#5A0275" />
+            app:tint="#5A0275" />
 
         <!-- Campo de texto -->
         <EditText
