@@ -46,7 +46,6 @@ class TelaAgendaFragment : Fragment() {
         initListeners()
     }
 
-    /** 🔹 Carrega dados do prestador e serviços do Firebase */
     private fun carregarDadosDoPrestador() {
         val prestadorRef = database.child("prestadores").child(prestadorUid)
         prestadorRef.get().addOnSuccessListener { snapshot ->

@@ -29,7 +29,7 @@ class FragmentTelaPrincipal : Fragment() {
         _binding = FragmentTelaPrincipalBinding.inflate(inflater, container, false)
         setupRecyclerView()
         setupNavigationBar()
-        buscarPrestadores()
+        buscarPrestadoresTop3()
         return binding.root
     }
 
@@ -48,55 +48,63 @@ class FragmentTelaPrincipal : Fragment() {
     }
 
     // Busca prestadores do Firebase e atualiza a lista
-    private fun buscarPrestadores() {
-        val db = FirebaseDatabase.getInstance().reference.child("prestadores")
+    private fun buscarPrestadoresTop3() {
+        val refPrestadores = FirebaseDatabase.getInstance().reference.child("prestadores")
 
-        db.get().addOnSuccessListener { prestadoresSnapshot ->
-            if (!prestadoresSnapshot.exists()) {
-                prestadorAdapter.atualizarLista(emptyList())
-                return@addOnSuccessListener
-            }
 
-            val prestadores = mutableListOf<PrestadorDisplay>()
-            val totalPrestadores = prestadoresSnapshot.childrenCount.toInt()
-            if (totalPrestadores == 0) {
-                prestadorAdapter.atualizarLista(emptyList())
-                return@addOnSuccessListener
-            }
+        refPrestadores.orderByChild("info_prestador/notaMedia").limitToLast(3).get()
+            .addOnSuccessListener { snap ->
+                if (!snap.exists()) {
+                    prestadorAdapter.atualizarLista(emptyList())
+                    return@addOnSuccessListener
+                }
 
-            // Processa cada prestador
-            prestadoresSnapshot.children.forEach { prestadorSnapshot ->
-                val uid = prestadorSnapshot.key ?: return@forEach
+                val filhosOrdenadosDesc = snap.children.toList().sortedByDescending {
+                    it.child("info_prestador/notaMedia").getValue(Double::class.java) ?: 0.0
+                }
 
-                FirebaseDatabase.getInstance().reference.child("usuarios").child(uid)
-                    .get().addOnSuccessListener { userSnapshot ->
-                        val user = userSnapshot.getValue(User::class.java) ?: User()
-                        val prestadorInfo = prestadorSnapshot.child("info_prestador")
-                            .getValue(Prestador::class.java) ?: Prestador()
-                        val tiposServico = prestadorSnapshot.child("info_serviços")
-                            .getValue(TiposServico::class.java) ?: TiposServico()
+                val resultado = mutableListOf<PrestadorDisplay>()
+                var processados = 0
+                val total = filhosOrdenadosDesc.size
 
-                        prestadores.add(PrestadorDisplay(user, prestadorInfo, tiposServico))
+                filhosOrdenadosDesc.forEach { prestadorNode ->
+                    val uidDaChave = prestadorNode.key
 
-                        // Atualiza RecyclerView quando todos os prestadores forem processados
-                        if (prestadores.size == totalPrestadores) {
-                            atualizarTopPrestadores(prestadores)
-                        }
+                    val uid = uidDaChave ?: prestadorNode
+                        .child("info_prestador/uid").getValue(String::class.java)
+
+                    if (uid.isNullOrEmpty()) {
+                        processados++
+                        if (processados == total) prestadorAdapter.atualizarLista(resultado)
+                        return@forEach
                     }
-                    .addOnFailureListener {
-                        // Mesmo que dê erro, continua contando
-                        if (prestadores.size == totalPrestadores) {
-                            atualizarTopPrestadores(prestadores)
+
+                    // mapeia os blocos
+                    val prestadorInfo = prestadorNode.child("info_prestador")
+                        .getValue(Prestador::class.java) ?: Prestador()
+
+                    val tiposServico = prestadorNode.child("info_servicos")
+                        .getValue(TiposServico::class.java)
+
+                    // busca dados do usuário
+                    FirebaseDatabase.getInstance().reference
+                        .child("usuarios").child(uid)
+                        .get()
+                        .addOnSuccessListener { userSnap ->
+                            val user = userSnap.getValue(User::class.java) ?: User()
+                            resultado.add(PrestadorDisplay(user, prestadorInfo, tiposServico))
                         }
-                    }
+                        .addOnCompleteListener {
+                            processados++
+                            if (processados == total) {
+                                prestadorAdapter.atualizarLista(resultado)
+                            }
+                        }
+                }
             }
-        }.addOnFailureListener { e ->
-            Toast.makeText(
-                requireContext(),
-                "Erro ao carregar prestadores: ${e.message}",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Erro: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     // Atualiza os top 3 prestadores por nota
