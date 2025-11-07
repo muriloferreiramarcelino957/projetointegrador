@@ -112,13 +112,13 @@ class TelaCadastro2 : Fragment() {
         }
 
         val user = args.user!!
-        user.cep = cep
-        user.logradouro = descLogradouro
-        user.numero = numero
-        user.bairro = bairro
-        user.cidade = cidade
-        user.estado = estado
-
+        user.cep to cep
+        user.logradouro to descLogradouro
+        user.numero to numero
+        user.bairro to bairro
+        user.cidade to cidade
+        user.estado to estado
+        
         binding.btnCadastrar.isEnabled = false
 
 

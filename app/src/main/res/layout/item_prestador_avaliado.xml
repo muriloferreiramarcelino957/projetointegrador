@@ -8,84 +8,151 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="12dp">
 
-        <!-- Nome do Prestador -->
+        <!-- Avatar -->
+        <ImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:contentDescription="@null"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvServicos" />
+
+        <!-- Nome -->
         <TextView
             android:id="@+id/tvNome"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:layout_marginStart="12dp"
+            android:text="Caio Silva"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#000000"/>
+            android:fontFamily="@font/anekkannadabold"
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toEndOf="@id/imgAvatar"
+            app:layout_constraintTop_toTopOf="@id/imgAvatar"
+            app:layout_constraintEnd_toStartOf="@id/colInfoDireita" />
 
-        <!-- Rating e Nota -->
+        <!-- Último acesso -->
+        <TextView
+            android:id="@+id/tvUltimoAcesso"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Último acesso há 18 horas"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            app:layout_constraintStart_toStartOf="@id/tvNome"
+            app:layout_constraintTop_toBottomOf="@id/tvNome"
+            app:layout_constraintEnd_toEndOf="@id/tvNome" />
+
+        <!-- Linha: estrela + nota -->
         <LinearLayout
+            android:id="@+id/rowRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="@id/tvNome"
+            app:layout_constraintTop_toBottomOf="@id/tvUltimoAcesso"
+            app:layout_constraintBottom_toBottomOf="@id/imgAvatar">
 
-            <RatingBar
-                android:id="@+id/rbNota"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:rating="0"
-                style="?android:attr/ratingBarStyleSmall"/>
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_star"
+                android:contentDescription="@null" />
 
             <TextView
                 android:id="@+id/tvNota"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="14sp"
-                android:textColor="#000000"/>
+                android:layout_marginStart="4dp"
+                android:text="5.0"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
         </LinearLayout>
 
-        <!-- Data de Início -->
-        <TextView
-            android:id="@+id/tvDataInicio"
-            android:layout_width="wrap_content"
+        <!-- Coluna da direita: desde quando + localização -->
+        <LinearLayout
+            android:id="@+id/colInfoDireita"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp"
-            android:textColor="#666666"/>
+            android:orientation="vertical"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/tvNome"
+            app:layout_constraintTop_toTopOf="@id/tvNome"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/rowRating">
 
-        <!-- Localização -->
-        <TextView
-            android:id="@+id/tvLocalizacao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp"
-            android:textColor="#666666"/>
+            <!-- Desde quando -->
+            <LinearLayout
+                android:id="@+id/rowInicio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-        <!-- Serviços -->
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_calendar"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/tvDataInicio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Na AllService desde maio de 2024"
+                    android:textSize="12sp"
+                    android:textColor="#444444" />
+            </LinearLayout>
+
+            <!-- Localização -->
+            <LinearLayout
+                android:id="@+id/rowLocal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_pin"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/tvLocalizacao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Jardim Camburi, Vitória - ES"
+                    android:textSize="12sp"
+                    android:textColor="#444444" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Serviços (linha de baixo, ocupando a largura inteira) -->
         <TextView
             android:id="@+id/tvServicos"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textSize="14sp"
-            android:textColor="#666666"/>
-
-        <!-- Último Acesso -->
-        <TextView
-            android:id="@+id/tvUltimoAcesso"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:text="Faxina, Elétrica, Hidráulica"
             android:textSize="12sp"
-            android:textColor="#999999"/>
+            android:textColor="#555555"
+            app:layout_constraintStart_toEndOf="@id/imgAvatar"
+            app:layout_constraintTop_toBottomOf="@id/imgAvatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
-

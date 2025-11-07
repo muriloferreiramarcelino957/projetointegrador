@@ -4,40 +4,53 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Top Bar -->
+        <!-- Top Bar roxa -->
         <include
             android:id="@+id/topBar"
             layout="@layout/item_top_navigation_bar" />
 
-        <!-- Perfil -->
-        <LinearLayout
+        <!-- CABEÇALHO PERFIL -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/headerPerfil"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="top">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp">
 
+            <!-- Avatar -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgAvatar"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
                 android:layout_marginEnd="12dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_image_perfil"
-                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button" />
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
+            <!-- Nome + status + nota (lado esquerdo) -->
             <LinearLayout
+                android:id="@+id/colNomeStatus"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintStart_toEndOf="@id/imgAvatar"
+                app:layout_constraintTop_toTopOf="@id/imgAvatar"
+                app:layout_constraintBottom_toBottomOf="@id/imgAvatar"
+                app:layout_constraintEnd_toStartOf="@id/servicos_tags">
 
                 <TextView
                     android:id="@+id/txtNome"
@@ -45,25 +58,45 @@
                     android:layout_height="wrap_content"
                     android:text="Seu Hélio"
                     android:fontFamily="@font/anekkannadabold"
-                    android:textSize="18sp" />
+                    android:textSize="20sp" />
 
+                <!-- status online com bolinha verde -->
                 <TextView
                     android:id="@+id/status_online"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="online"
+                    android:layout_marginTop="2dp"
+                    android:text="● online"
+                    android:textColor="#2BB639"
                     android:fontFamily="@font/anekkannadalight"
                     android:textSize="12sp" />
 
-                <TextView
-                    android:id="@+id/txtRating"
+                <!-- Linha: estrela + nota -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5"
-                    android:fontFamily="@font/poppinsmedium"
-                    android:textSize="14sp" />
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_star"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:id="@+id/txtRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="5"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:textSize="14sp" />
+                </LinearLayout>
             </LinearLayout>
 
+            <!-- Tags de serviços (pill roxa à direita) -->
             <TextView
                 android:id="@+id/servicos_tags"
                 android:layout_width="wrap_content"
@@ -71,30 +104,38 @@
                 android:background="@drawable/bg_servicos_tag"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
-                android:text="Fáxina | Hidráulica | Elétrica"
+                android:text="Faxina | Hidráulica | Elétrica"
                 android:fontFamily="@font/anekkannadaregular"
                 android:textColor="@android:color/white"
-                android:textSize="12sp" />
-        </LinearLayout>
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/imgAvatar" />
 
-        <!-- Info localização e cadastro -->
-        <LinearLayout
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- INFO LOCALIZAÇÃO + MÉDIA -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/infoLocalMedia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:gravity="top"
-            android:layout_marginTop="-12dp">
+            android:paddingBottom="8dp"
+            android:layout_marginTop="-4dp">
 
-            <!-- Bloco com calendário e localização -->
+            <!-- Bloco esquerda: desde / local -->
             <LinearLayout
+                android:id="@+id/colInfoEsquerda"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/colMedia">
 
-                <!-- Linha: ícone + texto calendário -->
+                <!-- Desde -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -107,18 +148,18 @@
                         android:layout_height="16dp"
                         android:layout_marginEnd="6dp"
                         android:src="@drawable/ic_calendar"
-                        android:contentDescription="Ícone de calendário" />
+                        android:contentDescription="@null" />
 
                     <TextView
                         android:id="@+id/txtDesde"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Na AllService desde abril de 2025"
+                        android:text="Na AllService desde fevereiro de 2024"
                         android:fontFamily="@font/anekkannadalight"
-                        android:textSize="17sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
 
-                <!-- Linha: ícone + texto localização -->
+                <!-- Local -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -130,40 +171,73 @@
                         android:layout_height="16dp"
                         android:layout_marginEnd="6dp"
                         android:src="@drawable/ic_location"
-                        android:contentDescription="Ícone de localização" />
+                        android:contentDescription="@null" />
 
                     <TextView
                         android:id="@+id/txtLocal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Jardim Camburi, Vitória - ES"
+                        android:text="Jardim da Penha, Vitória - ES"
                         android:fontFamily="@font/anekkannadalight"
-                        android:textSize="17sp" />
+                        android:textSize="13sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/rating_media"
+            <!-- Bloco direita: Média -->
+            <LinearLayout
+                android:id="@+id/colMedia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginRight="50dp"
-                android:text="Média"
-                android:fontFamily="@font/anekkannadabold"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Nível de Cadastro -->
+                <TextView
+                    android:id="@+id/rating_media"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Média"
+                    android:fontFamily="@font/anekkannadabold"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="4dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_star"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:id="@+id/txtRatingMediaValor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="5"
+                        android:fontFamily="@font/poppinsmedium"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- NÍVEL DE CADASTRO -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:text="Nível de Cadastro"
-            android:fontFamily="@font/anekkannadaregular" />
+            android:fontFamily="@font/anekkannadaregular"
+            android:textSize="16sp" />
 
         <ProgressBar
             android:id="@+id/progressCadastro"
@@ -171,81 +245,94 @@
             android:layout_width="match_parent"
             android:layout_height="8dp"
             android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="4dp"
             android:max="100"
             android:progress="90"
             android:progressDrawable="@drawable/ic_rectangle51" />
 
-        <!-- Validações e botão -->
+        <!-- VALIDAÇÕES -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="4dp"
             android:gravity="center_vertical">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="150dp"
-                    android:layout_height="25dp"
-                    android:text="Endereço de e-mail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✓ Endereço de e-mail"
                     android:fontFamily="@font/anekkannadalight"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
 
                 <TextView
-                    android:layout_width="150dp"
-                    android:layout_height="25dp"
-                    android:text="Número de Telefone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="✓ Número de telefone"
                     android:fontFamily="@font/anekkannadalight"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
 
                 <TextView
-                    android:layout_width="150dp"
-                    android:layout_height="25dp"
-                    android:text="Facebook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="✓ Facebook"
                     android:fontFamily="@font/anekkannadalight"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
-
-            <Button
-                android:id="@+id/btnAgenda"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Minha Agenda"
-                android:fontFamily="@font/anekkannadasemibold"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#5A0275" />
         </LinearLayout>
 
-        <!-- Descrição -->
+        <!-- DESCRIÇÃO -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:text="Descrição"
             android:fontFamily="@font/anekkannadaregular"
-            android:textSize="23sp" />
+            android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/txtDescricao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sodales..."
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"
+            android:text="Texto da descrição do prestador..."
             android:fontFamily="@font/anekkannadamedium"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
-        <!-- Fotos -->
-        <TextView
+        <!-- FOTOS (título com ícone de câmera) -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Fotos"
-            android:fontFamily="@font/anekkannadaregular"
-            android:textSize="23sp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginEnd="6dp"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fotos"
+                android:fontFamily="@font/anekkannadaregular"
+                android:textSize="20sp" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -256,39 +343,54 @@
 
             <ImageView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
+                android:scaleType="centerCrop"
                 android:background="@android:color/darker_gray"
                 android:src="@drawable/ic_image_prestador1" />
 
             <ImageView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="4dp"
+                android:scaleType="centerCrop"
                 android:background="@android:color/darker_gray"
                 android:src="@drawable/ic_image_prestador2" />
 
             <ImageView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
+                android:scaleType="centerCrop"
                 android:background="@android:color/darker_gray"
                 android:src="@drawable/ic_image_prestador3" />
         </LinearLayout>
 
-        <!-- Quantidade de serviços -->
+        <!-- QUANTIDADE DE SERVIÇOS -->
         <TextView
             android:id="@+id/quantidade_servicos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:text="Quantidade de serviços prestados:   27"
-            android:textSize="24sp"
-            android:fontFamily="@font/anekkannadaregular"/>
+            android:layout_marginTop="4dp"
+            android:text="Quantidade de serviços prestados: 27"
+            android:textSize="16sp"
+            android:fontFamily="@font/anekkannadaregular" />
+
+        <!-- BOTÃO AGENDAR roxo, ocupando a largura -->
+        <Button
+            android:id="@+id/btnAgendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Agendar"
+            android:fontFamily="@font/anekkannadasemibold"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#5A0275" />
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

@@ -8,7 +8,9 @@ import com.example.projetointegrador.databinding.ItemPrestadorAvaliadoBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PrestadorAdapter : RecyclerView.Adapter<PrestadorAdapter.PrestadorViewHolder>() {
+class PrestadorAdapter(
+    private val onItemClick: (PrestadorDisplay) -> Unit = {}
+) : RecyclerView.Adapter<PrestadorAdapter.PrestadorViewHolder>() {
 
     private var listaPrestadores = listOf<PrestadorDisplay>()
 
@@ -30,12 +32,15 @@ class PrestadorAdapter : RecyclerView.Adapter<PrestadorAdapter.PrestadorViewHold
         with(holder.binding) {
             tvNome.text = prestadorDisplay.user.nomeUsuario
 
-            val notaFormatada = String.format(Locale.getDefault(), "%.1f", prestadorDisplay.prestador.notaMedia)
-            rbNota.rating = prestadorDisplay.prestador.notaMedia.toFloat()
+            val nota = prestadorDisplay.prestador.notaMedia ?: 0.0
+            val notaFormatada = String.format(Locale.getDefault(), "%.1f", nota)
             tvNota.text = notaFormatada
 
-            tvDataInicio.text = "Na AllService desde ${formatarData(prestadorDisplay.prestador.dataDeInicio)}"
-            tvLocalizacao.text = "${prestadorDisplay.user.bairro}, ${prestadorDisplay.user.cidade} - ${prestadorDisplay.user.estado}"
+            tvDataInicio.text =
+                "Na AllService desde ${formatarData(prestadorDisplay.prestador.dataDeInicio)}"
+
+            tvLocalizacao.text =
+                "${prestadorDisplay.user.bairro}, ${prestadorDisplay.user.cidade} - ${prestadorDisplay.user.estado}"
 
             val servicosText = buildString {
                 val servicos = prestadorDisplay.tiposServico?.let { tipos ->
@@ -45,38 +50,39 @@ class PrestadorAdapter : RecyclerView.Adapter<PrestadorAdapter.PrestadorViewHold
                         if (tipos.tipoServico3.isNotEmpty()) "${tipos.tipoServico3} (R$ ${tipos.valorServico3})" else null
                     )
                 } ?: emptyList()
-                
+
                 servicos.take(3).forEachIndexed { index, servico ->
                     if (index > 0) append(", ")
                     append(servico)
                 }
-                if (servicos.size > 3) {
-                    append(" +${servicos.size - 3} mais")
-                }
+                if (servicos.size > 3) append(" +${servicos.size - 3} mais")
             }
             tvServicos.text = servicosText
 
-            tvUltimoAcesso.text = "Último acesso: há ${calcularTempoDesde(prestadorDisplay.prestador.dataDeInicio)}"
+            tvUltimoAcesso.text =
+                "Último acesso há ${calcularTempoDesde(prestadorDisplay.prestador.dataDeInicio)}"
+
+            root.setOnClickListener {
+                onItemClick(prestadorDisplay)
+            }
         }
     }
 
-    private fun formatarData(data: String): String {
-        return try {
-            val inputFormat = SimpleDateFormat("MM/dd/yy", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("MMMM/yyyy", Locale.getDefault())
-            val date = inputFormat.parse(data)
-            outputFormat.format(date ?: Date())
-        } catch (e: Exception) {
-            data
-        }
-    }
+    private fun formatarData(data: String): String =
+        runCatching {
+            val inFmt = java.text.SimpleDateFormat("MM/dd/yy", java.util.Locale.US)
+            val outFmt = java.text.SimpleDateFormat("MMMM 'de' yyyy", java.util.Locale("pt", "BR"))
+            outFmt.format(inFmt.parse(data)!!)
+                .replaceFirstChar { it.titlecase(java.util.Locale("pt", "BR")) }
+        }.getOrElse { data }
+
 
     private fun calcularTempoDesde(data: String): String {
         return try {
             val format = SimpleDateFormat("MM/dd/yy", Locale.getDefault())
             val inicio = format.parse(data)
             val agora = Date()
-            val diff = agora.time - inicio.time
+            val diff = agora.time - (inicio?.time ?: agora.time)
 
             val segundos = diff / 1000
             val minutos = segundos / 60

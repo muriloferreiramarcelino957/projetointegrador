@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.projetointegrador.PrestadorDisplay
 import com.example.projetointegrador.databinding.FragmentTelaPrincipalBinding
@@ -40,7 +41,15 @@ class FragmentTelaPrincipal : Fragment() {
 
     // Configura RecyclerView
     private fun setupRecyclerView() {
-        prestadorAdapter = PrestadorAdapter()
+        prestadorAdapter = PrestadorAdapter{ prestadorDisplay ->
+
+            val action = FragmentTelaPrincipalDirections
+                .actionFragmentTelaPrincipalToTelaPerfilFragment(
+                    prestadorDisplay.prestador.uid
+                )
+            findNavController().navigate(action)
+
+        }
         binding.rvPrestadores.apply {
             adapter = prestadorAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -82,6 +91,7 @@ class FragmentTelaPrincipal : Fragment() {
                     // mapeia os blocos
                     val prestadorInfo = prestadorNode.child("info_prestador")
                         .getValue(Prestador::class.java) ?: Prestador()
+                    prestadorInfo.uid = uid
 
                     val tiposServico = prestadorNode.child("info_servicos")
                         .getValue(TiposServico::class.java)

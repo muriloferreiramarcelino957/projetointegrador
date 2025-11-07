@@ -1,6 +1,7 @@
 package com.example.projetointegrador.registro.login
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.TelaLoginBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 
 class TelaLoginFragment : Fragment() {
 
@@ -34,17 +37,12 @@ class TelaLoginFragment : Fragment() {
     }
 
     private fun initListeners() {
-        // Botão de voltar
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
-
-        // Esqueci a senha
         binding.forgotPasswordText.setOnClickListener {
             findNavController().navigate(R.id.action_telaLoginFragment_to_recuperacao1)
         }
-
-        // Botão login
         binding.loginButton.setOnClickListener {
             realizarLogin()
         }
@@ -69,7 +67,19 @@ class TelaLoginFragment : Fragment() {
             }
             .addOnFailureListener { e ->
                 binding.loginButton.isEnabled = true
-                Toast.makeText(requireContext(), "Erro no login: ${e.message}", Toast.LENGTH_SHORT).show()
+
+                when(e){
+                    is FirebaseAuthInvalidUserException -> {
+                        Toast.makeText(requireContext(), "Usuário não encontrado. Verifique o e-mail digitado.", Toast.LENGTH_SHORT).show()
+                    }
+                    is FirebaseAuthInvalidCredentialsException -> {
+                        Toast.makeText(requireContext(), "Senha incorreta. Tente novamente.", Toast.LENGTH_SHORT).show()
+                    }
+                    else ->{
+                        Toast.makeText(requireContext(), "Erro ao fazer login: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                        Log.e("FirebaseAuth", "Erro no login", e)
+                    }
+                }
             }
     }
 

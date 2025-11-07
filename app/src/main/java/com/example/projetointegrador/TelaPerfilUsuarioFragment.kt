@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.databinding.TelaDePerfilBinding
 import com.example.projetointegrador.navigation.TopNavigationBarHelper
 
-class TelaPerfilFragment : Fragment() {
+class TelaPerfilUsuarioFragment : Fragment() {
 
     private var _binding: TelaDePerfilBinding? = null
     private val binding get() = _binding!!

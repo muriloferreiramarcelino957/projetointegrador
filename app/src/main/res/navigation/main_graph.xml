@@ -160,6 +160,7 @@
                 <action
                     android:id="@+id/action_telaPerfilFragment_to_telaNotificacaoFragment"
                     app:destination="@id/telaNotificacaoFragment" />
+                <argument android:name="uid" />
 
             </fragment>
             <fragment
