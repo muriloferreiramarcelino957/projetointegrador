@@ -42,14 +42,15 @@
         <TextView
             android:id="@+id/tvUltimoAcesso"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_height="21dp"
+            android:fontFamily="@font/anekkannadalight"
             android:text="Último acesso há 18 horas"
-            android:textSize="12sp"
             android:textColor="#666666"
+            android:textSize="12sp"
+            android:layout_marginTop="-5dp"
+            app:layout_constraintEnd_toEndOf="@id/tvNome"
             app:layout_constraintStart_toStartOf="@id/tvNome"
-            app:layout_constraintTop_toBottomOf="@id/tvNome"
-            app:layout_constraintEnd_toEndOf="@id/tvNome" />
+            app:layout_constraintTop_toBottomOf="@id/tvNome" />
 
         <!-- Linha: estrela + nota -->
         <LinearLayout
@@ -63,6 +64,7 @@
             app:layout_constraintBottom_toBottomOf="@id/imgAvatar">
 
             <ImageView
+                android:layout_marginTop="10dp"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_star"
@@ -73,8 +75,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="5.0"
-                android:textSize="13sp"
+                android:layout_marginTop="5dp"
+                android:text="5"
+                android:fontFamily="@font/poppinsregular"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black" />
         </LinearLayout>
@@ -82,7 +86,7 @@
         <!-- Coluna da direita: desde quando + localização -->
         <LinearLayout
             android:id="@+id/colInfoDireita"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginStart="12dp"
@@ -109,6 +113,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
+                    android:fontFamily="@font/anekkannadalight"
                     android:text="Na AllService desde maio de 2024"
                     android:textSize="12sp"
                     android:textColor="#444444" />
@@ -126,13 +131,15 @@
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:src="@drawable/ic_pin"
-                    android:contentDescription="@null" />
+                    android:contentDescription="@null"
+                    app:tint="@color/black" />
 
                 <TextView
                     android:id="@+id/tvLocalizacao"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
+                    android:fontFamily="@font/anekkannadalight"
                     android:text="Jardim Camburi, Vitória - ES"
                     android:textSize="12sp"
                     android:textColor="#444444" />
@@ -144,8 +151,9 @@
             android:id="@+id/tvServicos"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:text="Faxina, Elétrica, Hidráulica"
+            android:fontFamily="@font/anekkannadaregular"
             android:textSize="12sp"
             android:textColor="#555555"
             app:layout_constraintStart_toEndOf="@id/imgAvatar"

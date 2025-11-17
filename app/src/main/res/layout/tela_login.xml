@@ -43,7 +43,7 @@
         android:background="@drawable/edit_text_background"
         android:drawableStart="@drawable/ic_person"
         android:drawablePadding="10dp"
-        android:hint="Usuário"
+        android:hint="Email"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:textColor="@android:color/white"

@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -27,11 +28,19 @@
             android:paddingTop="12dp"
             android:paddingBottom="8dp">
 
+            <ImageView
+                android:id="@+id/btnArrowBack"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_left_arrow"
+                app:tint="@color/black" />
+
             <!-- Avatar -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgAvatar"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="12dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_image_perfil"
@@ -47,6 +56,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginEnd="8dp"
+                android:layout_marginTop="20dp"
                 app:layout_constraintStart_toEndOf="@id/imgAvatar"
                 app:layout_constraintTop_toTopOf="@id/imgAvatar"
                 app:layout_constraintBottom_toBottomOf="@id/imgAvatar"
@@ -104,6 +114,7 @@
                 android:background="@drawable/bg_servicos_tag"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
+                android:layout_marginTop="20dp"
                 android:text="Faxina | Hidráulica | Elétrica"
                 android:fontFamily="@font/anekkannadaregular"
                 android:textColor="@android:color/white"
@@ -120,8 +131,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:paddingBottom="8dp"
-            android:layout_marginTop="-4dp">
+            android:paddingBottom="4dp">
 
             <!-- Bloco esquerda: desde / local -->
             <LinearLayout
@@ -186,48 +196,53 @@
             <!-- Bloco direita: Média -->
             <LinearLayout
                 android:id="@+id/colMedia"
-                android:layout_width="wrap_content"
+                android:layout_width="54dp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="vertical"
-                android:gravity="center_horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/rating_media"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Média"
                     android:fontFamily="@font/anekkannadabold"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:text="Média"
+                    android:textSize="18sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginTop="4dp">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="18dp"
                         android:layout_height="18dp"
-                        android:src="@drawable/ic_star"
-                        android:contentDescription="@null" />
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_star" />
 
                     <TextView
                         android:id="@+id/txtRatingMediaValor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="5"
                         android:fontFamily="@font/poppinsmedium"
+                        android:text="5"
                         android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Linha fina para separar -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginHorizontal="16dp" />
 
         <!-- NÍVEL DE CADASTRO -->
         <TextView
@@ -248,7 +263,7 @@
             android:layout_marginTop="4dp"
             android:max="100"
             android:progress="90"
-            android:progressDrawable="@drawable/ic_rectangle51" />
+            android:progressDrawable="@drawable/barra_nivel_de_cadastro" />
 
         <!-- VALIDAÇÕES -->
         <LinearLayout
@@ -310,9 +325,9 @@
             android:layout_marginBottom="12dp"
             android:text="Texto da descrição do prestador..."
             android:fontFamily="@font/anekkannadamedium"
-            android:textSize="15sp" />
+            android:textSize="10sp" />
 
-        <!-- FOTOS (título com ícone de câmera) -->
+        <!-- FOTOS -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -380,17 +395,17 @@
             android:textSize="16sp"
             android:fontFamily="@font/anekkannadaregular" />
 
-        <!-- BOTÃO AGENDAR roxo, ocupando a largura -->
+        <!-- BOTÃO AGENDAR -->
         <Button
             android:id="@+id/btnAgendar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="157dp"
+            android:layout_height="53dp"
             android:layout_margin="16dp"
+            android:layout_gravity="center"
             android:text="Agendar"
             android:fontFamily="@font/anekkannadasemibold"
             android:textColor="@android:color/white"
             android:backgroundTint="#5A0275" />
 
     </LinearLayout>
-
 </androidx.core.widget.NestedScrollView>

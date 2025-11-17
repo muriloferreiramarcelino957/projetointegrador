@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Segmento 1: Início (esquerda, ~33% da largura) -->
+    <item android:right="66%">
+        <shape android:shape="rectangle">
+            <solid android:color="#E5DDA0" />
+            <corners android:radius="4dp" />  <!-- Bordas arredondadas opcionais para suavizar -->
+        </shape>
+    </item>
+    <item android:left="33" android:right="33%">
+        <shape android:shape="rectangle">
+            <solid android:color="#9CC891" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+    <item android:left="66%">
+        <shape android:shape="rectangle">
+            <solid android:color="#177300" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+    <!-- Linha separadora 1 (entre segmento 1 e 2) -->
+    <item android:left="33%" android:right="33%">
+        <shape android:shape="rectangle">
+            <size android:width="1dp" android:height="8dp" />  <!-- Largura da linha: 1dp; altura: mesma da barra -->
+            <solid android:color="#000000" />  <!-- Cor preta; mude se quiser outra -->
+        </shape>
+    </item>
+    <!-- Linha separadora 2 (entre segmento 2 e 3) -->
+    <item android:left="66%" android:right="66%">
+        <shape android:shape="rectangle">
+            <size android:width="1dp" android:height="8dp" />
+            <solid android:color="#000000" />
+        </shape>
+    </item>
+    <!-- Camada de progresso (branca ou transparente para "cortar" os segmentos) -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <solid android:color="#FFFFFF" />  <!-- Branco para cobrir; ajuste para transparente se quiser ver fundo -->
+                <corners android:radius="4dp" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>
