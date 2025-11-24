@@ -2,7 +2,6 @@ package com.example.projetointegrador.registro.cadastro
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -19,155 +18,162 @@ class TelaCadastroFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = TelaCadastroBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         initListeners()
     }
 
-    private fun initListeners() {
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
-        }
-        binding.button.setOnClickListener {
-            verificaInputs()
-        }
-        binding.editTextTextNascimento.setOnClickListener {
-            val calendar = Calendar.getInstance()
-            val ano = calendar.get(Calendar.YEAR)
-            val mes = calendar.get(Calendar.MONTH)
-            val dia = calendar.get(Calendar.DAY_OF_MONTH)
+    // -------------------------------------------------------------------------
+    //  LISTENERS
+    // -------------------------------------------------------------------------
+    private fun initListeners() = with(binding) {
 
-            val datePicker = DatePickerDialog(
-                requireContext(),
-                { _, year, month, dayOfMonth ->
-                    val dataFormatada = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
-                    binding.editTextTextNascimento.setText(dataFormatada)
-                },
-                ano, mes, dia
-            )
-            val maxCalendar = Calendar.getInstance().apply { add(Calendar.YEAR, -18) }
-            datePicker.datePicker.maxDate = maxCalendar.timeInMillis
-            datePicker.show()
-        }
+        backButton.setOnClickListener { findNavController().navigateUp() }
+
+        button.setOnClickListener { verificaInputs() }
+
+        editTextTextNascimento.setOnClickListener { abrirDatePicker() }
     }
 
-    private fun verificaInputs() {
-        val nome = binding.editTextTextNome.text.toString().trim()
-        val email = binding.editTextTextEmail.text.toString().trim()
-        val cpf = binding.editTextTextCPF.text.toString().replace(Regex("\\D"), "")
-        val dataDeNascimento = binding.editTextTextNascimento.text.toString().trim()
-        val senha = binding.editTextTextSenha.text?.toString()?.trim().orEmpty()
-        val senhaRepetida = binding.editTextTextRepitaSenha.text?.toString()?.trim().orEmpty()
-        if (nome.isEmpty() || email.isEmpty() || cpf.isEmpty() || dataDeNascimento.isEmpty() || senha.isEmpty() || senhaRepetida.isEmpty()) {
-            Toast.makeText(requireContext(), "Preencha todos os campos.", Toast.LENGTH_SHORT).show()
+    private fun abrirDatePicker() {
+        val calendar = Calendar.getInstance()
+        val ano = calendar.get(Calendar.YEAR)
+        val mes = calendar.get(Calendar.MONTH)
+        val dia = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val picker = DatePickerDialog(
+            requireContext(),
+            { _, year, month, day ->
+                binding.editTextTextNascimento.setText(
+                    "%02d/%02d/%04d".format(day, month + 1, year)
+                )
+            }, ano, mes, dia
+        )
+
+        // Só permite datas até 18 anos atrás
+        val limite = Calendar.getInstance().apply { add(Calendar.YEAR, -18) }
+        picker.datePicker.maxDate = limite.timeInMillis
+
+        picker.show()
+    }
+
+    // -------------------------------------------------------------------------
+    //  VALIDAÇÃO
+    // -------------------------------------------------------------------------
+    private fun verificaInputs() = with(binding) {
+
+        val nome = editTextTextNome.text.toString().trim()
+        val email = editTextTextEmail.text.toString().trim()
+        val cpf = editTextTextCPF.text.toString().replace(Regex("\\D"), "")
+        val nascimento = editTextTextNascimento.text.toString().trim()
+        val senha = editTextTextSenha.text?.toString()?.trim().orEmpty()
+        val senha2 = editTextTextRepitaSenha.text?.toString()?.trim().orEmpty()
+
+        // Verifica campos vazios
+        if (listOf(nome, email, cpf, nascimento, senha, senha2).any { it.isEmpty() }) {
+            toast("Preencha todos os campos.")
             return
         }
+
         if (nome.length < 4) {
-            Toast.makeText(requireContext(), "O nome precisa ter no mínimo 4 caracteres", Toast.LENGTH_SHORT).show()
+            toast("O nome precisa ter no mínimo 4 caracteres.")
             return
         }
-        if (!validarEmail(email)) {
-            Toast.makeText(requireContext(), "Insira um email real", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (!validarCPF(cpf)) {
-            Toast.makeText(requireContext(), "Insira um CPF real", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val anoNascimento = dataDeNascimento.takeLast(4).toInt()
-        val anoAtual = Calendar.getInstance().get(Calendar.YEAR)
-        if (anoNascimento > (anoAtual.toInt() - 18)){
-            Toast.makeText(requireContext(), "O cadastro não é permitido para menores de 18 anos", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (!validarSenha(senha, senhaRepetida)){
-            return
-        }
-        mandarDados()
-    }
 
-    private fun validarEmail(email: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            toast("Insira um email válido.")
+            return
+        }
+
+        if (!validarCPF(cpf)) {
+            toast("Insira um CPF real.")
+            return
+        }
+
+        if (!maiorDeIdade(nascimento)) {
+            toast("Cadastro permitido somente para maiores de 18 anos.")
+            return
+        }
+
+        if (!validarSenha(senha, senha2)) return
+
+        mandarDados()
     }
 
     private fun validarCPF(cpf: String): Boolean {
         if (cpf.length != 11) return false
         if (cpf.all { it == cpf[0] }) return false
-        try {
-            val numbers = cpf.map { it.toString().toInt() }
 
-            val dv1 = calculateVerifierDigit(numbers.subList(0, 9), 10)
-            if (numbers[9] != dv1) return false
+        return try {
+            val numeros = cpf.map { it.toString().toInt() }
 
-            val dv2 = calculateVerifierDigit(numbers.subList(0, 10), 11)
-            if (numbers[10] != dv2) return false
+            val dv1 = calcularDV(numeros.subList(0, 9), 10)
+            if (numeros[9] != dv1) return false
 
-            return true
-        } catch (e: Exception) {
-            return false
+            val dv2 = calcularDV(numeros.subList(0, 10), 11)
+            if (numeros[10] != dv2) return false
+
+            true
+        } catch (_: Exception) {
+            false
         }
     }
 
-    fun calculateVerifierDigit(digits: List<Int>, weight: Int): Int {
-        var sum = 0
-        for (i in digits.indices) {
-            sum += digits[i] * (weight - i)
-        }
-        val remainder = sum % 11
-        return if (remainder < 2) 0 else 11 - remainder
+    private fun calcularDV(digitos: List<Int>, pesoInicial: Int): Int {
+        val soma = digitos.indices.sumOf { digitos[it] * (pesoInicial - it) }
+        val resto = soma % 11
+        return if (resto < 2) 0 else 11 - resto
     }
 
-    private fun validarSenha(senha: String, senhaRepetida: String): Boolean{
+    private fun maiorDeIdade(data: String): Boolean {
+        val anoNasc = data.takeLast(4).toIntOrNull() ?: return false
+        val anoAtual = Calendar.getInstance().get(Calendar.YEAR)
+        return anoNasc <= anoAtual - 18
+    }
+
+    private fun validarSenha(senha: String, repetir: String): Boolean {
         if (senha.length < 8) {
-            Toast.makeText(requireContext(), "A senha precisa ter no mínimo 8 caracteres", Toast.LENGTH_SHORT).show()
+            toast("A senha precisa ter no mínimo 8 caracteres.")
             return false
         }
-        for (char in senha){
-            if (char.toString() ==  " "){
-                Toast.makeText(requireContext(), "A senha não pode conter espaços", Toast.LENGTH_SHORT).show()
-                return false
-            }
-        }
-        val regex = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).+\$")
-        val apenasNormais = senha.matches(Regex("^[A-Za-z0-9@#\$%^&+=!]*\$"))
-        if (!apenasNormais || !regex.containsMatchIn(senha)) {
-            Toast.makeText(requireContext(), "A senha deve conter ao menos uma letra maiúscula, um número e um caractere especial", Toast.LENGTH_SHORT).show()
+
+        if (senha.contains(" ")) {
+            toast("A senha não pode conter espaços.")
             return false
         }
-        if (senha != senhaRepetida) {
-            Toast.makeText(requireContext(), "As senhas precisam ser iguais", Toast.LENGTH_SHORT).show()
-            Log.d("senha", binding.editTextTextSenha.text?.toString().orEmpty())
-            Log.d("senhaRepetida", binding.editTextTextRepitaSenha.text?.toString().orEmpty())
+
+        val regexComplexidade = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).+$")
+        val somenteValidos = Regex("^[A-Za-z0-9@#\$%^&+=!]*$")
+
+        if (!somenteValidos.matches(senha) || !regexComplexidade.containsMatchIn(senha)) {
+            toast("A senha deve conter letra maiúscula, número e caractere especial.")
             return false
         }
+
+        if (senha != repetir) {
+            toast("As senhas precisam ser iguais.")
+            return false
+        }
+
         return true
     }
-    private fun mandarDados(){
-        val username = binding.editTextTextNome.text.toString().trim()
-        val email = binding.editTextTextEmail.text.toString().trim()
-        val password = binding.editTextTextSenha.text.toString().trim()
-        val birthdate = binding.editTextTextNascimento.text.toString().trim()
-        val cpf = binding.editTextTextCPF.text.toString().trim()
 
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || birthdate.isEmpty() || cpf.isEmpty()) {
-            Toast.makeText(requireContext(), "Preencha todos os campos.", Toast.LENGTH_SHORT).show()
-            return
-        }
+    // -------------------------------------------------------------------------
+    //  ENVIO PARA PRÓXIMA TELA
+    // -------------------------------------------------------------------------
+    private fun mandarDados() = with(binding) {
 
-        val userParcial = User(
-            nomeUsuario = username,
-            email = email,
-            dataNascimento = birthdate,
-            cpf = cpf,
-            senha = password,
+        val user = User(
+            nomeUsuario = editTextTextNome.text.toString().trim(),
+            email = editTextTextEmail.text.toString().trim(),
+            dataNascimento = editTextTextNascimento.text.toString().trim(),
+            cpf = editTextTextCPF.text.toString().trim(),
+            senha = editTextTextSenha.text.toString().trim(),
             cep = "",
             logradouro = "",
             numero = "",
@@ -176,9 +182,17 @@ class TelaCadastroFragment : Fragment() {
             estado = "",
             prestador = false
         )
-        val action = TelaCadastroFragmentDirections.actionTelaCadastroFragmentToTelaCadastro2(userParcial)
+
+        val action =
+            TelaCadastroFragmentDirections.actionTelaCadastroFragmentToTelaCadastro2(user)
+
         findNavController().navigate(action)
     }
+
+    // -------------------------------------------------------------------------
+    private fun toast(msg: String) =
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

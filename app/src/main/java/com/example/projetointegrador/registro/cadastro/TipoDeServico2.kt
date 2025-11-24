@@ -1,152 +1,235 @@
 package com.example.projetointegrador.registro.cadastro
 
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.text.InputFilter
-import androidx.fragment.app.Fragment
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.TelaTipoDeServico2Binding
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
-import java.util.Locale
-
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TipoDeServico2 : Fragment() {
 
     private var _binding: TelaTipoDeServico2Binding? = null
     private val binding get() = _binding!!
+
     private val args by navArgs<TipoDeServico2Args>()
+    private lateinit var auth: FirebaseAuth
+    private lateinit var prestadoresRef: DatabaseReference
+
+    /** Horários permitidos **/
+    private val horariosInicio = listOf(
+        "06:00","06:30","07:00","07:30",
+        "08:00","08:30","09:00","09:30",
+        "10:00","10:30","11:00","11:30",
+        "12:00","12:30","13:00","13:30",
+        "14:00","14:30","15:00"
+    )
+
+    private val horariosFim = listOf(
+        "09:00","09:30",
+        "10:00","10:30","11:00","11:30",
+        "12:00","12:30","13:00","13:30",
+        "14:00","14:30","15:00","15:30",
+        "16:00","16:30","17:00","17:30",
+        "18:00"
+    )
+
+    /** Para cada dia: campos de início e fim */
+    private val camposPorDia = mutableMapOf<String, Pair<AutoCompleteTextView, AutoCompleteTextView>>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = TelaTipoDeServico2Binding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initListeners()
+        auth = FirebaseAuth.getInstance()
+        prestadoresRef = FirebaseDatabase.getInstance().reference.child("prestadores")
 
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
-        }
+        val diasSelecionados = normalizeArray(args.diasSelecionados)
+        gerarCamposParaDias(diasSelecionados)
 
-        val tipos = listOf("Tipo de serviço 1", "Fáxina", "Hidraúlica", "Elétrica")
-        binding.autoTipoServico.setAdapter(
-            ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, tipos)
-        )
-        binding.autoTipoServico.setOnClickListener { binding.autoTipoServico.showDropDown() }
-
-        // Valor p/ hora: apenas 3 dígitos numéricos (XML já limita; reforço via filtro)
-        binding.editValorHora.filters = arrayOf(InputFilter.LengthFilter(3))
-
-        setupTimeInput(binding.inputHorario1)
-        setupTimeInput(binding.inputHorario2)
-        setupTimeInput(binding.inputHorario3)
+        configurarIndicadores()
+        configurarBotoes()
     }
 
-    private fun setupTimeInput(editText: android.widget.EditText) {
-        val openPicker = View.OnClickListener {
-            val picker = MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setHour(8)
-                .setMinute(0)
-                .setTitleText("Selecione um horário")
-                .build()
-
-            picker.addOnPositiveButtonClickListener {
-                val h = picker.hour
-                val m = picker.minute
-                editText.setText(String.format(Locale.getDefault(), "%02d:%02d", h, m))
-            }
-            picker.show(parentFragmentManager, editText.id.toString())
+    /** Normaliza dias vindos do SafeArgs */
+    private fun normalizeArray(value: Any?): List<String> =
+        when (value) {
+            null -> emptyList()
+            is Array<*> -> value.filterIsInstance<String>()
+            is List<*> -> value.filterIsInstance<String>()
+            is String -> listOf(value)
+            else -> listOf(value.toString())
         }
-        editText.setOnClickListener(openPicker)
-        editText.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) openPicker.onClick(editText) }
+
+    /** Cria dinamicamente os campos para cada dia selecionado */
+    private fun gerarCamposParaDias(dias: List<String>) {
+        val ctx = requireContext()
+        val container = binding.containerDias
+
+        val adapterInicio = ArrayAdapter(ctx, android.R.layout.simple_list_item_1, horariosInicio)
+        val adapterFim = ArrayAdapter(ctx, android.R.layout.simple_list_item_1, horariosFim)
+
+        camposPorDia.clear()
+
+        dias.forEach { diaLabel ->
+
+            container.addView(
+                TextView(ctx).apply {
+                    text = "Horários de $diaLabel"
+                    setTextColor(Color.WHITE)
+                    textSize = 17f
+                    setPadding(10, 25, 10, 10)
+                    typeface = Typeface.DEFAULT_BOLD
+                }
+            )
+
+            val inicio = criarCampoHorario("Início do turno", adapterInicio)
+            val fim = criarCampoHorario("Fim do turno", adapterFim)
+
+            container.addView(inicio)
+            container.addView(fim)
+
+            camposPorDia[diaLabel] = inicio to fim
+        }
     }
 
-    private fun checkInputs(): Int {
-        if (binding.autoTipoServico.text.toString().isEmpty()){
-            binding.autoTipoServico.error = "Insira um tipo de serviço"
-            return 1
-        } else{
-            binding.autoTipoServico.error = null
-        }
-        if (binding.editValorHora.text.toString().isEmpty()){
-            binding.editValorHora.error = "Insira um valor para o serviço prestado"
-            return 1
-        } else{
-            binding.editValorHora.error = null
-        }
-        if (binding.inputHorario1.text.toString().isEmpty()){
-            binding.inputHorario1.error = "Insira um horário"
-            return 1
-        } else{
-            binding.inputHorario1.error = null
-        }
-        if (binding.inputHorario2.text.toString().isEmpty()){
-            binding.inputHorario2.error = "Insira um horário"
-            return 1
-        } else{
-            binding.inputHorario2.error = null
-        }
-        if (binding.inputHorario3.text.toString().isEmpty()){
-            binding.inputHorario3.error = "Insira um horário"
-            return 1
-        } else{
-            binding.inputHorario3.error = null
+    /** Cria AutoCompleteTextView estilizado */
+    private fun criarCampoHorario(
+        hint: String,
+        adapter: ArrayAdapter<String>
+    ): AutoCompleteTextView = AutoCompleteTextView(requireContext()).apply {
+
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT, 120
+        ).apply { topMargin = 10 }
+
+        background = GradientDrawable().apply {
+            setStroke(3, Color.WHITE)
+            cornerRadius = 18f
+            setColor(Color.TRANSPARENT)
         }
 
-        val horarios = setOf(
-            binding.inputHorario1.text.toString().trim(),
-            binding.inputHorario2.text.toString().trim(),
-            binding.inputHorario3.text.toString().trim())
-        if (horarios.size < 3){
-            binding.inputHorario1.error = "Insira um horário distinto"
-            binding.inputHorario2.error = "Insira um horário distinto"
-            binding.inputHorario3.error = "Insira um horário distinto"
-            return 2
-        } else{
-            binding.inputHorario1.error = null
-            binding.inputHorario2.error = null
-            binding.inputHorario3.error = null
-        }
-        return 0
+        this.hint = hint
+        setHintTextColor(Color.WHITE)
+        setTextColor(Color.WHITE)
+        textSize = 15f
+        setPadding(35, 20, 20, 20)
+
+        /** Impede digitação */
+        inputType = InputType.TYPE_NULL
+        keyListener = null
+        isFocusable = true
+        isFocusableInTouchMode = true
+
+        /** Adapter + abrir dropdown automaticamente */
+        setAdapter(adapter)
+        threshold = 0
+        setOnClickListener { showDropDown() }
+        setOnFocusChangeListener { _, hasFocus -> if (hasFocus) showDropDown() }
     }
 
-    private fun initListeners(){
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
-        }
+    private fun configurarIndicadores() {
+        binding.ball1.setImageResource(R.drawable.ic_ball_not_pressed)
+        binding.ball2.setImageResource(R.drawable.ic_ball_pressed)
+        binding.ball3.setImageResource(R.drawable.ic_ball_not_pressed)
+    }
+
+    private fun configurarBotoes() {
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+
         binding.btnProximo.setOnClickListener {
-            if (checkInputs() == 0) {
-                val tipos = args.tiposervico!!
-                tipos.tipoServico2 = binding.autoTipoServico.text.toString()
-                tipos.valorServico2 = binding.editValorHora.text.toString().toDouble()
-                tipos.horarioServico2_1 = binding.inputHorario1.text.toString()
-                tipos.horarioServico2_2 = binding.inputHorario2.text.toString()
-                tipos.horarioServico2_3 = binding.inputHorario3.text.toString()
-                val action = TipoDeServico2Directions.actionTipoDeServico2ToTipoDeServico3(tipos)
-                findNavController().navigate(action)
-            } else if (checkInputs() == 1){
-                Toast.makeText(requireContext(), "Existem campos vazios", Toast.LENGTH_SHORT).show()
-            } else if (checkInputs() == 2) {
-                Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Erro desconhecido", Toast.LENGTH_SHORT).show()
-            }
+            if (!validarCampos()) return@setOnClickListener
+
+            salvarDisponibilidade()
+            findNavController().navigate(R.id.tipoDeServico3Fragment)
         }
     }
+
+    private fun validarCampos(): Boolean {
+        camposPorDia.forEach { (dia, campos) ->
+            val inicio = campos.first.text.toString()
+            val fim = campos.second.text.toString()
+
+            if (inicio.isEmpty() || fim.isEmpty()) {
+                Toast.makeText(requireContext(), "Defina início e fim para $dia.", Toast.LENGTH_SHORT).show()
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun salvarDisponibilidade() {
+        val uid = auth.currentUser?.uid ?: return
+
+        val (dataCadastro, ultimoAcesso) = datasBrasil()
+
+        val disponibilidade = camposPorDia.mapValues { (_, campos) ->
+            mapOf(
+                "inicio" to campos.first.text.toString(),
+                "fim" to campos.second.text.toString()
+            )
+        }.mapKeys { (k, _) -> mapDiaParaKey(k) }
+
+        prestadoresRef.child(uid).updateChildren(
+            mapOf(
+                "disponibilidade" to disponibilidade,
+                "nivel_cadastro" to "bronze",
+                "data_cadastro" to dataCadastro,
+                "ultimo_acesso" to ultimoAcesso
+            )
+        ).addOnFailureListener {
+            Toast.makeText(requireContext(), "Erro ao salvar: ${it.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /** Mapeia: Segunda → segunda */
+    private fun mapDiaParaKey(nome: String): String =
+        when (nome.lowercase(Locale.getDefault())) {
+            "segunda", "segunda-feira" -> "segunda"
+            "terça", "terça-feira", "terca", "terca-feira" -> "terca"
+            "quarta", "quarta-feira" -> "quarta"
+            "quinta", "quinta-feira" -> "quinta"
+            "sexta", "sexta-feira" -> "sexta"
+            "sábado", "sabado" -> "sabado"
+            "domingo" -> "domingo"
+            else -> nome.lowercase(Locale.getDefault())
+        }
+
+    /** Retorna datas corretas no fuso de Brasília */
+    private fun datasBrasil(): Pair<String, String> {
+        val tz = TimeZone.getTimeZone("America/Sao_Paulo")
+        val agora = Date()
+
+        val data = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply { timeZone = tz }
+        val dataHora = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).apply { timeZone = tz }
+
+        return data.format(agora) to dataHora.format(agora)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

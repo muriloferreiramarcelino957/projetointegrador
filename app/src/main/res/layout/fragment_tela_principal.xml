@@ -10,15 +10,14 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:elevation="6dp">
+        android:layout_height="wrap_content">
 
         <include
             android:id="@+id/topBar"
             layout="@layout/item_top_navigation_bar" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- CONTEÚDO QUE ROLA -->
+    <!-- CONTEÚDO -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/contentScroll"
         android:layout_width="match_parent"
@@ -32,23 +31,18 @@
             android:orientation="vertical">
 
             <!-- Barra de busca -->
-            <LinearLayout
+            <EditText
+                android:id="@+id/searchInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="20dp">
-
-                <EditText
-                    android:id="@+id/searchInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/button_purple_background"
-                    android:drawableStart="@drawable/ic_search"
-                    android:drawablePadding="8dp"
-                    android:fontFamily="@font/anekkannadaregular"
-                    android:hint="Busque aqui o seu prestador"
-                    android:paddingStart="16dp"
-                    android:textColorHint="#FFFFFF" />
-            </LinearLayout>
+                android:layout_height="48dp"
+                android:layout_margin="20dp"
+                android:background="@drawable/button_purple_background"
+                android:drawableStart="@drawable/ic_search"
+                android:drawablePadding="8dp"
+                android:fontFamily="@font/anekkannadaregular"
+                android:hint="Busque aqui o seu prestador"
+                android:paddingStart="16dp"
+                android:textColorHint="#FFFFFF" />
 
             <!-- Em alta -->
             <TextView
@@ -72,59 +66,59 @@
                     android:layout_height="48dp"
                     android:layout_margin="4dp"
                     android:layout_columnWeight="1"
-                    android:fontFamily="@font/anekkannadaregular"
                     android:background="@drawable/button_purple_background"
-                    android:padding="10dp"
+                    android:backgroundTint="#530081"
                     android:drawableStart="@drawable/ic_housekeeper"
+                    android:fontFamily="@font/anekkannadaregular"
+                    android:padding="10dp"
                     android:text="Fáxina"
                     android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
-                    android:backgroundTint="#530081" />
+                    android:textColor="#FFFFFF" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_margin="4dp"
                     android:layout_columnWeight="1"
-                    android:textAllCaps="false"
-                    android:text="Serviço elétrico"
                     android:background="@drawable/button_purple_background"
-                    android:padding="10dp"
-                    android:fontFamily="@font/anekkannadaregular"
-                    android:textColor="#FFFFFF"
                     android:backgroundTint="#530081"
-                    android:drawableStart="@drawable/ic_conflict" />
+                    android:drawableStart="@drawable/ic_conflict"
+                    android:fontFamily="@font/anekkannadaregular"
+                    android:padding="10dp"
+                    android:text="Serviço elétrico"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_margin="4dp"
                     android:layout_columnWeight="1"
-                    android:textAllCaps="false"
                     android:background="@drawable/button_purple_background"
+                    android:backgroundTint="#530081"
+                    android:drawableStart="@drawable/ic_plumbing"
+                    android:fontFamily="@font/anekkannadaregular"
                     android:padding="10dp"
                     android:text="Hidráulica"
-                    android:fontFamily="@font/anekkannadaregular"
-                    android:textColor="#FFFFFF"
-                    android:backgroundTint="#530081"
-                    android:drawableStart="@drawable/ic_plumbing" />
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_margin="4dp"
                     android:layout_columnWeight="1"
+                    android:background="@drawable/button_purple_background"
+                    android:backgroundTint="#530081"
+                    android:drawableStart="@drawable/ic_jardinagem"
+                    android:fontFamily="@font/anekkannadaregular"
+                    android:padding="10dp"
                     android:text="Jardinagem"
                     android:textAllCaps="false"
-                    android:background="@drawable/button_purple_background"
-                    android:padding="10dp"
-                    android:fontFamily="@font/anekkannadaregular"
-                    android:textColor="#FFFFFF"
-                    android:backgroundTint="#530081"
-                    android:drawableStart="@drawable/ic_jardinagem" />
+                    android:textColor="#FFFFFF" />
             </GridLayout>
 
-            <!-- Prestadores mais bem avaliados -->
+            <!-- Prestadores top -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -140,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"/>
 
-            <!-- Título Anúncios -->
+            <!-- Anúncios -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -151,7 +145,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- RecyclerView horizontal para anúncios -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerAnuncios"
                 android:layout_width="match_parent"

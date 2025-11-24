@@ -1,245 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fundo_gradiente">
 
-    <!-- Voltar -->
-    <ImageButton
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="45dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_arrow_back"
-        app:tint="@android:color/white"
-        android:contentDescription="Voltar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Título -->
     <ImageView
         android:id="@+id/logo"
         android:layout_width="200dp"
         android:layout_height="100dp"
+        android:layout_marginTop="50dp"
         android:src="@drawable/logo"
-        app:layout_constraintTop_toBottomOf="@id/backButton"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Instrução 1 -->
     <TextView
-        android:id="@+id/txtInstrucao1"
+        android:id="@+id/txtInstrucao"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/anekkannadaregular"
-        android:text="Escolha um tipo de serviço e o valor por hora por cada um."
+        android:text="Selecione os dias da semana que você deseja trabalhar."
         android:textColor="@color/white"
-        android:textSize="13sp"
+        android:textSize="15sp"
         android:gravity="center"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="12dp"
+        android:fontFamily="@font/anekkannadaregular"
+        android:layout_marginTop="15dp"
+        android:layout_marginHorizontal="24dp"
         app:layout_constraintTop_toBottomOf="@id/logo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Linha responsiva: Tipo de serviço (dropdown) + Valor p/ hora -->
-    <AutoCompleteTextView
-        android:id="@+id/autoTipoServico"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/rectangule2"
-        android:drawableLeft="@drawable/ic_clean"
-        android:drawableRight="@drawable/ic_arrow_drop_down"
-        android:drawablePadding="8dp"
-        android:padding="5dp"
-        android:fontFamily="@font/anekkannadaregular"
-        android:hint="Tipo de serviço 1"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:textSize="12sp"
-        android:inputType="none"
-        android:focusable="false"
-        android:cursorVisible="false"
-        app:layout_constraintTop_toBottomOf="@id/txtInstrucao1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/editValorHora"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintHorizontal_weight="1" />
-
-    <!-- Instrução 2 -->
-    <EditText
-        android:id="@+id/editValorHora"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/rectangule2"
-        android:digits="0123456789"
-        android:drawableLeft="@drawable/ic_money"
-        android:drawablePadding="8dp"
-        android:fontFamily="@font/anekkannadaregular"
-        android:hint="Valor p/ hora"
-        android:inputType="number"
-        android:maxLength="3"
-        android:padding="5dp"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@id/autoTipoServico"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@id/autoTipoServico"
-        app:layout_constraintTop_toTopOf="@id/autoTipoServico" />
-
-    <TextView
-        android:id="@+id/txtInstrucao2"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/colunaDias"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/anekkannadaregular"
-        android:text="Escolha três horários para atendimento."
-        android:textColor="@color/white"
-        android:textSize="13sp"
-        android:gravity="center"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:orientation="vertical"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/autoTipoServico"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/txtInstrucao"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <!-- Inputs de horário com borda branca (mesmo estilo: rectangule2) -->
-    <EditText
-        android:id="@+id/inputHorario1"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:background="@drawable/rectangule2"
-        android:drawableLeft="@drawable/ic_clock"
-        android:drawablePadding="8dp"
-        android:fontFamily="@font/anekkannadaregular"
-        android:hint="Horário 1"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:textSize="12sp"
-        android:paddingLeft="14dp"
-        android:paddingRight="14dp"
-        android:inputType="none"
-        android:focusable="false"
-        android:cursorVisible="false"
-        android:clickable="true"/>
+        <CheckBox android:id="@+id/cbSeg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Segunda-feira"
+            android:textColor="@color/white"
+            android:fontFamily="@font/anekkannadaregular"/>
 
-    <EditText
-        android:id="@+id/inputHorario2"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:background="@drawable/rectangule2"
-        android:drawableLeft="@drawable/ic_clock"
-        android:drawablePadding="8dp"
-        android:fontFamily="@font/anekkannadaregular"
-        android:hint="Horário 2"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:textSize="12sp"
-        android:paddingLeft="14dp"
-        android:paddingRight="14dp"
-        android:inputType="none"
-        android:focusable="false"
-        android:cursorVisible="false"
-        android:clickable="true"/>
+        <CheckBox android:id="@+id/cbTer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Terça-feira"
+            android:textColor="@color/white"
+            android:fontFamily="@font/anekkannadaregular"/>
 
-    <EditText
-        android:id="@+id/inputHorario3"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:background="@drawable/rectangule2"
-        android:drawableLeft="@drawable/ic_clock"
-        android:drawablePadding="8dp"
-        android:fontFamily="@font/anekkannadaregular"
-        android:hint="Horário 3"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:textSize="12sp"
-        android:paddingLeft="14dp"
-        android:paddingRight="14dp"
-        android:inputType="none"
-        android:focusable="false"
-        android:cursorVisible="false"
-        android:clickable="true"/>
+        <CheckBox android:id="@+id/cbQua"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quarta-feira"
+            android:textColor="@color/white"
+            android:fontFamily="@font/anekkannadaregular"/>
 
-    <!-- Flow organiza os 3 inputs (quebra se faltar espaço) -->
-    <androidx.constraintlayout.helper.widget.Flow
-        android:id="@+id/flowHorarios"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="inputHorario1,inputHorario2,inputHorario3"
-        app:flow_wrapMode="chain"
-        app:flow_horizontalStyle="packed"
-        app:flow_horizontalGap="8dp"
-        app:flow_verticalGap="12dp"
-        app:layout_constraintTop_toBottomOf="@id/txtInstrucao2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="16dp" />
+        <CheckBox android:id="@+id/cbQui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quinta-feira"
+            android:textColor="@color/white"
+            android:fontFamily="@font/anekkannadaregular"/>
 
-    <!-- Botão principal -->
+        <CheckBox android:id="@+id/cbSex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sexta-feira"
+            android:textColor="@color/white"
+            android:fontFamily="@font/anekkannadaregular"/>
+
+        <CheckBox android:id="@+id/cbSab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sábado"
+            android:textColor="@color/white"
+            android:fontFamily="@font/anekkannadaregular"/>
+
+        <CheckBox android:id="@+id/cbDom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Domingo"
+            android:textColor="@color/white"
+            android:fontFamily="@font/anekkannadaregular"/>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/btnProximo"
-        android:layout_width="230dp"
-        android:layout_height="50dp"
-        android:backgroundTint="@color/white"
-        android:fontFamily="@font/anekkannadaregular"
-        android:text="Próximo"
+        android:layout_width="220dp"
+        android:layout_height="48dp"
+        android:text="Próxima tela"
         android:textColor="@color/black"
-        android:textSize="19sp"
-        app:cornerRadius="10dp"
-        android:layout_marginTop="28dp"
-        app:layout_constraintTop_toBottomOf="@id/flowHorarios"
+        android:textSize="17sp"
+        android:fontFamily="@font/anekkannadaregular"
+        android:backgroundTint="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/colunaDias"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Bolinhas próximas como no seu código -->
-    <ImageView
-        android:id="@+id/ball1"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:src="@drawable/ic_ball_pressed"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/ball2"
-        app:layout_constraintHorizontal_bias="0.978"
+    <LinearLayout
+        android:id="@+id/bolinhas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/btnProximo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnProximo"
-        app:layout_constraintVertical_bias="0.95" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <ImageView
-        android:id="@+id/ball2"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:src="@drawable/ic_ball_not_pressed"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnProximo"
-        app:layout_constraintVertical_bias="0.95" />
+        <ImageView
+            android:id="@+id/ball1"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:src="@drawable/ic_ball_pressed"/>
 
-    <ImageView
-        android:id="@+id/ball3"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:src="@drawable/ic_ball_not_pressed"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.022"
-        app:layout_constraintStart_toEndOf="@id/ball2"
-        app:layout_constraintTop_toTopOf="@id/btnProximo"
-        app:layout_constraintVertical_bias="0.95"/>
+        <ImageView
+            android:id="@+id/ball2"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_ball_not_pressed"/>
+
+        <ImageView
+            android:id="@+id/ball3"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_ball_not_pressed"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

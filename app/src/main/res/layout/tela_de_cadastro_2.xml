@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/fundo_gradiente"
-    tools:context=".registro.cadastro.TelaCadastroFragment"
     android:paddingTop="30dp">
 
+    <!-- Botão voltar -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
@@ -16,175 +16,168 @@
         android:layout_marginTop="45dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_arrow_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="Voltar"
         app:tint="@android:color/white"
-        android:contentDescription="Voltar" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Título -->
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="68dp"
-        android:fontFamily="@font/poppinsmedium"
         android:text="Faça seu cadastro"
+        android:fontFamily="@font/poppinsmedium"
         android:textColor="@color/white"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Logo -->
     <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="110dp"
         android:layout_marginTop="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.507"
+        android:src="@drawable/logo"
+        app:layout_constraintTop_toBottomOf="@id/textView2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:srcCompat="@drawable/logo" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Campo CEP -->
     <EditText
         android:id="@+id/editTextTextCEP"
         android:layout_width="260dp"
         android:layout_height="40dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/rectangule2"
         android:drawableLeft="@drawable/ic_cep"
         android:drawablePadding="8dp"
-        android:ems="13"
         android:hint="CEP"
         android:maxLength="8"
-        android:fontFamily="@font/anekkannadaregular"
         android:inputType="number"
+        android:fontFamily="@font/anekkannadaregular"
         android:padding="5dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="12sp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@id/logo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-
+    <!-- Logradouro -->
     <EditText
         android:id="@+id/editTextTextDescricaoLogradouro"
         android:layout_width="260dp"
         android:layout_height="40dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/rectangule2"
         android:drawableLeft="@drawable/ic_pin"
         android:drawablePadding="8dp"
-        android:ems="13"
         android:hint="Logradouro"
         android:fontFamily="@font/anekkannadaregular"
         android:padding="5dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="12sp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@id/editTextTextCEP"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextCEP" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Número -->
     <EditText
         android:id="@+id/editTextTextNumero"
         android:layout_width="260dp"
         android:layout_height="40dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/rectangule2"
         android:drawableLeft="@drawable/ic_number"
         android:drawablePadding="8dp"
-        android:ems="13"
         android:hint="Número"
-        android:inputType="date"
+        android:inputType="number"
         android:fontFamily="@font/anekkannadaregular"
         android:padding="5dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="12sp"
         android:maxLength="10"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@id/editTextTextDescricaoLogradouro"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextDescricaoLogradouro" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Bairro -->
     <EditText
         android:id="@+id/editTextTextBairro"
         android:layout_width="260dp"
         android:layout_height="40dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/rectangule2"
         android:drawableLeft="@drawable/ic_bairro"
         android:drawablePadding="8dp"
-        android:ems="13"
-        android:fontFamily="@font/anekkannadaregular"
         android:hint="Bairro"
+        android:fontFamily="@font/anekkannadaregular"
         android:padding="5dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="12sp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@id/editTextTextNumero"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextNumero" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Cidade -->
     <EditText
         android:id="@+id/editTextCidade"
         android:layout_width="260dp"
         android:layout_height="40dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/rectangule2"
         android:drawableLeft="@drawable/ic_cidade"
         android:drawablePadding="8dp"
-        android:ems="13"
         android:hint="Cidade"
         android:fontFamily="@font/anekkannadaregular"
         android:padding="5dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="12sp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@id/editTextTextBairro"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextBairro" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-
+    <!-- Estado -->
     <EditText
         android:id="@+id/editTextUF"
         android:layout_width="260dp"
         android:layout_height="40dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/rectangule2"
         android:drawableLeft="@drawable/ic_estado"
         android:drawablePadding="8dp"
-        android:ems="13"
         android:hint="Estado"
         android:fontFamily="@font/anekkannadaregular"
         android:padding="5dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="12sp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@id/editTextCidade"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextCidade" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Botão Cadastrar -->
     <Button
         android:id="@+id/btnCadastrar"
         android:layout_width="180dp"
         android:layout_height="55dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="@color/white"
-        android:fontFamily="@font/anekkannadaregular"
         android:text="Cadastrar"
         android:textColor="@color/purple_300"
         android:textSize="21sp"
+        android:fontFamily="@font/anekkannadaregular"
         app:cornerRadius="8dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintTop_toBottomOf="@id/editTextUF"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextUF"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

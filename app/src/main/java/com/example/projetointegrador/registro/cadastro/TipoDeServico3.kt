@@ -1,201 +1,167 @@
 package com.example.projetointegrador.registro.cadastro
 
-import android.icu.text.DateFormat
-import android.icu.util.Calendar
 import android.os.Bundle
-import android.text.InputFilter
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.TelaTipoDeServico3Binding
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.projetointegrador.app.ui.Prestador
-import java.util.Locale
 
-
-class TipoDeServico3 : Fragment() {
+class TipoDeServico3Fragment : Fragment() {
 
     private var _binding: TelaTipoDeServico3Binding? = null
     private val binding get() = _binding!!
-    private lateinit var auth: FirebaseAuth
-    private val args by navArgs<TipoDeServico3Args>()
-    private lateinit var database: DatabaseReference
+
+    private val uid by lazy { FirebaseAuth.getInstance().uid!! }
+    private val prestadorRef by lazy {
+        FirebaseDatabase.getInstance().reference.child("prestadores").child(uid)
+    }
+
+    /** Modelos */
+    data class ServicoTemp(val id: String, val valor: String)
+    data class TipoServico(val id: String, val nome: String)
+
+    /** Lista temporária (compartilhada entre instâncias) */
+    companion object {
+        val listaServicosTemp = mutableListOf<ServicoTemp>()
+    }
+
+    /** Lista carregada do Firebase */
+    private val servicosFirebase = mutableListOf<TipoServico>()
+
+    /** Contador */
+    private val servicosJaPreenchidos get() = listaServicosTemp.size
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         _binding = TelaTipoDeServico3Binding.inflate(inflater, container, false)
-        auth = FirebaseAuth.getInstance()
-        database = FirebaseDatabase.getInstance().reference
         return binding.root
     }
 
+    override fun onViewCreated(v: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(v, savedInstanceState)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initListeners()
+        configurarBotoes()
+        configurarAutoComplete()
+        carregarTiposServico()
+    }
 
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
+    // -------------------------------------------------------------------------
+    //  CONFIGURAÇÕES DE UI
+    // -------------------------------------------------------------------------
+
+    private fun configurarBotoes() {
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+
+        binding.btnAdicionar.setOnClickListener {
+            if (!salvarTemporariamente()) return@setOnClickListener
+            findNavController().navigate(R.id.tipoDeServico3Fragment)
         }
 
-        val tipos = listOf("Tipo de serviço 1", "Fáxina", "Hidraúlica", "Elétrica")
-        binding.autoTipoServico.setAdapter(
-            ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, tipos)
+        binding.btnOk.setOnClickListener {
+            if (!salvarTemporariamente()) return@setOnClickListener
+            enviarTodosParaFirebase()
+        }
+
+        atualizarVisibilidadeAdicionar()
+    }
+
+    private fun configurarAutoComplete() {
+        binding.autoServico.keyListener = null
+        binding.autoServico.setOnClickListener { binding.autoServico.showDropDown() }
+    }
+
+    private fun atualizarVisibilidadeAdicionar() {
+        binding.btnAdicionar.visibility =
+            if (servicosJaPreenchidos >= 2) View.GONE else View.VISIBLE
+    }
+
+    // -------------------------------------------------------------------------
+    //  FIREBASE
+    // -------------------------------------------------------------------------
+
+    private fun carregarTiposServico() {
+        FirebaseDatabase.getInstance().reference.child("tipos_de_servico")
+            .get()
+            .addOnSuccessListener { snap ->
+                servicosFirebase.clear()
+
+                for (tipo in snap.children) {
+                    val id = tipo.key ?: continue
+                    val nome = tipo.child("dscr_servico").getValue(String::class.java) ?: continue
+                    servicosFirebase.add(TipoServico(id, nome))
+                }
+
+                atualizarAdapter()
+            }
+    }
+
+    private fun atualizarAdapter() {
+        val nomesDisponiveis = servicosFirebase
+            .filterNot { tipo -> listaServicosTemp.any { it.id == tipo.id } }
+            .map { it.nome }
+
+        binding.autoServico.setAdapter(
+            ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, nomesDisponiveis)
         )
-        binding.autoTipoServico.setOnClickListener { binding.autoTipoServico.showDropDown() }
-
-        // Valor p/ hora: apenas 3 dígitos numéricos (XML já limita; reforço via filtro)
-        binding.editValorHora.filters = arrayOf(InputFilter.LengthFilter(3))
-
-        setupTimeInput(binding.inputHorario1)
-        setupTimeInput(binding.inputHorario2)
-        setupTimeInput(binding.inputHorario3)
     }
 
-    private fun setupTimeInput(editText: android.widget.EditText) {
-        val openPicker = View.OnClickListener {
-            val picker = MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setHour(8)
-                .setMinute(0)
-                .setTitleText("Selecione um horário")
-                .build()
+    // -------------------------------------------------------------------------
+    //  VALIDAÇÃO + SALVAMENTO LOCAL
+    // -------------------------------------------------------------------------
 
-            picker.addOnPositiveButtonClickListener {
-                val h = picker.hour
-                val m = picker.minute
-                editText.setText(String.format(Locale.getDefault(), "%02d:%02d", h, m))
-            }
-            picker.show(parentFragmentManager, editText.id.toString())
+    private fun salvarTemporariamente(): Boolean {
+        val nome = binding.autoServico.text.toString().trim()
+        val valor = binding.editValor.text.toString().trim()
+
+        if (nome.isEmpty()) {
+            toast("Selecione um serviço")
+            return false
         }
-        editText.setOnClickListener(openPicker)
-        editText.setOnFocusChangeListener { _, hasFocus -> if (hasFocus) openPicker.onClick(editText) }
+        if (valor.isEmpty()) {
+            toast("Digite o valor")
+            return false
+        }
+
+        val tipo = servicosFirebase.firstOrNull { it.nome == nome }
+        if (tipo == null) {
+            toast("Serviço inválido")
+            return false
+        }
+
+        listaServicosTemp.add(ServicoTemp(tipo.id, valor))
+        return true
     }
 
-    private fun checkInputs(): Int {
-        if (binding.autoTipoServico.text.toString().isEmpty()) {
-            binding.autoTipoServico.error = "Insira um tipo de serviço"
-            return 1
-        } else {
-            binding.autoTipoServico.error = null
-        }
-        if (binding.editValorHora.text.toString().isEmpty()) {
-            binding.editValorHora.error = "Insira um valor para o serviço prestado"
-            return 1
-        } else {
-            binding.editValorHora.error = null
-        }
-        if (binding.inputHorario1.text.toString().isEmpty()) {
-            binding.inputHorario1.error = "Insira um horário"
-            return 1
-        } else {
-            binding.inputHorario1.error = null
-        }
-        if (binding.inputHorario2.text.toString().isEmpty()) {
-            binding.inputHorario2.error = "Insira um horário"
-            return 1
-        } else {
-            binding.inputHorario2.error = null
-        }
-        if (binding.inputHorario3.text.toString().isEmpty()) {
-            binding.inputHorario3.error = "Insira um horário"
-            return 1
-        } else {
-            binding.inputHorario3.error = null
-        }
+    // -------------------------------------------------------------------------
+    //  ENVIO AO FIREBASE
+    // -------------------------------------------------------------------------
 
-        val horarios = setOf(
-            binding.inputHorario1.text.toString().trim(),
-            binding.inputHorario2.text.toString().trim(),
-            binding.inputHorario3.text.toString().trim()
+    private fun enviarTodosParaFirebase() {
+        val servicosMap = listaServicosTemp.associate { it.id to it.valor }
+
+        val updates = mapOf(
+            "servicos_oferecidos" to servicosMap,
+            "nivel_cadastro" to "bronze"
         )
-        if (horarios.size < 3) {
-            binding.inputHorario1.error = "Insira um horário distinto"
-            binding.inputHorario2.error = "Insira um horário distinto"
-            binding.inputHorario3.error = "Insira um horário distinto"
-            return 2
-        } else {
-            binding.inputHorario1.error = null
-            binding.inputHorario2.error = null
-            binding.inputHorario3.error = null
-        }
-        return 0
+
+        prestadorRef.updateChildren(updates)
+            .addOnSuccessListener {
+                toast("Serviços salvos!")
+                listaServicosTemp.clear()
+                findNavController().navigate(R.id.navigation)
+            }
     }
 
-    private fun initListeners() {
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
-        }
-        binding.btnCadastrar.setOnClickListener {
-            binding.btnCadastrar.isEnabled = false
-            if (checkInputs() == 0) {
-                val tipos = args.tiposervico!!
-                val prestador = Prestador(
-                    dataDeInicio = DateFormat.getDateInstance(DateFormat.SHORT)
-                        .format(Calendar.getInstance().time),
-                    notaMedia = 0.0,
-                    quantidadeAvaliacoes = 0
-                )
-                tipos.tipoServico3 = binding.autoTipoServico.text.toString()
-                tipos.valorServico3 = binding.editValorHora.text.toString().toDouble()
-                tipos.horarioServico3_1 = binding.inputHorario1.text.toString()
-                tipos.horarioServico3_2 = binding.inputHorario2.text.toString()
-                tipos.horarioServico3_3 = binding.inputHorario3.text.toString()
-                inserirTipos(tipos, prestador) {
-                    findNavController().navigate(R.id.action_tipoDeServico3_to_navigation)
-                }
-            } else if (checkInputs() == 1) {
-                Toast.makeText(requireContext(), "Existem campos vazios", Toast.LENGTH_SHORT).show()
-            } else if (checkInputs() == 2) {
-                Toast.makeText(requireContext(), "Insira horários distintos", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                Toast.makeText(requireContext(), "Erro desconhecido", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun inserirTipos(
-        tiposServico: TiposServico,
-        prestador: Prestador,
-        onSuccess: () -> Unit
-    ) {
-        val uid = auth.currentUser!!.uid
-
-        database.child("prestadores").child(uid).child("info_serviços").setValue(tiposServico)
-            .addOnSuccessListener { e ->
-                database.child("prestadores").child(uid).child("info_prestador").setValue(prestador)
-                .addOnSuccessListener { e ->
-                    Toast.makeText(requireContext(),"Usuário cadastrado com sucesso!",Toast.LENGTH_SHORT).show()
-                    binding.btnCadastrar.isEnabled = true
-                    onSuccess()
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(requireContext(),"Ocorreu um erro no cadastro das informações do prestador.",Toast.LENGTH_SHORT).show()
-                    Log.e("Erro - Info Prestador", e.message.toString())
-                    binding.btnCadastrar.isEnabled = true
-                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(requireContext(),"Ocorreu um erro no cadastro dos serviços.",Toast.LENGTH_SHORT).show()
-                Log.e("Erro - Info Servicos", e.message.toString())
-                binding.btnCadastrar.isEnabled = true
-            }
-
-
-    }
+    private fun toast(msg: String) =
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
 
     override fun onDestroyView() {
         super.onDestroyView()
