@@ -27,7 +27,7 @@ class TipoDeServico3Fragment : Fragment() {
     data class ServicoTemp(val id: String, val valor: String)
     data class TipoServico(val id: String, val nome: String)
 
-    /** Lista temporária (compartilhada entre instâncias) */
+    /** Lista temporária compartilhada */
     companion object {
         val listaServicosTemp = mutableListOf<ServicoTemp>()
     }
@@ -39,7 +39,9 @@ class TipoDeServico3Fragment : Fragment() {
     private val servicosJaPreenchidos get() = listaServicosTemp.size
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = TelaTipoDeServico3Binding.inflate(inflater, container, false)
         return binding.root
@@ -141,15 +143,25 @@ class TipoDeServico3Fragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    //  ENVIO AO FIREBASE
+    //  ENVIO AO FIREBASE (ALTERADO COMO VOCE PEDIU)
     // -------------------------------------------------------------------------
 
     private fun enviarTodosParaFirebase() {
+
+        // Mapa de serviços: "1" -> "300", "2" -> "100"
         val servicosMap = listaServicosTemp.associate { it.id to it.valor }
+
+        // Quantidade de serviços começa sempre em ZERO
+        val quantidadeInicial = 0
+
+        // Descrição padrão
+        val descricaoPadrao = "Olá, sou um prestador da AllService!"
 
         val updates = mapOf(
             "servicos_oferecidos" to servicosMap,
-            "nivel_cadastro" to "bronze"
+            "nivel_cadastro" to "bronze",
+            "quantidade_de_servicos" to quantidadeInicial,
+            "info_prestador/descricao" to descricaoPadrao
         )
 
         prestadorRef.updateChildren(updates)

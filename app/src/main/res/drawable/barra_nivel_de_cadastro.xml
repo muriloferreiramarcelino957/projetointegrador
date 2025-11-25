@@ -1,40 +1,39 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="8dp"
-    android:orientation="horizontal">
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Segmento 1 (33%) -->
-    <View
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="#E5DDA0"/>
+    <!-- Segmento 1 -->
+    <item android:left="0dp" android:right="66dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#E5DDA0"/>
+        </shape>
+    </item>
 
     <!-- Linha divisória 1 -->
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:background="#000000"/>
+    <item android:left="66dp" android:right="132dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#000000"/>
+        </shape>
+    </item>
 
-    <!-- Segmento 2 (33%) -->
-    <View
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="#9CC891"/>
+    <!-- Segmento 2 -->
+    <item android:left="67dp" android:right="66dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#9CC891"/>
+        </shape>
+    </item>
 
     <!-- Linha divisória 2 -->
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:background="#000000"/>
+    <item android:left="133dp" android:right="66dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#000000"/>
+        </shape>
+    </item>
 
-    <!-- Segmento 3 (33%) -->
-    <View
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="#177300"/>
+    <!-- Segmento 3 -->
+    <item android:left="134dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#177300"/>
+        </shape>
+    </item>
 
-</LinearLayout>
+</layer-list>

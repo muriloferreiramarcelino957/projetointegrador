@@ -13,12 +13,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Top Bar roxa -->
         <include
             android:id="@+id/topBar"
             layout="@layout/item_top_navigation_bar" />
 
-        <!-- CABEÇALHO PERFIL -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/headerPerfil"
             android:layout_width="match_parent"
@@ -35,7 +33,6 @@
                 android:src="@drawable/ic_left_arrow"
                 app:tint="@color/black" />
 
-            <!-- Avatar -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgAvatar"
                 android:layout_width="72dp"
@@ -49,7 +46,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-            <!-- Nome + status + nota (lado esquerdo) -->
             <LinearLayout
                 android:id="@+id/colNomeStatus"
                 android:layout_width="0dp"
@@ -70,7 +66,6 @@
                     android:fontFamily="@font/anekkannadabold"
                     android:textSize="20sp" />
 
-                <!-- status online com bolinha verde -->
                 <TextView
                     android:id="@+id/status_online"
                     android:layout_width="wrap_content"
@@ -80,33 +75,8 @@
                     android:textColor="#2BB639"
                     android:fontFamily="@font/anekkannadalight"
                     android:textSize="12sp" />
-
-                <!-- Linha: estrela + nota -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="4dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_star"
-                        android:contentDescription="@null" />
-
-                    <TextView
-                        android:id="@+id/txtRating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="5"
-                        android:fontFamily="@font/poppinsmedium"
-                        android:textSize="14sp" />
-                </LinearLayout>
             </LinearLayout>
 
-            <!-- Tags de serviços (pill roxa à direita) -->
             <TextView
                 android:id="@+id/servicos_tags"
                 android:layout_width="wrap_content"
@@ -124,7 +94,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- INFO LOCALIZAÇÃO + MÉDIA -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/infoLocalMedia"
             android:layout_width="match_parent"
@@ -133,7 +102,6 @@
             android:paddingEnd="16dp"
             android:paddingBottom="4dp">
 
-            <!-- Bloco esquerda: desde / local -->
             <LinearLayout
                 android:id="@+id/colInfoEsquerda"
                 android:layout_width="0dp"
@@ -145,7 +113,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/colMedia">
 
-                <!-- Desde -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -169,7 +136,6 @@
                         android:textSize="13sp" />
                 </LinearLayout>
 
-                <!-- Local -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -193,7 +159,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Bloco direita: Média -->
             <LinearLayout
                 android:id="@+id/colMedia"
                 android:layout_width="54dp"
@@ -205,8 +170,8 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/rating_media"
-                    android:layout_width="match_parent"
+                    android:id="@+id/rating_media_label"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/anekkannadabold"
                     android:text="Média"
@@ -237,14 +202,12 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Linha fina para separar -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@android:color/darker_gray"
             android:layout_marginHorizontal="16dp" />
 
-        <!-- NÍVEL DE CADASTRO -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -265,7 +228,6 @@
             android:progress="90"
             android:progressDrawable="@drawable/barra_nivel_de_cadastro" />
 
-        <!-- VALIDAÇÕES -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -306,7 +268,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- DESCRIÇÃO -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -327,7 +288,6 @@
             android:fontFamily="@font/anekkannadamedium"
             android:textSize="10sp" />
 
-        <!-- FOTOS -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -384,7 +344,6 @@
                 android:src="@drawable/ic_image_prestador3" />
         </LinearLayout>
 
-        <!-- QUANTIDADE DE SERVIÇOS -->
         <TextView
             android:id="@+id/quantidade_servicos"
             android:layout_width="wrap_content"
@@ -395,7 +354,6 @@
             android:textSize="16sp"
             android:fontFamily="@font/anekkannadaregular" />
 
-        <!-- BOTÃO AGENDAR -->
         <Button
             android:id="@+id/btnAgendar"
             android:layout_width="157dp"

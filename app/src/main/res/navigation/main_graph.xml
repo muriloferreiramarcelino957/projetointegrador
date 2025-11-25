@@ -193,8 +193,6 @@
                 android:label="Perfil"
                 tools:layout="@layout/tela_de_perfil">
 
-                <argument android:name="uid" />
-
                 <action
                     android:id="@+id/action_telaPerfilFragment_to_telaAgendaFragment"
                     app:destination="@id/telaAgendaFragment" />
@@ -204,6 +202,9 @@
                 <action
                     android:id="@+id/action_telaPerfilFragment_to_telaNotificacaoFragment"
                     app:destination="@id/telaNotificacaoFragment" />
+                <argument
+                    android:name="uidPrestador"
+                    app:argType="string" />
             </fragment>
 
             <fragment

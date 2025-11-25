@@ -1,165 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginTop="8dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="3dp"
+    app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:padding="10dp">
 
-        <!-- Avatar -->
         <ImageView
             android:id="@+id/imgAvatar"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:src="@drawable/ic_image_perfil"
             android:contentDescription="@null"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tvServicos" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Nome -->
         <TextView
             android:id="@+id/tvNome"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="10dp"
             android:text="Caio Silva"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/anekkannadabold"
             android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:fontFamily="@font/anekkannadabold"
             app:layout_constraintStart_toEndOf="@id/imgAvatar"
             app:layout_constraintTop_toTopOf="@id/imgAvatar"
-            app:layout_constraintEnd_toStartOf="@id/colInfoDireita" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Último acesso -->
         <TextView
             android:id="@+id/tvUltimoAcesso"
             android:layout_width="0dp"
-            android:layout_height="21dp"
-            android:fontFamily="@font/anekkannadalight"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
             android:text="Último acesso há 18 horas"
-            android:textColor="#666666"
+            android:textColor="#444"
             android:textSize="12sp"
-            android:layout_marginTop="-5dp"
-            app:layout_constraintEnd_toEndOf="@id/tvNome"
-            app:layout_constraintStart_toStartOf="@id/tvNome"
-            app:layout_constraintTop_toBottomOf="@id/tvNome" />
+            android:fontFamily="@font/anekkannadalight"
+            app:layout_constraintStart_toEndOf="@id/imgAvatar"
+            app:layout_constraintTop_toBottomOf="@id/tvNome"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Linha: estrela + nota -->
-        <LinearLayout
-            android:id="@+id/rowRating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+        <ImageView
+            android:id="@+id/iconCalendar"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="4dp"
-            app:layout_constraintStart_toStartOf="@id/tvNome"
-            app:layout_constraintTop_toBottomOf="@id/tvUltimoAcesso"
-            app:layout_constraintBottom_toBottomOf="@id/imgAvatar">
+            android:src="@drawable/ic_calendar"
+            app:tint="@android:color/black"
+            app:layout_constraintStart_toEndOf="@id/imgAvatar"
+            app:layout_constraintTop_toBottomOf="@id/tvUltimoAcesso" />
 
-            <ImageView
-                android:layout_marginTop="10dp"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_star"
-                android:contentDescription="@null" />
-
-            <TextView
-                android:id="@+id/tvNota"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="5dp"
-                android:text="5"
-                android:fontFamily="@font/poppinsregular"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black" />
-        </LinearLayout>
-
-        <!-- Coluna da direita: desde quando + localização -->
-        <LinearLayout
-            android:id="@+id/colInfoDireita"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="12dp"
-            app:layout_constraintStart_toEndOf="@id/tvNome"
-            app:layout_constraintTop_toTopOf="@id/tvNome"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/rowRating">
-
-            <!-- Desde quando -->
-            <LinearLayout
-                android:id="@+id/rowInicio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_calendar"
-                    android:contentDescription="@null" />
-
-                <TextView
-                    android:id="@+id/tvDataInicio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:fontFamily="@font/anekkannadalight"
-                    android:text="Na AllService desde maio de 2024"
-                    android:textSize="12sp"
-                    android:textColor="#444444" />
-            </LinearLayout>
-
-            <!-- Localização -->
-            <LinearLayout
-                android:id="@+id/rowLocal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="2dp">
-
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:src="@drawable/ic_pin"
-                    android:contentDescription="@null"
-                    app:tint="@color/black" />
-
-                <TextView
-                    android:id="@+id/tvLocalizacao"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:fontFamily="@font/anekkannadalight"
-                    android:text="Jardim Camburi, Vitória - ES"
-                    android:textSize="12sp"
-                    android:textColor="#444444" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Serviços (linha de baixo, ocupando a largura inteira) -->
         <TextView
-            android:id="@+id/tvServicos"
+            android:id="@+id/tvDataInicio"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Faxina, Elétrica, Hidráulica"
-            android:fontFamily="@font/anekkannadaregular"
+            android:layout_marginStart="4dp"
+            android:text="Na AllService desde maio 2024"
+            android:textColor="#444"
             android:textSize="12sp"
-            android:textColor="#555555"
+            android:fontFamily="@font/anekkannadalight"
+            app:layout_constraintStart_toEndOf="@id/iconCalendar"
+            app:layout_constraintTop_toTopOf="@id/iconCalendar"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/iconLocal"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/ic_location"
+            app:tint="@android:color/black"
             app:layout_constraintStart_toEndOf="@id/imgAvatar"
-            app:layout_constraintTop_toBottomOf="@id/imgAvatar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/iconCalendar" />
+
+        <TextView
+            android:id="@+id/tvLocalizacao"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="Jardim Camburi, Vitória - ES"
+            android:textColor="#444"
+            android:textSize="12sp"
+            android:fontFamily="@font/anekkannadalight"
+            app:layout_constraintStart_toEndOf="@id/iconLocal"
+            app:layout_constraintTop_toTopOf="@id/iconLocal"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/iconStar"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_star"
+            app:tint="@android:color/black"
+            app:layout_constraintStart_toEndOf="@id/imgAvatar"
+            app:layout_constraintTop_toBottomOf="@id/iconLocal" />
+
+        <TextView
+            android:id="@+id/tvNota"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="5.0"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:fontFamily="@font/poppinsmedium"
+            app:layout_constraintStart_toEndOf="@id/iconStar"
+            app:layout_constraintTop_toTopOf="@id/iconStar"
+            app:layout_constraintBottom_toBottomOf="@id/iconStar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

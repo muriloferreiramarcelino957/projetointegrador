@@ -1,4 +1,4 @@
-package com.projetointegrador.app.ui
+package com.example.projetointegrador.registro.cadastro
 
 data class Prestador(
     var uid: String = "",
