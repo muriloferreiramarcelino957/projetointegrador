@@ -175,6 +175,9 @@
                 <action
                     android:id="@+id/action_telaAgendaFragment_to_telaAgenda2Fragment"
                     app:destination="@id/telaAgenda2Fragment" />
+                <argument
+                    android:name="prestadorUid"
+                    app:argType="string" />
             </fragment>
 
             <fragment

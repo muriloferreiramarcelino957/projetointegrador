@@ -56,11 +56,13 @@ class TelaPerfilFragment : Fragment() {
         }
 
         binding.btnAgendar.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_telaPerfilFragment_to_telaAgendaFragment
-            )
+            val action = TelaPerfilFragmentDirections
+                .actionTelaPerfilFragmentToTelaAgendaFragment(args.uidPrestador)
+
+            findNavController().navigate(action)
         }
     }
+
 
     // -------------------------------------------------------------------------
     // CARREGA O NOME EM /usuarios/{uid}

@@ -33,29 +33,36 @@ class PrestadorAdapter(
         with(holder.binding) {
 
             // Nome
-            tvNome.text = p.user.nomeUsuario
+            tvNome.text = p.user.nome.ifBlank { "Prestador" }
 
-            // Nota
+            // ⭐ NOTA — COMEÇA EM 0.0
             val nota = p.prestador.notaMedia ?: 0.0
-            tvNota.text = String.format(Locale.getDefault(), "%.1f", nota)
+            tvNota.text = String.format(Locale("pt", "BR"), "%.1f", nota)
 
-            // 🌟 "Na AllService desde ..." (Usando o novo campo dataCadastro)
-            // Assumindo que dataCadastro é no formato "YYYY-MM-DD"
+            // Desde
             tvDataInicio.text =
-                "Na AllService desde ${formatarDataCadastro(p.dataCadastro)}"
+                if (p.dataCadastro.isNotBlank())
+                    "Na AllService desde ${formatarDataCadastro(p.dataCadastro)}"
+                else
+                    "Data de cadastro desconhecida"
 
-            // Localização
-            tvLocalizacao.text =
-                "${p.user.bairro}, ${p.user.cidade} - ${p.user.estado}"
+            // Endereço
+            tvLocalizacao.text = listOfNotNull(
+                p.user.bairro.takeIf { it.isNotBlank() },
+                p.user.cidade.takeIf { it.isNotBlank() },
+                p.user.estado.takeIf { it.isNotBlank() }
+            ).joinToString(", ")
 
-            // 🌟 Último acesso (Usando o novo campo ultimoAcesso)
-            // Assumindo que ultimoAcesso é no formato "YYYY-MM-DD HH:MM:SS"
+            // Último acesso
             tvUltimoAcesso.text =
                 "Último acesso ${calcularTempoDesdeUltimoAcesso(p.ultimoAcesso)}"
 
+            // Clique
             root.setOnClickListener { onItemClick(p) }
         }
     }
+
+
 
     // ============================================
     // FORMATAÇÃO DE DATAS

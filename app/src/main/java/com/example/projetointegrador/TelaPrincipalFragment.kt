@@ -1,15 +1,13 @@
 package com.projetointegrador.app.ui
 
-// ... imports ...
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.projetointegrador.PrestadorDisplay // Esta classe precisa ser atualizada
+import com.example.projetointegrador.PrestadorDisplay
 import com.example.projetointegrador.databinding.FragmentTelaPrincipalBinding
 import com.example.projetointegrador.navigation.TopNavigationBarHelper
 import com.example.projetointegrador.registro.cadastro.Prestador
@@ -41,8 +39,9 @@ class FragmentTelaPrincipal : Fragment() {
 
     private fun setupRecyclerView() {
         prestadorAdapter = PrestadorAdapter { prestadorDisplay ->
+            // 👉 AGORA USA O UID DO PrestadorDisplay
             val action = FragmentTelaPrincipalDirections
-                .actionFragmentTelaPrincipalToTelaPerfilFragment(prestadorDisplay.prestador.uid)
+                .actionFragmentTelaPrincipalToTelaPerfilFragment(prestadorDisplay.uid)
             findNavController().navigate(action)
         }
 
@@ -51,39 +50,80 @@ class FragmentTelaPrincipal : Fragment() {
     }
 
     // ================================
-    // BUSCA TOP 3 PRESTADORES (ou todos se houver menos de 3)
+    // CARREGA PRESTADORES (simples)
     // ================================
 
     private fun carregarPrestadores() {
-        val ref = FirebaseDatabase.getInstance().reference.child("prestadores")
+        val db = FirebaseDatabase.getInstance().reference
 
-        // 1. Ordena pela notaMedia (crescente) e pega os 3 últimos, que são os melhores.
-        ref.orderByChild("info_prestador/notaMedia").limitToLast(3)
-            .get()
-            .addOnSuccessListener { snap ->
+        db.child("prestadores").get().addOnSuccessListener { snapPrestadores ->
 
-                if (!snap.exists()) {
-                    prestadorAdapter.atualizarLista(emptyList())
-                    return@addOnSuccessListener
+            val lista = mutableListOf<PrestadorDisplay>()
+
+            snapPrestadores.children.forEach { prestadorSnap ->
+
+                val uid = prestadorSnap.key ?: return@forEach
+
+                db.child("usuarios").child(uid).get().addOnSuccessListener { userSnap ->
+
+                    val user = userSnap.getValue(User::class.java) ?: User()
+
+                    // -----------------------------
+                    // CAMPOS COM PADRÃO DEFINITIVO
+                    // -----------------------------
+                    val dataCadastro =
+                        prestadorSnap.child("data_cadastro")
+                            .getValue(String::class.java) ?: ""
+
+                    val ultimoAcesso =
+                        prestadorSnap.child("ultimo_acesso")
+                            .getValue(String::class.java) ?: ""
+
+                    val prestadorInfo =
+                        prestadorSnap.child("info_prestador")
+                            .getValue(Prestador::class.java)
+                            ?: Prestador(notaMedia = 0.0)
+
+                    // -------- SERVIÇOS ----------
+                    val servicos = prestadorSnap.child("servicos_oferecidos")
+                        .children.associate {
+                            it.key!! to it.value.toString()
+                        }
+
+                    // Garantir que nota não seja null
+                    val prestadorCorrigido = prestadorInfo.copy(
+                        notaMedia = prestadorInfo.notaMedia ?: 0.0
+                    )
+
+                    lista.add(
+                        PrestadorDisplay(
+                            uid = uid,
+                            user = user,
+                            prestador = prestadorCorrigido,
+                            servicos = servicos,
+                            dataCadastro = dataCadastro,
+                            ultimoAcesso = ultimoAcesso
+                        )
+                    )
+
+                    // Já carregou tudo → mostrar top 3
+                    if (lista.size == snapPrestadores.childrenCount.toInt()) {
+
+                        val top3 = lista
+                            .sortedByDescending { it.prestador.notaMedia ?: 0.0 }
+                            .take(3)
+
+                        prestadorAdapter.atualizarLista(top3)
+                    }
                 }
-
-                // 2. Mapeia e inverte a ordem para que o melhor (maior nota) venha primeiro.
-                val ranking = snap.children.mapNotNull { node ->
-                    val uid = node.key ?: return@mapNotNull null
-                    val nota = node.child("info_prestador/notaMedia")
-                        .getValue(Double::class.java) ?: 0.0
-                    uid to nota
-                }.sortedByDescending { it.second } // Ordem: Nota mais alta primeiro
-
-                carregarPrestadoresCompletos(ranking.map { it.first })
             }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Erro ao carregar", Toast.LENGTH_SHORT).show()
-            }
+        }
     }
 
+
+
     // ================================
-    // CARREGA TODOS OS DADOS DO PRESTADOR
+    // CARREGA PRESTADORES EM ORDEM (optional)
     // ================================
 
     private fun carregarPrestadoresCompletos(ordemUIDs: List<String>) {
@@ -99,38 +139,32 @@ class FragmentTelaPrincipal : Fragment() {
 
             refPrestador.get().addOnSuccessListener { prestadorSnap ->
 
-                // === BUSCA DATA DE CADASTRO E ULTIMO ACESSO DO NÓ PRINCIPAL ===
-                val dataCadastro = prestadorSnap.child("data_cadastro")
+                val dataCadastro = prestadorSnap.child("data-cadastro")
                     .getValue(String::class.java)
-                val ultimoAcesso = prestadorSnap.child("ultimo_acesso")
+                val ultimoAcesso = prestadorSnap.child("ultimo-acesso")
                     .getValue(String::class.java)
 
                 refUser.get().addOnSuccessListener { userSnap ->
 
-                    // ==== PRESTADOR (Mantido inalterado) ====
                     val prestadorInfo =
-                        prestadorSnap.child("info_prestador").getValue(Prestador::class.java)
-                            ?: Prestador().also { it.uid = uid }
-                    prestadorInfo.uid = uid
+                        prestadorSnap.getValue(Prestador::class.java) ?: Prestador()
 
-                    // ==== SERVICOS OFERECIDOS ====
                     val servicosMap = prestadorSnap.child("servicos_oferecidos")
                         .children
                         .associate { servico ->
                             servico.key!! to servico.value.toString()
                         }
 
-                    // ==== USER ====
                     val user = userSnap.getValue(User::class.java) ?: User()
 
                     resultado.add(
                         PrestadorDisplay(
+                            uid = uid,                         // 👈 UID aqui também
                             user = user,
                             prestador = prestadorInfo,
                             servicos = servicosMap,
-                            // === NOVIDADE: PASSANDO DADOS EXTRAS AQUI ===
-                            dataCadastro = dataCadastro, // Você deve atualizar a classe PrestadorDisplay
-                            ultimoAcesso = ultimoAcesso // Você deve atualizar a classe PrestadorDisplay
+                            dataCadastro = dataCadastro ?: "",
+                            ultimoAcesso = ultimoAcesso ?: ""
                         )
                     )
 
@@ -138,12 +172,10 @@ class FragmentTelaPrincipal : Fragment() {
                     carregados++
 
                     if (carregados == ordemUIDs.size) {
-
-                        // Garante que a lista final seja exibida na ordem de nota decrescente
-                        val ordenado = resultado.sortedBy {
-                            ordemUIDs.indexOf(it.prestador.uid)
+                        // Ordena pela ordem de UIDs passada
+                        val ordenado = resultado.sortedBy { pd ->
+                            ordemUIDs.indexOf(pd.uid)        // 👈 USA pd.uid
                         }
-
                         prestadorAdapter.atualizarLista(ordenado)
                     }
                 }

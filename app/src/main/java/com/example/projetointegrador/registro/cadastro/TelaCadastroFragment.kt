@@ -169,7 +169,7 @@ class TelaCadastroFragment : Fragment() {
     private fun mandarDados() = with(binding) {
 
         val user = User(
-            nomeUsuario = editTextTextNome.text.toString().trim(),
+            nome = editTextTextNome.text.toString().trim(),
             email = editTextTextEmail.text.toString().trim(),
             dataNascimento = editTextTextNascimento.text.toString().trim(),
             cpf = editTextTextCPF.text.toString().trim(),
