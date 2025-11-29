@@ -74,7 +74,7 @@ class TelaPerfilFragment : Fragment() {
             .child(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snap: DataSnapshot) {
-                    val nome = snap.child("nomeUsuario").getValue(String::class.java)
+                    val nome = snap.child("nome").getValue(String::class.java)
                     binding.txtNome.text = nome ?: "Prestador"
                 }
 

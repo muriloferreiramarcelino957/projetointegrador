@@ -11,59 +11,64 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Top Bar -->
+        <!-- TOP BAR ROXA -->
         <include
             android:id="@+id/topBar"
             layout="@layout/item_top_navigation_bar" />
 
-        <!-- Perfil -->
+        <!-- ================= PERFIL (avatar, nome, status, tags) ================= -->
         <LinearLayout
+            android:id="@+id/blocoPerfil"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="16dp"
-            android:gravity="top">
+            android:gravity="center_vertical">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgAvatar"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:layout_marginEnd="12dp"
-                android:scaleType="centerCrop"
                 android:src="@drawable/ic_image_perfil"
+                android:scaleType="centerCrop"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.Button" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
 
                 <TextView
                     android:id="@+id/txtNome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Seu Hélio"
-                    android:fontFamily="@font/anekkannadabold"
-                    android:textSize="18sp" />
+                    android:text="Nome do Usuário"
+                    android:textSize="18sp"
+                    android:textColor="#000000"
+                    android:fontFamily="@font/anekkannadabold" />
 
                 <TextView
                     android:id="@+id/status_online"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="online"
-                    android:fontFamily="@font/anekkannadalight"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:textColor="@android:color/holo_green_dark"
+                    android:fontFamily="@font/anekkannadalight" />
 
                 <TextView
                     android:id="@+id/txtRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5"
-                    android:fontFamily="@font/poppinsmedium"
-                    android:textSize="14sp" />
+                    android:text="★ 5,0"
+                    android:textSize="14sp"
+                    android:textColor="#000000"
+                    android:fontFamily="@font/poppinsmedium" />
             </LinearLayout>
 
+            <!-- TAGS DOS SERVIÇOS (escondemos no código se não for prestador) -->
             <TextView
                 android:id="@+id/servicos_tags"
                 android:layout_width="wrap_content"
@@ -71,30 +76,31 @@
                 android:background="@drawable/bg_servicos_tag"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
-                android:text="Fáxina | Hidráulica | Elétrica"
-                android:fontFamily="@font/anekkannadaregular"
+                android:text="Faxina | Hidráulica | Elétrica"
                 android:textColor="@android:color/white"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:fontFamily="@font/anekkannadaregular" />
         </LinearLayout>
 
-        <!-- Info localização e cadastro -->
+        <!-- ============ INFO: DESDE / CIDADE + MÉDIA ============ -->
         <LinearLayout
+            android:id="@+id/blocoInfoLocal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:gravity="top"
-            android:layout_marginTop="-12dp">
+            android:layout_marginTop="-8dp">
 
-            <!-- Bloco com calendário e localização -->
+            <!-- Lado esquerdo: desde + local -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <!-- Linha: ícone + texto calendário -->
+                <!-- Desde -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -107,18 +113,19 @@
                         android:layout_height="16dp"
                         android:layout_marginEnd="6dp"
                         android:src="@drawable/ic_calendar"
-                        android:contentDescription="Ícone de calendário" />
+                        android:contentDescription="Ícone calendário" />
 
                     <TextView
                         android:id="@+id/txtDesde"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Na AllService desde abril de 2025"
-                        android:fontFamily="@font/anekkannadalight"
-                        android:textSize="17sp" />
+                        android:text="Na AllService desde março de 2024"
+                        android:textSize="14sp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/anekkannadalight" />
                 </LinearLayout>
 
-                <!-- Linha: ícone + texto localização -->
+                <!-- Local -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -130,58 +137,70 @@
                         android:layout_height="16dp"
                         android:layout_marginEnd="6dp"
                         android:src="@drawable/ic_location"
-                        android:contentDescription="Ícone de localização" />
+                        android:contentDescription="Ícone localização" />
 
                     <TextView
                         android:id="@+id/txtLocal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Jardim Camburi, Vitória - ES"
-                        android:fontFamily="@font/anekkannadalight"
-                        android:textSize="17sp" />
+                        android:text="Vitória - ES"
+                        android:textSize="14sp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/anekkannadalight" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Lado direito: texto MÉDIA (escondemos se não for prestador) -->
             <TextView
                 android:id="@+id/rating_media"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginRight="50dp"
-                android:text="Média"
-                android:fontFamily="@font/anekkannadabold"
+                android:layout_marginTop="12dp"
+                android:text="Média\n★ 5,0"
+                android:textSize="16sp"
+                android:textColor="#000000"
                 android:textAlignment="center"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:fontFamily="@font/anekkannadabold" />
         </LinearLayout>
 
-        <!-- Nível de Cadastro -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="Nível de Cadastro"
-            android:fontFamily="@font/anekkannadaregular" />
-
-        <ProgressBar
-            android:id="@+id/progressCadastro"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:layout_marginHorizontal="16dp"
-            android:max="100"
-            android:progress="90"
-            android:progressDrawable="@drawable/ic_rectangle51" />
-
-        <!-- Validações e botão -->
+        <!-- ============ NÍVEL DE CADASTRO (somente prestador) ============ -->
         <LinearLayout
+            android:id="@+id/blocoNivelCadastro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/labelNivel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Nível de Cadastro"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:fontFamily="@font/anekkannadaregular" />
+
+            <ProgressBar
+                android:id="@+id/progressCadastro"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="4dp"
+                android:max="100"
+                android:progress="80"
+                android:progressDrawable="@drawable/ic_rectangle51" />
+        </LinearLayout>
+
+        <!-- ============ VALIDAÇÕES + BOTÃO MINHA AGENDA ============ -->
+        <LinearLayout
+            android:id="@+id/blocoValidacoes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -190,25 +209,28 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="150dp"
-                    android:layout_height="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Endereço de e-mail"
-                    android:fontFamily="@font/anekkannadalight"
-                    android:textSize="16sp" />
+                    android:textSize="14sp"
+                    android:textColor="#000000"
+                    android:fontFamily="@font/anekkannadalight" />
 
                 <TextView
-                    android:layout_width="150dp"
-                    android:layout_height="25dp"
-                    android:text="Número de Telefone"
-                    android:fontFamily="@font/anekkannadalight"
-                    android:textSize="16sp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Número de telefone"
+                    android:textSize="14sp"
+                    android:textColor="#000000"
+                    android:fontFamily="@font/anekkannadalight" />
 
                 <TextView
-                    android:layout_width="150dp"
-                    android:layout_height="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Facebook"
-                    android:fontFamily="@font/anekkannadalight"
-                    android:textSize="16sp" />
+                    android:textSize="14sp"
+                    android:textColor="#000000"
+                    android:fontFamily="@font/anekkannadalight" />
             </LinearLayout>
 
             <Button
@@ -216,79 +238,91 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Minha Agenda"
-                android:fontFamily="@font/anekkannadasemibold"
                 android:textColor="@android:color/white"
+                android:fontFamily="@font/anekkannadasemibold"
                 android:backgroundTint="#5A0275" />
         </LinearLayout>
 
-        <!-- Descrição -->
+        <!-- ============ DESCRIÇÃO (escondemos tudo se não for prestador) ============ -->
         <TextView
+            android:id="@+id/labelDescricao"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Descrição"
-            android:fontFamily="@font/anekkannadaregular"
-            android:textSize="23sp" />
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:fontFamily="@font/anekkannadaregular" />
 
         <TextView
+            android:id="@+id/txtDescricao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sodales..."
-            android:fontFamily="@font/anekkannadamedium"
-            android:textSize="15sp"/>
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="4dp"
+            android:text="Texto da descrição do prestador..."
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:fontFamily="@font/anekkannadamedium" />
 
-        <!-- Fotos -->
+        <!-- ============ FOTOS (somente prestador) ============ -->
         <TextView
+            android:id="@+id/labelFotos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:text="Fotos"
-            android:fontFamily="@font/anekkannadaregular"
-            android:textSize="23sp" />
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:fontFamily="@font/anekkannadaregular" />
 
         <LinearLayout
+            android:id="@+id/blocoFotos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="16dp"
-            android:gravity="center">
+            android:gravity="center_vertical">
 
             <ImageView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="90dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
-                android:background="@android:color/darker_gray"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_image_prestador1" />
 
             <ImageView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="90dp"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="4dp"
-                android:background="@android:color/darker_gray"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_image_prestador2" />
 
             <ImageView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="90dp"
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
-                android:background="@android:color/darker_gray"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_image_prestador3" />
         </LinearLayout>
 
-        <!-- Quantidade de serviços -->
+        <!-- QUANTIDADE DE SERVIÇOS (somente prestador) -->
         <TextView
             android:id="@+id/quantidade_servicos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:text="Quantidade de serviços prestados:   27"
-            android:textSize="24sp"
-            android:fontFamily="@font/anekkannadaregular"/>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:text="Quantidade de serviços prestados: 27"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:fontFamily="@font/anekkannadaregular" />
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

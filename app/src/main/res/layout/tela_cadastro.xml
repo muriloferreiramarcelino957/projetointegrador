@@ -53,7 +53,7 @@
         android:drawableLeft="@drawable/iclogin"
         android:drawablePadding="8dp"
         android:ems="17"
-        android:hint="Nome de usuário"
+        android:hint="Nome completo"
         android:fontFamily="@font/interregular"
         android:inputType="textPersonName|textCapWords"
         android:padding="5dp"

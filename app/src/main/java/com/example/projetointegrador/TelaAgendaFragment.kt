@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -28,7 +27,7 @@ class TelaAgendaFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
-    private val args: TelaAgendaFragmentArgs by navArgs()
+    private val args by navArgs<TelaAgendaFragmentArgs>()
     private lateinit var prestadorUid: String
 
     private var selectedDate: String? = null
@@ -37,7 +36,7 @@ class TelaAgendaFragment : Fragment() {
     private var selectedServiceName: String? = null
     private var selectedServicePrice: Int? = null
 
-    private var horariosAtuais: List<String> = emptyList()
+    private var horariosAtuais = emptyList<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,19 +51,28 @@ class TelaAgendaFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
+
         prestadorUid = args.prestadorUid
 
-        // estado inicial
+        // 🚫 Impede agendamento consigo mesmo
+        if (prestadorUid == auth.currentUser?.uid) {
+            Toast.makeText(requireContext(), "Você não pode agendar consigo mesmo.", Toast.LENGTH_LONG).show()
+            findNavController().navigateUp()
+            return
+        }
+
         binding.dropHorarios.isEnabled = false
+        binding.tilHorario.hint = "Selecione um serviço"
+
         binding.btnConfirm.isEnabled = false
 
         carregarDadosPrestador()
         setupListeners()
     }
 
-    // -------------------------------------------------------------------------
-    // CARREGAR DADOS DO PRESTADOR
-    // -------------------------------------------------------------------------
+    // =====================================================================
+    // CARREGA DADOS DO PRESTADOR
+    // =====================================================================
 
     private fun carregarDadosPrestador() {
         val ref = database.child("prestadores").child(prestadorUid)
@@ -78,7 +86,7 @@ class TelaAgendaFragment : Fragment() {
 
             carregarNomeDoUsuario()
 
-            val servicosNode = snap.child("servicos-oferecidos")
+            val servicosNode = snap.child("servicos_oferecidos")
             val servicosList = servicosNode.children.toList()
 
             if (servicosList.isEmpty()) {
@@ -94,54 +102,55 @@ class TelaAgendaFragment : Fragment() {
     }
 
     private fun carregarNomeDoUsuario() {
-        FirebaseDatabase.getInstance().reference
-            .child("usuarios")
-            .child(prestadorUid)
+        database.child("usuarios").child(prestadorUid)
             .get()
-            .addOnSuccessListener {
-                binding.txtNome.text = it.child("nomeUsuario").getValue(String::class.java) ?: "Prestador"
-                binding.txtRating.text = "★ 5" // placeholder por enquanto
+            .addOnSuccessListener { snap ->
+                binding.txtNome.text = snap.child("nome").getValue(String::class.java) ?: "Prestador"
+                binding.txtRating.text = "★ 0,0"
             }
     }
 
-    // -------------------------------------------------------------------------
-    // SERVIÇOS (NOME + PREÇO)
-    // -------------------------------------------------------------------------
+    // =====================================================================
+    // CARREGA SERVIÇOS + PREÇO
+    // =====================================================================
 
     private fun carregarServicosComDescricoes(listaServicos: List<DataSnapshot>) {
         val refTipos = database.child("tipos_de_servico")
-        val serviceButtons = listOf(binding.btnService1, binding.btnService2, binding.btnService3)
+        val buttons = listOf(binding.btnService1, binding.btnService2, binding.btnService3)
 
-        // limpa texto inicial
-        serviceButtons.forEach { it.text = "" }
+        buttons.forEach { it.text = "" }
 
         for (i in listaServicos.indices.take(3)) {
+
             val snap = listaServicos[i]
-            val serviceKey = snap.key?.toIntOrNull() ?: continue
-            val servicePrice = snap.getValue(Int::class.java) ?: continue
+            val idServico = snap.key?.toIntOrNull() ?: continue
+            val preco = snap.getValue(String::class.java)?.toIntOrNull() ?: continue
 
-            refTipos.child(serviceKey.toString()).get()
+            refTipos.child(idServico.toString()).get()
                 .addOnSuccessListener { tipoSnap ->
-                    val nomeServico = tipoSnap.child("dscr_servico").value?.toString() ?: "Serviço"
 
-                    val btn = serviceButtons[i]
-                    btn.text = "$nomeServico\nR$ $servicePrice"
+                    val nomeServico =
+                        tipoSnap.child("dscr_servico").getValue(String::class.java)
+                            ?: "Serviço"
+
+                    val btn = buttons[i]
+                    btn.text = "$nomeServico\nR$ $preco"
 
                     btn.setOnClickListener {
-                        resetServiceButtons(serviceButtons)
+                        resetarBotoes(buttons)
 
                         btn.setBackgroundColor(Color.parseColor("#5A0275"))
                         btn.setTextColor(Color.WHITE)
 
-                        selectedServiceId = serviceKey
+                        selectedServiceId = idServico
                         selectedServiceName = nomeServico
-                        selectedServicePrice = servicePrice
+                        selectedServicePrice = preco
 
-                        if (selectedDate != null) {
-                            gerarHorariosDoDia()
-                        } else {
-                            mostrarEstado("Selecione uma data no calendário para ver os horários.")
-                        }
+                        // Caixa de horário volta a exigir seleção de data
+                        binding.tilHorario.hint = "Selecione uma data"
+
+                        if (selectedDate != null) gerarHorariosDoDia()
+                        else mostrarEstado("Selecione uma data para ver horários.")
 
                         atualizarBotaoConfirmar()
                     }
@@ -149,22 +158,23 @@ class TelaAgendaFragment : Fragment() {
         }
     }
 
-    private fun resetServiceButtons(buttons: List<TextView>) {
+    private fun resetarBotoes(buttons: List<TextView>) {
         buttons.forEach {
             it.setBackgroundResource(R.drawable.border_calendar)
             it.setTextColor(Color.parseColor("#5A0275"))
         }
     }
 
-    // -------------------------------------------------------------------------
-    // GERAÇÃO AUTOMÁTICA DE HORÁRIOS + ESTADO DO DIA
-    // -------------------------------------------------------------------------
+    // =====================================================================
+    // DISPONIBILIDADE + HORÁRIOS
+    // =====================================================================
 
     private fun gerarHorariosDoDia() {
         if (selectedDate == null || selectedServiceId == null) return
 
         val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(selectedDate!!)!!
-        val cal = Calendar.getInstance().apply { time = date }
+        val cal = Calendar.getInstance()
+        cal.time = date
 
         val diaSemana = when (cal.get(Calendar.DAY_OF_WEEK)) {
             Calendar.MONDAY -> "segunda"
@@ -176,92 +186,97 @@ class TelaAgendaFragment : Fragment() {
             else -> "domingo"
         }
 
-        val ref = database.child("prestadores").child(prestadorUid)
-            .child("disponibilidade").child(diaSemana)
+        val ref = database.child("prestadores")
+            .child(prestadorUid)
+            .child("disponibilidade")
+            .child(diaSemana)
 
         ref.get().addOnSuccessListener { snap ->
-            val inicio = snap.child("inicio").value?.toString()
-            val fim = snap.child("fim").value?.toString()
+
+            val inicio = snap.child("inicio").getValue(String::class.java)
+            val fim = snap.child("fim").getValue(String::class.java)
 
             if (inicio == null || fim == null) {
-                // 🔒 dia sem turno
+
                 horariosAtuais = emptyList()
                 atualizarDropdownSemHorarios()
+
                 mostrarEstado("Sem disponibilidade neste dia.", isError = true)
+
+                // Caixa indica necessidade de outro dia
+                binding.tilHorario.hint = "Sem horários disponíveis"
+
             } else {
-                val lista = gerarListaHorarios(inicio, fim)
-                horariosAtuais = lista
-                atualizarDropdownComHorarios(lista)
+
+                horariosAtuais = gerarListaHorarios(inicio, fim)
+
+                atualizarDropdownComHorarios(horariosAtuais)
                 mostrarEstado("Selecione um horário disponível.")
+
+                binding.tilHorario.hint = "Selecione um horário"
             }
+
             atualizarBotaoConfirmar()
         }
     }
 
     private fun gerarListaHorarios(inicio: String, fim: String): List<String> {
-        val lista = mutableListOf<String>()
-
+        val horarios = mutableListOf<String>()
         var horaAtual = inicio
+
         while (horaAtual < fim) {
-            lista.add(horaAtual)
+            horarios.add(horaAtual)
 
             val (h, m) = horaAtual.split(":").map { it.toInt() }
             horaAtual = String.format("%02d:%02d", h + 1, m)
         }
 
-        return lista
+        return horarios
     }
 
     private fun atualizarDropdownComHorarios(lista: List<String>) {
-        val adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            lista
-        )
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, lista)
+
         binding.dropHorarios.setAdapter(adapter)
         binding.dropHorarios.setText("", false)
         binding.dropHorarios.isEnabled = true
-        binding.tilHorario.hint = "Selecione um horário"
 
         selectedTime = null
 
         binding.dropHorarios.setOnItemClickListener { _, _, position, _ ->
-            selectedTime = horariosAtuais.getOrNull(position)
+            selectedTime = lista[position]
             atualizarBotaoConfirmar()
         }
     }
 
     private fun atualizarDropdownSemHorarios() {
-        binding.tilHorario.hint = "Sem horários para este dia"   // <- CORRETO
-        binding.dropHorarios.setAdapter(null)
         binding.dropHorarios.setText("", false)
-        binding.dropHorarios.clearFocus()
         binding.dropHorarios.isEnabled = false
         selectedTime = null
     }
 
-
     private fun mostrarEstado(msg: String, isError: Boolean = false) {
         binding.tvEstadoDia.text = msg
         binding.tvEstadoDia.setTextColor(
-            if (isError) Color.parseColor("#B00020")
-            else Color.DKGRAY
+            if (isError) Color.parseColor("#B00020") else Color.DKGRAY
         )
     }
 
-    // -------------------------------------------------------------------------
-    // LISTENERS GERAIS
-    // -------------------------------------------------------------------------
+    // =====================================================================
+    // LISTENERS
+    // =====================================================================
 
     private fun setupListeners() {
 
-        binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            selectedDate = "$dayOfMonth/${month + 1}/$year"
+        binding.calendarView.setOnDateChangeListener { _, year, month, day ->
+
+            selectedDate = "%02d/%02d/%04d".format(day, month + 1, year)
 
             if (selectedServiceId != null) {
                 gerarHorariosDoDia()
             } else {
-                mostrarEstado("Selecione um tipo de serviço para ver os horários.")
+                mostrarEstado("Selecione um serviço para ver horários.")
+                binding.tilHorario.hint = "Selecione um serviço"
                 atualizarDropdownSemHorarios()
             }
 
@@ -284,60 +299,79 @@ class TelaAgendaFragment : Fragment() {
                     selectedServiceId != null
     }
 
-    // -------------------------------------------------------------------------
-    // CONFIRMAÇÃO E SALVAMENTO
-    // -------------------------------------------------------------------------
+    // =====================================================================
+    // SALVAR NO FIREBASE
+    // =====================================================================
 
     private fun confirmarAgendamento() {
-        val mensagem = """
+
+        val msg = """
             Confirme seu agendamento:
             
             📅 Data: $selectedDate
             ⏰ Horário: $selectedTime
             🧰 Serviço: $selectedServiceName
-            💲 Preço: R$ $selectedServicePrice
+            💵 Preço: R$ $selectedServicePrice
         """.trimIndent()
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Confirmar Agendamento")
-            .setMessage(mensagem)
+            .setTitle("Confirmar agendamento")
+            .setMessage(msg)
             .setPositiveButton("Confirmar") { _, _ -> salvarNoFirebase() }
             .setNegativeButton("Cancelar", null)
             .show()
     }
 
     private fun salvarNoFirebase() {
-        val uid = auth.currentUser?.uid ?: return
+        val userUid = auth.currentUser?.uid ?: return
         val ref = database.child("prestacoes")
-        val id = ref.push().key ?: return
+        val pushId = ref.push().key ?: return
 
-        val ag = Agendamento(
-            data = selectedDate!!,
-            hora = selectedTime!!,
-            tipoServico = selectedServiceName!!,
-            prestador = prestadorUid,
-            usuarioId = uid,
-            status = "aguardando_confirmacao"
+        // 🔹 1. Criar registro de agendamento
+        val dados = mapOf(
+            "data" to selectedDate!!,
+            "hora" to selectedTime!!,
+            "tipo_servico" to selectedServiceName!!,
+            "prestador" to prestadorUid,
+            "usuario_id" to userUid,
+            "status" to "aguardando_confirmacao",
+            "local" to "Local do usuário futuramente",
+            "valor" to selectedServicePrice!!
         )
 
-        ref.child(id).setValue(ag)
+        ref.child(pushId).setValue(dados)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Agendamento confirmado!", Toast.LENGTH_SHORT).show()
 
-                val action = TelaAgendaFragmentDirections
-                    .actionTelaAgendaFragmentToTelaAgenda2Fragment(
-                        selectedDate!!,
-                        selectedTime!!,
-                        selectedServiceName!!
-                    )
-                findNavController().navigate(action)
-            }
-            .addOnFailureListener {
-                Toast.makeText(requireContext(), "Erro: ${it.message}", Toast.LENGTH_LONG).show()
+                // 🔹 NOTIFICAÇÃO PARA O PRESTADOR
+                val notifRef = database.child("notificacoes")
+                    .child(prestadorUid)
+                    .push()
+
+                val notifData = mapOf(
+                    "tipo" to "solicitacao_servico",
+                    "agendamento_id" to pushId,
+                    "mensagem" to "Novo pedido de $selectedServiceName às $selectedTime",
+                    "data_hora" to System.currentTimeMillis(),
+                    "lido" to false
+                )
+
+                notifRef.setValue(notifData)
+
+                // 🔹 NAVEGAÇÃO CORRIGIDA
+                findNavController().navigate(
+                    TelaAgendaFragmentDirections
+                        .actionTelaAgendaFragmentToTelaAgenda2Fragment(
+                            selectedDate!!,
+                            selectedTime!!,
+                            selectedServiceName!!,
+                            pushId
+                        )
+                )
             }
     }
 
-    override fun onDestroyView() {
+
+        override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
