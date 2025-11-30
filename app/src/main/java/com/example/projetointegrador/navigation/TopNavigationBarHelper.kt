@@ -1,6 +1,5 @@
 package com.example.projetointegrador.navigation
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
@@ -17,11 +16,12 @@ object TopNavigationBarHelper {
         val btnSearch = root.findViewById<ImageView>(R.id.ic_search)
         val btnNotification = root.findViewById<ImageView>(R.id.ic_notification)
         val btnSettings = root.findViewById<ImageView>(R.id.ic_settings)
-        val btnProfile = root.findViewById<ImageView>(R.id.ic_person)   // <- IMPORTANTE
+        val btnProfile = root.findViewById<ImageView>(R.id.ic_person)
+        val btnLogo = root.findViewById<ImageView>(R.id.ic_logo)   //  ← AQUI
 
-        // MENU (não navega ainda)
+        // MENU
         btnMenu?.setOnClickListener {
-            // Futuro drawer
+            // Drawer futuramente
         }
 
         // BUSCA
@@ -39,10 +39,14 @@ object TopNavigationBarHelper {
             navController.navigate(R.id.telaConfiguracoesFragment)
         }
 
-        // PERFIL DO USUÁRIO (NOVO!)
+        // PERFIL DO USUÁRIO
         btnProfile?.setOnClickListener {
-            Log.d("TOPBAR_DEBUG", "Clicou no ic_person da TOP BAR")
             navController.navigate(R.id.telaPerfilUsuarioFragment)
+        }
+
+        // LOGO → VOLTAR PARA A TELA PRINCIPAL
+        btnLogo?.setOnClickListener {
+            navController.navigate(R.id.fragmentTelaPrincipal)
         }
     }
 }

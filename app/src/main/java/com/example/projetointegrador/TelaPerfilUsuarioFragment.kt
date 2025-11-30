@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.databinding.TelaDePerfilDoUsuarioBinding
 import com.example.projetointegrador.navigation.TopNavigationBarHelper
 import com.google.firebase.auth.FirebaseAuth
@@ -34,8 +35,14 @@ class TelaPerfilUsuarioFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
-
         uid = auth.currentUser?.uid ?: return
+
+        // ✅ AGENDA SEMPRE APARECE (usuário comum OU prestador)
+        binding.blocoValidacoes.visibility = View.VISIBLE
+        binding.btnAgenda.visibility = View.VISIBLE
+        binding.btnAgenda.setOnClickListener {
+            findNavController().navigate(R.id.telaAgenda2Fragment)
+        }
 
         carregarUsuario()
         verificarSeEhPrestador()
@@ -79,29 +86,32 @@ class TelaPerfilUsuarioFragment : Fragment() {
     // =============================================================
     private fun carregarDadosPrestador(snap: DataSnapshot) {
 
-        // DATA DE CADASTRO
-        val desde = snap.child("data-cadastro").getValue(String::class.java) ?: "2025"
+        val desde =
+            snap.child("data_cadastro").getValue(String::class.java)
+                ?: snap.child("data-cadastro").getValue(String::class.java)
+                ?: "2025"
+
         binding.txtDesde.text = "Na AllService desde $desde"
 
-        // --- INFO PRESTADOR ---
         val info = snap.child("info_prestador")
 
         val descricao = info.child("descricao").getValue(String::class.java) ?: ""
-        val nivelCadastro = info.child("nivel_cadastro").getValue(String::class.java) ?: ""
-        val quantidadeServicos = info.child("quantidade_de_servicos").getValue(Int::class.java) ?: 0
+        val quantidadeServicos =
+            info.child("quantidade_de_servicos").getValue(Long::class.java)?.toInt()
+                ?: info.child("quantidade_de_servicos").getValue(Int::class.java)
+                ?: 0
 
         binding.txtDescricao.text = descricao
         binding.quantidadeServicos.text = "Quantidade de serviços prestados: $quantidadeServicos"
 
-        // TAGS DE SERVIÇO
-        val tags = snap.child("servicos-oferecidos")
-            .children
-            .mapNotNull { it.key }
-            .joinToString(" | ")
+        val tags =
+            (snap.child("servicos_oferecidos").children.mapNotNull { it.key } +
+                    snap.child("servicos-oferecidos").children.mapNotNull { it.key })
+                .distinct()
+                .joinToString(" | ")
 
         binding.servicosTags.text = if (tags.isNotBlank()) tags else "Nenhum serviço"
 
-        // RATING (a implementar depois)
         binding.txtRating.text = "★ 5,0"
 
         mostrarPartesDePrestador()
@@ -112,29 +122,23 @@ class TelaPerfilUsuarioFragment : Fragment() {
     // =============================================================
     private fun ocultarPartesDePrestador() {
 
-        // Tags e rating
         binding.servicosTags.visibility = View.GONE
         binding.txtRating.visibility = View.GONE
         binding.ratingMedia.visibility = View.GONE
-
-        // Nível
-        binding.labelNivel.visibility = View.GONE
-        binding.progressCadastro.visibility = View.GONE
         binding.blocoNivelCadastro.visibility = View.GONE
 
-        // Validações e agenda
+        // ✅ esse bloco é só de prestador
         binding.blocoValidacoes.visibility = View.GONE
 
-        // Descrição
         binding.labelDescricao.visibility = View.GONE
         binding.txtDescricao.visibility = View.GONE
-
-        // Fotos
         binding.labelFotos.visibility = View.GONE
         binding.blocoFotos.visibility = View.GONE
-
-        // Quantidade serviços
         binding.quantidadeServicos.visibility = View.GONE
+
+        // ✅ agenda fica ligada
+        binding.blocoValidacoes.visibility = View.VISIBLE
+        binding.btnAgenda.visibility = View.VISIBLE
     }
 
     // =============================================================
@@ -142,23 +146,23 @@ class TelaPerfilUsuarioFragment : Fragment() {
     // =============================================================
     private fun mostrarPartesDePrestador() {
 
-        binding.ratingMedia.visibility = View.VISIBLE
+        binding.servicosTags.visibility = View.VISIBLE
         binding.txtRating.visibility = View.VISIBLE
         binding.ratingMedia.visibility = View.VISIBLE
-
-        binding.labelNivel.visibility = View.VISIBLE
-        binding.progressCadastro.visibility = View.VISIBLE
         binding.blocoNivelCadastro.visibility = View.VISIBLE
 
+        // ✅ só prestador
         binding.blocoValidacoes.visibility = View.VISIBLE
 
         binding.labelDescricao.visibility = View.VISIBLE
         binding.txtDescricao.visibility = View.VISIBLE
-
         binding.labelFotos.visibility = View.VISIBLE
         binding.blocoFotos.visibility = View.VISIBLE
-
         binding.quantidadeServicos.visibility = View.VISIBLE
+
+        // ✅ agenda também
+        binding.blocoValidacoes.visibility = View.VISIBLE
+        binding.btnAgenda.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {
