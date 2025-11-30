@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F9F8FF">
 
-    <!-- Barra superior -->
+    <!-- ================= TOP BAR CORRETA ================= -->
     <include
         android:id="@+id/topBar"
-        layout="@layout/item_top_navigation_bar" />
+        layout="@layout/item_top_navigation_bar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Sub barra (Título da tela) -->
+    <!-- =============== SUB-BARRA (TÍTULO) =============== -->
     <LinearLayout
         android:id="@+id/subBar"
         android:layout_width="0dp"
@@ -32,7 +36,7 @@
             android:fontFamily="@font/anekkannadaregular" />
     </LinearLayout>
 
-    <!-- Opção Tema Escuro -->
+    <!-- =============== TEMA ESCURO =============== -->
     <LinearLayout
         android:id="@+id/layoutDarkMode"
         android:layout_width="0dp"
@@ -68,7 +72,7 @@
             android:showText="false" />
     </LinearLayout>
 
-    <!-- Botão Editar Perfil -->
+    <!-- =============== BOTÃO EDITAR PERFIL =============== -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnEditProfile"
         android:layout_width="200dp"

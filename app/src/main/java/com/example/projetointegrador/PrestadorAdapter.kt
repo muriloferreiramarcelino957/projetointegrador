@@ -32,69 +32,47 @@ class PrestadorAdapter(
 
         with(holder.binding) {
 
-            // Nome
             tvNome.text = p.user.nome.ifBlank { "Prestador" }
 
-            // ⭐ NOTA — COMEÇA EM 0.0
             val nota = p.prestador.notaMedia ?: 0.0
             tvNota.text = String.format(Locale("pt", "BR"), "%.1f", nota)
 
-            // Desde
             tvDataInicio.text =
                 if (p.dataCadastro.isNotBlank())
                     "Na AllService desde ${formatarDataCadastro(p.dataCadastro)}"
                 else
                     "Data de cadastro desconhecida"
 
-            // Endereço
             tvLocalizacao.text = listOfNotNull(
                 p.user.bairro.takeIf { it.isNotBlank() },
                 p.user.cidade.takeIf { it.isNotBlank() },
                 p.user.estado.takeIf { it.isNotBlank() }
             ).joinToString(", ")
 
-            // Último acesso
             tvUltimoAcesso.text =
                 "Último acesso ${calcularTempoDesdeUltimoAcesso(p.ultimoAcesso)}"
 
-            // Clique
             root.setOnClickListener { onItemClick(p) }
         }
     }
 
-
-
-    // ============================================
-    // FORMATAÇÃO DE DATAS
-    // ============================================
-
-    /**
-     * Formata a string de "YYYY-MM-DD" para "Mês AAAA".
-     */
     private fun formatarDataCadastro(data: String?): String {
         return runCatching {
             if (data.isNullOrBlank()) return "data desconhecida"
 
-            // O formato de entrada é "YYYY-MM-DD"
             val inFmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-            // O formato de saída é "Mês de YYYY" (Ex: "novembro de 2025")
             val outFmt = SimpleDateFormat("MMMM 'de' yyyy", Locale("pt", "BR"))
 
             val dateObj = inFmt.parse(data) ?: return data
 
-            // Capitaliza a primeira letra do mês (Ex: "novembro" -> "Novembro")
             return outFmt.format(dateObj).replaceFirstChar { it.titlecase(Locale("pt", "BR")) }
         }.getOrElse { data ?: "data inválida" }
     }
 
-    /**
-     * Calcula o tempo decorrido do último acesso no formato "YYYY-MM-DD HH:MM:SS".
-     */
     private fun calcularTempoDesdeUltimoAcesso(dataHora: String?): String {
         if (dataHora.isNullOrBlank()) return "indisponível"
 
         return try {
-            // Formato de entrada: "YYYY-MM-DD HH:MM:SS"
             val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
             val ultimoAcesso = format.parse(dataHora)
             val agora = Date()
@@ -112,7 +90,6 @@ class PrestadorAdapter(
                 hours < 24 -> "há ${hours} hora(s)"
                 days <= 7 -> "há ${days} dia(s)"
                 else -> {
-                    // Se for mais de 7 dias, mostra a data e hora formatada
                     val specificFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                     "em ${specificFormat.format(ultimoAcesso)}"
                 }

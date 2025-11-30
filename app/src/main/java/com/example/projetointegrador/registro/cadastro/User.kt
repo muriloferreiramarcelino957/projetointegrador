@@ -1,8 +1,10 @@
 package com.example.projetointegrador.registro.cadastro
 
 import android.os.Parcelable
+import com.google.firebase.database.IgnoreExtraProperties
 import kotlinx.parcelize.Parcelize
 
+@IgnoreExtraProperties
 @Parcelize
 data class User(
     var nome: String = "",
