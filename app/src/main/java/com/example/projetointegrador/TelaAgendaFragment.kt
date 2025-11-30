@@ -7,8 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -45,6 +48,7 @@ class TelaAgendaFragment : Fragment() {
         _binding = TelaDeAgendaBinding.inflate(inflater, container, false)
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -368,6 +372,15 @@ class TelaAgendaFragment : Fragment() {
                         )
                 )
             }
+    }
+
+    private fun configurarMenuLateral() {
+        val btnMenu = binding.topBar.root.findViewById<ImageView>(R.id.ic_menu)
+        val drawerLayout = binding.root.findViewById<DrawerLayout>(R.id.drawerLayout)
+
+        btnMenu.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
     }
 
 

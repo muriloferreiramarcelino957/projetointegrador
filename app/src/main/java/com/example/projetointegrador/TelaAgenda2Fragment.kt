@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.databinding.TelaDeAgenda2Binding
@@ -30,6 +33,15 @@ class TelaAgenda2Fragment : Fragment() {
         database = FirebaseDatabase.getInstance().reference
         auth = FirebaseAuth.getInstance()
         return binding.root
+    }
+
+    private fun configurarMenuLateral() {
+        val btnMenu = binding.topBar.root.findViewById<ImageView>(R.id.ic_menu)
+        val drawerLayout = binding.root.findViewById<DrawerLayout>(R.id.drawerLayout)
+
+        btnMenu.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

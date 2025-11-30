@@ -1,158 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:layout_height="match_parent">
 
-    <!-- TOPBAR FIXA -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <include
-            android:id="@+id/topBar"
-            layout="@layout/item_top_navigation_bar" />
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- CONTEÚDO -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/contentScroll"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:background="#FFFFFF">
 
-        <LinearLayout
+        <!-- TOPBAR FIXA -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <!-- Barra de busca -->
-            <EditText
-                android:id="@+id/searchInput"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_margin="20dp"
-                android:background="@drawable/button_purple_background"
-                android:drawableStart="@drawable/ic_search"
-                android:drawablePadding="8dp"
-                android:fontFamily="@font/anekkannadaregular"
-                android:hint="Busque aqui o seu prestador"
-                android:paddingStart="16dp"
-                android:textColorHint="#FFFFFF" />
+            <include
+                android:id="@+id/topBar"
+                layout="@layout/item_top_navigation_bar" />
+        </com.google.android.material.appbar.AppBarLayout>
 
-            <!-- Em alta -->
-            <TextView
+        <!-- CONTEÚDO -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/contentScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:text="Em alta"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:orientation="vertical">
 
-            <!-- Botões -->
-            <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="2"
-                android:padding="16dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:layout_width="0dp"
+                <!-- Barra de busca -->
+                <EditText
+                    android:id="@+id/searchInput"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_margin="4dp"
-                    android:layout_columnWeight="1"
+                    android:layout_margin="20dp"
                     android:background="@drawable/button_purple_background"
-                    android:backgroundTint="#530081"
-                    android:drawableStart="@drawable/ic_housekeeper"
+                    android:drawableStart="@drawable/ic_search"
+                    android:drawablePadding="8dp"
                     android:fontFamily="@font/anekkannadaregular"
-                    android:padding="10dp"
-                    android:text="Fáxina"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
+                    android:hint="Busque aqui o seu prestador"
+                    android:paddingStart="16dp"
+                    android:textColorHint="#FFFFFF" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_margin="4dp"
-                    android:layout_columnWeight="1"
-                    android:background="@drawable/button_purple_background"
-                    android:backgroundTint="#530081"
-                    android:drawableStart="@drawable/ic_conflict"
-                    android:fontFamily="@font/anekkannadaregular"
-                    android:padding="10dp"
-                    android:text="Serviço elétrico"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
+                <!-- Em alta -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:text="Em alta"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_margin="4dp"
-                    android:layout_columnWeight="1"
-                    android:background="@drawable/button_purple_background"
-                    android:backgroundTint="#530081"
-                    android:drawableStart="@drawable/ic_plumbing"
-                    android:fontFamily="@font/anekkannadaregular"
-                    android:padding="10dp"
-                    android:text="Hidráulica"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
+                <!-- Botões -->
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:padding="16dp">
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_margin="4dp"
-                    android:layout_columnWeight="1"
-                    android:background="@drawable/button_purple_background"
-                    android:backgroundTint="#530081"
-                    android:drawableStart="@drawable/ic_jardinagem"
-                    android:fontFamily="@font/anekkannadaregular"
-                    android:padding="10dp"
-                    android:text="Jardinagem"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
-            </GridLayout>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_margin="4dp"
+                        android:layout_columnWeight="1"
+                        android:background="@drawable/button_purple_background"
+                        android:backgroundTint="#530081"
+                        android:drawableStart="@drawable/ic_housekeeper"
+                        android:fontFamily="@font/anekkannadaregular"
+                        android:padding="10dp"
+                        android:text="Fáxina"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF" />
 
-            <!-- Prestadores top -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:text="Prestadores mais bem avaliados"
-                android:fontFamily="@font/anekkannadabold"
-                android:textColor="#000000"
-                android:textSize="18sp"/>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_margin="4dp"
+                        android:layout_columnWeight="1"
+                        android:background="@drawable/button_purple_background"
+                        android:backgroundTint="#530081"
+                        android:drawableStart="@drawable/ic_conflict"
+                        android:fontFamily="@font/anekkannadaregular"
+                        android:padding="10dp"
+                        android:text="Serviço elétrico"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvPrestadores"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"/>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_margin="4dp"
+                        android:layout_columnWeight="1"
+                        android:background="@drawable/button_purple_background"
+                        android:backgroundTint="#530081"
+                        android:drawableStart="@drawable/ic_plumbing"
+                        android:fontFamily="@font/anekkannadaregular"
+                        android:padding="10dp"
+                        android:text="Hidráulica"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF" />
 
-            <!-- Anúncios -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Anúncios"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_margin="4dp"
+                        android:layout_columnWeight="1"
+                        android:background="@drawable/button_purple_background"
+                        android:backgroundTint="#530081"
+                        android:drawableStart="@drawable/ic_jardinagem"
+                        android:fontFamily="@font/anekkannadaregular"
+                        android:padding="10dp"
+                        android:text="Jardinagem"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF" />
+                </GridLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerAnuncios"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
-                android:overScrollMode="never" />
+                <!-- Prestadores top -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:text="Prestadores mais bem avaliados"
+                    android:fontFamily="@font/anekkannadabold"
+                    android:textColor="#000000"
+                    android:textSize="18sp"/>
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPrestadores"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                <!-- Anúncios -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Anúncios"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerAnuncios"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:overScrollMode="never" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="260dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#4B007D"
+        app:headerLayout="@layout/menu_lateral" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

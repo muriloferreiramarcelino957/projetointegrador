@@ -9,5 +9,5 @@ data class PrestadorDisplay(
     val prestador: Prestador = Prestador(),
     val servicos: Map<String, String> = emptyMap(),
     val dataCadastro: String = "",
-    val ultimoAcesso: String = ""
+    val ultimoAcesso: String = "",
 )

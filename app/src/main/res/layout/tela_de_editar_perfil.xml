@@ -4,66 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F9F8FF">
-
-    <!-- Barra superior -->
-    <LinearLayout
+    <include
         android:id="@+id/topBar"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:background="#5A0275"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        layout="@layout/item_top_navigation_bar" />
+    <!-- Barra superior -->
 
-        <!-- Ícone Menu -->
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_menu"
-            app:tint="@android:color/white" />
-
-        <!-- Ícone Lupa -->
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/ic_search"
-            app:tint="@android:color/white" />
-
-        <!-- Logo central -->
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="32dp"
-            android:layout_weight="1"
-            android:scaleType="fitCenter"
-            android:src="@drawable/logo" />
-
-        <!-- Notificação -->
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_notification"
-            app:tint="@android:color/white" />
-
-        <!-- Configurações -->
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="12dp"
-            android:src="@drawable/ic_settings"
-            app:tint="@android:color/white" />
-
-        <!-- Perfil -->
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="12dp"
-            android:src="@drawable/ic_person"
-            app:tint="@android:color/white" />
-    </LinearLayout>
 
     <!-- Conteúdo Scrollável -->
     <ScrollView
