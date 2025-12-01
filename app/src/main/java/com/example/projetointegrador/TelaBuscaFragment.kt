@@ -39,7 +39,7 @@ class TelaBuscaFragment : Fragment() {
         carregarPrestadoresDoFirebase()
         configurarBusca()
         configurarBotoes()
-        configurarMenuLateral() // <-- NOVO: configura o menu lateral
+        configurarMenuLateral()
 
         return binding.root
     }
@@ -59,9 +59,6 @@ class TelaBuscaFragment : Fragment() {
                 val lista = result.toObjects(PrestadorDisplay::class.java)
                 listaCompleta = lista
                 adapter.atualizarLista(lista)
-            }
-            .addOnFailureListener {
-                // Pode exibir um Toast se quiser
             }
     }
 
@@ -84,7 +81,6 @@ class TelaBuscaFragment : Fragment() {
     }
 
     private fun configurarBotoes() {
-
         binding.btnFiltros.setOnClickListener {
             FiltroBottomSheet { filtros ->
                 aplicarFiltros(filtros)
@@ -96,9 +92,6 @@ class TelaBuscaFragment : Fragment() {
         }
     }
 
-    // ===========================
-    // CONFIGURA MENU LATERAL
-    // ===========================
     private fun configurarMenuLateral() {
         val btnMenu = binding.topBar.root.findViewById<ImageView>(R.id.ic_menu)
         val drawerLayout = binding.root.findViewById<DrawerLayout>(R.id.drawerLayout)
@@ -115,16 +108,18 @@ class TelaBuscaFragment : Fragment() {
 
         val filtrados = listaCompleta.filter { p ->
 
+            val nivelPrestador = p.prestador.info_prestador?.nivel_cadastro ?: ""
+
             val nivelOk =
                 f.nivelCadastro == "Todos" ||
-                        p.prestador.nivel_cadastro.equals(f.nivelCadastro, ignoreCase = true)
+                        nivelPrestador.equals(f.nivelCadastro, ignoreCase = true)
 
             val servicoOk =
                 f.servico.isBlank() ||
                         p.servicos.keys.any { it.contains(f.servico, ignoreCase = true) }
 
             val avaliacaoOk =
-                (p.prestador.notaMedia?.toFloat() ?: 0f) >= f.avaliacaoMinima.toFloat()
+                (p.prestador.notaMedia ?: 0.0) >= f.avaliacaoMinima.toDouble()
 
             val localOk =
                 f.localizacao.isBlank() ||
