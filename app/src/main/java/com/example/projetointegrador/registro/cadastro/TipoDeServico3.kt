@@ -151,8 +151,11 @@ class TipoDeServico3Fragment : Fragment() {
         // Mapa de serviços: "1" -> "300", "2" -> "100"
         val servicosMap = listaServicosTemp.associate { it.id to it.valor }
 
-        // Quantidade de serviços começa sempre em ZERO
+        // Quantidade inicial sempre zero
         val quantidadeInicial = 0
+
+        // Nota inicial sempre zerada
+        val notaMediaInicial = 0.0
 
         // Descrição padrão
         val descricaoPadrao = "Olá, sou um prestador da AllService!"
@@ -160,7 +163,10 @@ class TipoDeServico3Fragment : Fragment() {
         val updates = mapOf(
             "servicos_oferecidos" to servicosMap,
             "nivel_cadastro" to "bronze",
-            "quantidade_de_servicos" to quantidadeInicial,
+
+            // 🔹 ESTRUTURA NOVA SOLICITADA
+            "info_prestador/quantidade_de_servicos" to quantidadeInicial,
+            "info_prestador/notaMedia" to notaMediaInicial,
             "info_prestador/descricao" to descricaoPadrao
         )
 
@@ -171,6 +177,7 @@ class TipoDeServico3Fragment : Fragment() {
                 findNavController().navigate(R.id.navigation)
             }
     }
+
 
     private fun toast(msg: String) =
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()

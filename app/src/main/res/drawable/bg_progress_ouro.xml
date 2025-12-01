@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/progress">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFD700"/> <!-- ouro -->
+            <corners android:radius="20dp"/>
+        </shape>
+    </item>
+</layer-list>

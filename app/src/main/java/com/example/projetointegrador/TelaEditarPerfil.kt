@@ -11,6 +11,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.databinding.TelaDeEditarPerfilBinding
+import com.example.projetointegrador.navigation.TopNavigationBarHelper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -33,6 +34,7 @@ class TelaEditarPerfil : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        TopNavigationBarHelper.setupNavigationBar(binding.root, this)
         initListeners()
         carregarDadosUsuario()
     }

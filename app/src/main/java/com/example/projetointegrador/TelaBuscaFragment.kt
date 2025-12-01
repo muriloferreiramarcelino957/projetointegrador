@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.projetointegrador.PrestadorDisplay
 import com.example.projetointegrador.R
 import com.example.projetointegrador.databinding.FragmentTelaBuscaBinding
+import com.example.projetointegrador.navigation.TopNavigationBarHelper
 import com.google.firebase.firestore.FirebaseFirestore
 import com.projetointegrador.app.model.FiltrosModel
 import com.projetointegrador.app.ui.FiltroBottomSheet
@@ -34,7 +35,7 @@ class TelaBuscaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTelaBuscaBinding.inflate(inflater, container, false)
-
+        TopNavigationBarHelper.setupNavigationBar(binding.root, this)
         configurarRecycler()
         carregarPrestadoresDoFirebase()
         configurarBusca()

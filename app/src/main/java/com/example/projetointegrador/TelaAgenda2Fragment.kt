@@ -4,17 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.projetointegrador.adapters.AgendamentoAdapter
 import com.example.projetointegrador.databinding.TelaDeAgenda2Binding
+import com.example.projetointegrador.navigation.TopNavigationBarHelper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 class TelaAgenda2Fragment : Fragment() {
 
@@ -25,18 +24,17 @@ class TelaAgenda2Fragment : Fragment() {
     private lateinit var auth: FirebaseAuth
 
     data class Agendamento(
-        val id: String,
-        val data: String,
-        val hora: String,
-        val tipoServico: String,
-        val statusCode: String,
-        val local: String
+        val id: String = "",
+        val data: String = "",
+        val hora: String = "",
+        val tipoServico: String = "",
+        val statusCode: String = "",
+        val local: String = "",
+        val valor: Int = 0
     )
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = TelaDeAgenda2Binding.inflate(inflater, container, false)
         database = FirebaseDatabase.getInstance().reference
@@ -44,201 +42,131 @@ class TelaAgenda2Fragment : Fragment() {
         return binding.root
     }
 
-    private fun configurarMenuLateral() {
-        val btnMenu = binding.topBar.root.findViewById<ImageView>(R.id.ic_menu)
-        val drawerLayout = binding.root.findViewById<DrawerLayout>(R.id.drawerLayout)
-
-        btnMenu.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnArrowBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
+        TopNavigationBarHelper.setupNavigationBar(binding.root, this)
 
-        carregarProximoAgendamentoDoUsuarioLogado()
+        binding.recyclerAgenda.layoutManager = LinearLayoutManager(requireContext())
+
+        carregarTodosAgendamentosDoUsuario()
     }
 
-    // =====================================================================
-    // BUSCA O PRÓXIMO AGENDAMENTO QUE ENVOLVE O USUÁRIO LOGADO
-    // - como cliente: usuario_id == uid
-    // - como prestador: prestador == uid
-    // =====================================================================
-    private fun carregarProximoAgendamentoDoUsuarioLogado() {
-        val uid = auth.currentUser?.uid
-        if (uid == null) {
-            Toast.makeText(requireContext(), "Usuário não logado", Toast.LENGTH_SHORT).show()
-            return
-        }
+    // =======================================================
+    // LER TODOS AGENDAMENTOS DO CLIENTE + PRESTADOR
+    // =======================================================
+    private fun carregarTodosAgendamentosDoUsuario() {
+        val uid = auth.currentUser?.uid ?: return
+        val ref = database.child("prestacoes")
 
-        val prestacoesRef = database.child("prestacoes")
-
-        // Vamos buscar 2 listas e unir (Realtime Database não tem OR query)
-        val resultados = LinkedHashMap<String, Agendamento>()
+        val lista = mutableListOf<Agendamento>()
         var pendentes = 2
 
-        fun finalizarSePronto() {
+        fun finalizarConsulta() {
             pendentes--
+
             if (pendentes > 0) return
 
-            if (resultados.isEmpty()) {
-                mostrarSemAgendamento()
+            if (lista.isEmpty()) {
+                binding.txtSemAgendamentos.visibility = View.VISIBLE
+                binding.recyclerAgenda.visibility = View.GONE
                 return
             }
 
-            val proximo = escolherAgendamentoMaisProximo(resultados.values.toList())
-            if (proximo == null) {
-                // se não houver futuro, pega o primeiro (ou o mais recente, se quiser)
-                val fallback = resultados.values.first()
-                mostrarAgendamento(fallback)
-            } else {
-                mostrarAgendamento(proximo)
+            binding.txtSemAgendamentos.visibility = View.GONE
+            binding.recyclerAgenda.visibility = View.VISIBLE
+
+            // Ordena todos os agendamentos por data+hora
+            val listaOrdenada = lista.sortedBy { ag ->
+                juntarDataHora(ag.data, ag.hora)
             }
+
+            binding.recyclerAgenda.adapter =
+                AgendamentoAdapter(listaOrdenada) { ag ->
+                    val action =
+                        TelaAgenda2FragmentDirections
+                            .actionTelaAgenda2FragmentToTelaAgenda3Fragment(ag.id)
+
+                    findNavController().navigate(action)
+                }
+
         }
 
-        // 1) COMO CLIENTE (chave REAL do seu banco: usuario_id)
-        prestacoesRef.orderByChild("usuario_id")
-            .equalTo(uid)
+        // ===============================
+        // COMO CLIENTE
+        // ===============================
+        ref.orderByChild("usuario_id").equalTo(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.forEach { child ->
-                        val ag = parseAgendamento(child) ?: return@forEach
-                        resultados[ag.id] = ag
+                        parseAgendamentoSeguro(child)?.let { lista.add(it) }
                     }
-                    finalizarSePronto()
+                    finalizarConsulta()
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    finalizarSePronto()
+                    finalizarConsulta()
                 }
             })
 
-        // 2) COMO PRESTADOR (chave REAL do seu banco: prestador)
-        // ❗ Se você quiser APENAS os agendamentos onde ele é cliente,
-        // apague este bloco inteiro e troque pendentes=2 para pendentes=1 acima.
-        prestacoesRef.orderByChild("prestador")
-            .equalTo(uid)
+        // ===============================
+        // COMO PRESTADOR
+        // ===============================
+        ref.orderByChild("prestador").equalTo(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.children.forEach { child ->
-                        val ag = parseAgendamento(child) ?: return@forEach
-                        resultados[ag.id] = ag
+                        parseAgendamentoSeguro(child)?.let { lista.add(it) }
                     }
-                    finalizarSePronto()
+                    finalizarConsulta()
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    finalizarSePronto()
+                    finalizarConsulta()
                 }
             })
     }
 
-    private fun parseAgendamento(snap: DataSnapshot): Agendamento? {
-        val id = snap.key ?: return null
+    // =======================================================
+    // PARSE SEGURO DO AGENDAMENTO
+    // =======================================================
+    private fun parseAgendamentoSeguro(s: DataSnapshot): Agendamento? {
+        val id = s.key ?: return null
 
-        // Chaves do seu banco (snake_case) + fallback para camelCase
-        val data = snap.child("data").getStringOrEmpty()
-        val hora = snap.child("hora").getStringOrEmpty()
+        val dataRaw = s.child("data").value?.toString() ?: return null
+        val hora = s.child("hora").value?.toString() ?: return null
+        val tipo = s.child("tipo_servico").value?.toString() ?: "Serviço"
+        val status = s.child("status").value?.toString() ?: "aguardando_confirmacao"
+        val local = s.child("local").value?.toString() ?: "Local não informado"
+        val valor = s.child("valor").value?.toString()?.toIntOrNull() ?: 0
 
-        val tipoServico =
-            snap.child("tipo_servico").getStringOrEmpty()
-                .ifBlank { snap.child("tipoServico").getStringOrEmpty() }
-                .ifBlank { "Serviço" }
-
-        val statusCode =
-            snap.child("status").getStringOrEmpty()
-                .ifBlank { "aguardando_confirmacao" }
-
-        val local =
-            snap.child("local").getStringOrEmpty()
-                .ifBlank { "Local informado no momento da contratação" }
-
-        if (data.isBlank() || hora.isBlank()) return null
+        val dataBR = converterDataParaBR(dataRaw)
 
         return Agendamento(
             id = id,
-            data = data,
+            data = dataBR,
             hora = hora,
-            tipoServico = tipoServico,
-            statusCode = statusCode,
-            local = local
+            tipoServico = tipo,
+            statusCode = status,
+            local = local,
+            valor = valor
         )
     }
 
-    private fun escolherAgendamentoMaisProximo(lista: List<Agendamento>): Agendamento? {
-        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-        val agora = Date()
-
-        var melhor: Agendamento? = null
-        var menorDiff: Long? = null
-
-        lista.forEach { ag ->
-            val dataHora = try {
-                sdf.parse("${ag.data} ${ag.hora}")
-            } catch (_: Exception) {
-                null
-            } ?: return@forEach
-
-            val diff = dataHora.time - agora.time
-            if (diff >= 0 && (menorDiff == null || diff < menorDiff!!)) {
-                menorDiff = diff
-                melhor = ag
-            }
-        }
-        return melhor
+    // =======================================================
+    // CONVERTE "2025/12/01" -> "01/12/2025"
+    // =======================================================
+    private fun converterDataParaBR(data: String): String {
+        val p = data.split("/")
+        return if (p.size == 3) "${p[2]}/${p[1]}/${p[0]}" else data
     }
 
-    private fun mostrarAgendamento(ag: Agendamento) {
-        val statusTexto = traduzirStatus(ag.statusCode)
-
-        binding.tvDataCalendario.text = "Próximo agendamento"
-        binding.eventDateTime.text = "${ag.data} • ${ag.hora}"
-        binding.eventType.text = ag.tipoServico
-        binding.eventLocation.text = ag.local
-        binding.eventStatus.text = "Status: $statusTexto"
-
-        binding.cardServicoSelecionado.isClickable = true
-        binding.cardServicoSelecionado.setOnClickListener {
-            val action =
-                TelaAgenda2FragmentDirections
-                    .actionTelaAgenda2FragmentToTelaAgenda3Fragment(ag.id)
-            findNavController().navigate(action)
-        }
-    }
-
-    private fun mostrarSemAgendamento() {
-        binding.tvDataCalendario.text = "Nenhum agendamento encontrado"
-        binding.eventDateTime.text = "Data e hora"
-        binding.eventType.text = "Tipo de Serviço"
-        binding.eventLocation.text = "Localização"
-        binding.eventStatus.text = "Status: —"
-        binding.cardServicoSelecionado.isClickable = false
-        binding.cardServicoSelecionado.setOnClickListener(null)
-    }
-
-    private fun traduzirStatus(code: String): String {
-        return when (code) {
-            "aguardando_confirmacao" -> "aguardando confirmação"
-            "agendado" -> "agendado"
-            "em_execucao" -> "em execução"
-            "finalizado" -> "finalizado"
-            "cancelado" -> "cancelado"
-            "recusado" -> "recusado"
-            else -> code.replace("_", " ")
-        }
-    }
-
-    private fun DataSnapshot.getStringOrEmpty(): String {
-        val v = this.value ?: return ""
-        return when (v) {
-            is String -> v
-            is Number -> v.toString()
-            is Boolean -> v.toString()
-            else -> v.toString()
+    private fun juntarDataHora(dataBR: String, hora: String): Long {
+        return try {
+            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            sdf.parse("$dataBR $hora")?.time ?: Long.MAX_VALUE
+        } catch (e: Exception) {
+            Long.MAX_VALUE
         }
     }
 

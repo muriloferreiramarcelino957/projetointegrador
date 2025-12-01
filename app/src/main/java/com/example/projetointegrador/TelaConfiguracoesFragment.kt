@@ -11,6 +11,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.projetointegrador.databinding.TelaDeConfiguracoesBinding
+import com.example.projetointegrador.navigation.TopNavigationBarHelper
 
 class TelaConfiguracoesFragment : Fragment() {
 
@@ -27,6 +28,7 @@ class TelaConfiguracoesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        TopNavigationBarHelper.setupNavigationBar(binding.root, this)
         initListeners()
     }
 

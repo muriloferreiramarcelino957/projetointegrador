@@ -210,8 +210,22 @@
                 android:name="com.example.projetointegrador.TelaAgenda3Fragment"
                 android:label="Agenda 3">
                 <argument android:name="agendamentoId" app:argType="string" />
+                <action
+                    android:id="@+id/action_telaAgenda3Fragment2_to_avaliarServicoFragment"
+                    app:destination="@id/avaliarServicoFragment" />
             </fragment>
 
+            <fragment
+                android:id="@+id/avaliarServicoFragment"
+                android:name="com.example.projetointegrador.AvaliarServicoFragment"
+                android:label="Avaliar Serviço">
+                <argument
+                    android:name="agendamentoId"
+                    app:argType="string" />
+                <argument
+                    android:name="prestadorId"
+                    app:argType="string" />
+            </fragment>
             <!-- CONFIGURAÇÕES -->
             <fragment
                 android:id="@+id/telaConfiguracoesFragment"
@@ -247,7 +261,7 @@
             <!-- HOME / PRINCIPAL -->
             <fragment
                 android:id="@+id/fragmentTelaPrincipal"
-                android:name="com.projetointegrador.app.ui.FragmentTelaPrincipal"
+                android:name="com.example.projetointegrador.TelaPrincipalFragment"
                 android:label="Principal">
                 <action
                     android:id="@+id/action_fragmentTelaPrincipal_to_telaPerfilFragment"
@@ -263,8 +277,9 @@
             <!-- BUSCA -->
             <fragment
                 android:id="@+id/telaBuscaFragment"
-                android:name="com.seuprojeto.app.ui.TelaBuscaFragment"
-                android:label="Busca" />
+                android:name="com.example.projetointegrador.ui.TelaBuscaFragment"
+                android:label="TelaBuscaFragment"
+                tools:layout="@layout/fragment_tela_busca" />
 
         </navigation>
     </navigation>

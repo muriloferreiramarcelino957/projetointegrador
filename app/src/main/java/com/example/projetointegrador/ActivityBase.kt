@@ -22,11 +22,5 @@ open class BaseActivity : AppCompatActivity() {
     override fun setContentView(layoutResID: Int) {
         val container = findViewById<FrameLayout>(R.id.baseContainer)
         layoutInflater.inflate(layoutResID, container, true)
-
-        // Depois que a tela for inflada, pegamos o botão menu
-        val menuButton = findViewById<ImageView>(R.id.ic_menu)
-        menuButton?.setOnClickListener {
-            drawerLayout.openDrawer(navigationView)
-        }
     }
 }

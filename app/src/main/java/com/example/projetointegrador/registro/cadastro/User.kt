@@ -12,6 +12,8 @@ data class User(
     var senha: String = "",
     var dataNascimento: String = "",
     var cpf: String = "",
+    var telefone: String = "",
+    var facebook: String = "",
     var cep: String = "",
     var logradouro: String = "",
     var numero: String = "",
@@ -20,3 +22,4 @@ data class User(
     var estado: String = "",
     var prestador: Boolean = false
 ) : Parcelable
+

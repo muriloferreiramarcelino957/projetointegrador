@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -34,112 +35,117 @@ class TelaPerfilFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setupNavigationBar()
+        TopNavigationBarHelper.setupNavigationBar(binding.root, this)
         setupListeners()
 
         val uid = args.uidPrestador
 
-        carregarNomeDoUsuario(uid)
-        carregarDadosDoPrestador(uid)
+        carregarDadosUsuario(uid)
+        carregarDadosPrestador(uid)
     }
 
     // -------------------------------------------------------------------------
-    // NAVBAR E LISTENERS
+    // BOTÕES / NAVBAR
     // -------------------------------------------------------------------------
-
-    private fun setupNavigationBar() {
-        TopNavigationBarHelper.setupNavigationBar(binding.root, this)
-    }
 
     private fun setupListeners() {
-        binding.btnArrowBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
+        binding.btnArrowBack.setOnClickListener { findNavController().navigateUp() }
 
         binding.btnAgendar.setOnClickListener {
             val action = TelaPerfilFragmentDirections
                 .actionTelaPerfilFragmentToTelaAgendaFragment(args.uidPrestador)
-
             findNavController().navigate(action)
         }
     }
 
-
     // -------------------------------------------------------------------------
-    // CARREGA O NOME EM /usuarios/{uid}
+    // CARREGAR CAMPOS DO USUÁRIO (nome, email, telefone, facebook)
+    // /usuarios/UID
     // -------------------------------------------------------------------------
 
-    private fun carregarNomeDoUsuario(uid: String) {
-        FirebaseDatabase.getInstance().reference
+    private fun carregarDadosUsuario(uid: String) {
+        val ref = FirebaseDatabase.getInstance().reference
             .child("usuarios")
             .child(uid)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snap: DataSnapshot) {
-                    val nome = snap.child("nome").getValue(String::class.java)
-                    binding.txtNome.text = nome ?: "Prestador"
-                }
 
-                override fun onCancelled(error: DatabaseError) {}
-            })
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snap: DataSnapshot) {
+
+                val nome = snap.child("nome").getValue(String::class.java) ?: "Prestador"
+                val email = snap.child("email").getValue(String::class.java) ?: "Não informado"
+                val telefone = snap.child("telefone").getValue(String::class.java) ?: "Não informado"
+                val facebook = snap.child("facebook").getValue(String::class.java) ?: "Não informado"
+
+                binding.txtNome.text = nome
+                binding.txtEmail.text = "✓ Endereço de e-mail: $email"
+                binding.txtTelefone.text = "✓ Número de telefone: $telefone"
+                binding.txtFacebook.text = "✓ Facebook: $facebook"
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     // -------------------------------------------------------------------------
-    // CARREGA DADOS EM /prestadores/{uid}
+    // CARREGAR CAMPOS DE PRESTADOR (descrição, nota, nivel, serviços, etc)
+    // /prestadores/UID
     // -------------------------------------------------------------------------
 
-    private fun carregarDadosDoPrestador(uid: String) {
+    private fun carregarDadosPrestador(uid: String) {
+
         database = FirebaseDatabase.getInstance().reference
-        val ref = database.child("prestadores").child(uid)
+        val refPrestador = database.child("prestadores").child(uid)
 
         listenerPrestador = object : ValueEventListener {
 
             override fun onDataChange(snap: DataSnapshot) {
 
-                // ------------------- DESCRIÇÃO -------------------
+                // DESCRIÇÃO
                 binding.txtDescricao.text =
                     snap.child("info_prestador/descricao")
                         .getValue(String::class.java)
                         ?: "Sem descrição cadastrada"
 
-                // ------------------- NOTA -------------------
-                val nota = snap.child("info_prestador/notaMedia")
-                    .getValue(Double::class.java) ?: 0.0
+                // NOTA
+                val nota = snap.child("info_prestador/notaMedia").getValue(Double::class.java) ?: 0.0
+                binding.txtRatingMediaValor.text = String.format("%.1f", nota)
 
-                val notaFormatada = String.format("%.1f", nota)
-                binding.txtRatingMediaValor.text = notaFormatada
-                binding.txtRatingMediaValor.text = notaFormatada
-
-                // ------------------- NÍVEL DE CADASTRO -------------------
+                // NIVEL CADASTRO → muda cor + progress
                 val nivel = snap.child("info_prestador/nivel_cadastro")
-                    .getValue(String::class.java) ?: "bronze"
+                    .getValue(String::class.java)?.lowercase() ?: "bronze"
 
-                binding.progressCadastro.progress = when (nivel.lowercase()) {
+                val drawable = when (nivel) {
+                    "bronze" -> R.drawable.bg_progress_bronze
+                    "prata" -> R.drawable.bg_progress_prata
+                    "ouro" -> R.drawable.bg_progress_ouro
+                    else -> R.drawable.bg_progress_bronze
+                }
+
+                binding.progressCadastro.progressDrawable =
+                    ContextCompat.getDrawable(requireContext(), drawable)
+
+                binding.progressCadastro.progress = when (nivel) {
                     "bronze" -> 33
                     "prata" -> 66
                     "ouro" -> 100
                     else -> 10
                 }
 
-                // ------------------- DATA CADASTRO -------------------
-                val dataBruta = snap.child("data_cadastro")
-                    .getValue(String::class.java)
-
+                // DATA DE CADASTRO
+                val dataBruta = snap.child("data_cadastro").getValue(String::class.java)
                 if (!dataBruta.isNullOrEmpty()) {
                     binding.txtDesde.text = "Na AllService desde ${formatarData(dataBruta)}"
                 }
 
-                // ------------------- QUANTIDADE DE SERVIÇOS -------------------
+                // QUANTIDADE DE SERVIÇOS
                 val qtd = snap.child("info_prestador/quantidade_de_servicos")
                     .getValue(Int::class.java) ?: 0
-
                 binding.quantidadeServicos.text =
                     "Quantidade de serviços prestados: $qtd"
 
-                // ------------------- SERVIÇOS OFERECIDOS -------------------
-                val servicosNode = snap.child("servicos_oferecidos").children
-                val ids = servicosNode.mapNotNull { it.key?.toIntOrNull() }
+                // SERVIÇOS OFERECIDOS
+                val ids = snap.child("servicos_oferecidos").children
+                    .mapNotNull { it.key?.toIntOrNull() }
 
                 if (ids.isEmpty()) {
                     binding.servicosTags.text = "Nenhum serviço"
@@ -147,28 +153,24 @@ class TelaPerfilFragment : Fragment() {
                     carregarDescricoesServicos(ids)
                 }
 
-                // ------------------- DISPONIBILIDADE -------------------
-                val inicio = snap.child("disponibilidade/segunda/inicio")
-                    .getValue(String::class.java)
+                // DISPONIBILIDADE
+                val inicio = snap.child("disponibilidade/segunda/inicio").getValue(String::class.java)
+                val fim = snap.child("disponibilidade/segunda/fim").getValue(String::class.java)
 
-                val fim = snap.child("disponibilidade/segunda/fim")
-                    .getValue(String::class.java)
-
-                binding.txtLocal.text =
-                    if (inicio != null && fim != null)
-                        "Disponível: $inicio — $fim"
-                    else
-                        "Disponibilidade não informada"
+                binding.txtLocal.text = if (inicio != null && fim != null)
+                    "Disponível: $inicio — $fim"
+                else
+                    "Disponibilidade não informada"
             }
 
             override fun onCancelled(error: DatabaseError) {}
         }
 
-        ref.addValueEventListener(listenerPrestador!!)
+        refPrestador.addValueEventListener(listenerPrestador!!)
     }
 
     // -------------------------------------------------------------------------
-    // BUSCA AS DESCRIÇÕES DOS SERVIÇOS EM /tipos_de_servico
+    // DESCRIÇÕES DOS SERVIÇOS
     // -------------------------------------------------------------------------
 
     private fun carregarDescricoesServicos(ids: List<Int>) {
@@ -181,22 +183,20 @@ class TelaPerfilFragment : Fragment() {
         ids.forEach { id ->
             refTipos.child(id.toString()).child("dscr_servico")
                 .get()
-                .addOnSuccessListener { dsnap ->
-                    val desc = dsnap.getValue(String::class.java)
-                    if (desc != null) descricoes.add(desc)
+                .addOnSuccessListener { snap ->
+                    snap.getValue(String::class.java)?.let { descricoes.add(it) }
                 }
                 .addOnCompleteListener {
                     carregados++
                     if (carregados == ids.size) {
-                        binding.servicosTags.text =
-                            descricoes.joinToString(" | ")
+                        binding.servicosTags.text = descricoes.joinToString(" | ")
                     }
                 }
         }
     }
 
     // -------------------------------------------------------------------------
-    // FORMATA DATA: yyyy-MM-dd → dd/MM/yyyy
+    // FORMATAR DATA
     // -------------------------------------------------------------------------
 
     private fun formatarData(data: String): String = try {
@@ -208,16 +208,8 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // LIMPEZA DE LISTENER
+    // LIMPAR LISTENER
     // -------------------------------------------------------------------------
-    private fun configurarMenuLateral() {
-        val btnMenu = binding.topBar.root.findViewById<ImageView>(R.id.ic_menu)
-        val drawerLayout = binding.root.findViewById<DrawerLayout>(R.id.drawerLayout)
-
-        btnMenu.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

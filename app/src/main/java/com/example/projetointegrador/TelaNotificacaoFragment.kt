@@ -1,146 +1,151 @@
-package com.example.projetointegrador
+package com.example.projetointegrador.adapters
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.projetointegrador.adapters.NotificacaoAdapter
-import com.example.projetointegrador.databinding.TelaDeNotificacoesBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import androidx.recyclerview.widget.RecyclerView
+import com.example.projetointegrador.databinding.ItemNotificacaoBinding
+import com.example.projetointegrador.databinding.ItemNotificacaoAvaliacaoBinding
+import com.example.projetointegrador.model.Notificacao
 
-class TelaNotificacaoFragment : Fragment() {
+class NotificacaoAdapter(
+    private val onAceitar: (String) -> Unit,
+    private val onRecusar: (String) -> Unit,
+    private val onMarcarLido: (String) -> Unit,
+    private val onAvaliar: (String, Int) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var _binding: TelaDeNotificacoesBinding? = null
-    private val binding get() = _binding!!
-
-    private lateinit var database: DatabaseReference
-    private lateinit var uid: String
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = TelaDeNotificacoesBinding.inflate(inflater, container, false)
-        return binding.root
+    companion object {
+        private const val VIEW_NORMAL = 0
+        private const val VIEW_AVALIACAO = 1
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private var lista = listOf<Notificacao>()
 
-        uid = FirebaseAuth.getInstance().uid!!
-        database = FirebaseDatabase.getInstance().reference
-
-        binding.recyclerNotificacoes.layoutManager = LinearLayoutManager(requireContext())
-
-        carregarNotificacoes()
-        initListeners()
+    fun atualizar(novas: List<Notificacao>) {
+        lista = novas.sortedByDescending { it.data_hora ?: 0 }
+        notifyDataSetChanged()
     }
 
-    private fun initListeners() {
-        binding.btnVoltar.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+    override fun getItemCount(): Int = lista.size
 
-        binding.btnMarcarComoLidas.setOnClickListener {
-            database.child("notificacoes").child(uid)
-                .get().addOnSuccessListener { snap ->
-                    snap.children.forEach { it.ref.child("lido").setValue(true) }
-                }
-            Toast.makeText(requireContext(), "Notificações marcadas como lidas!", Toast.LENGTH_SHORT).show()
+    override fun getItemViewType(position: Int): Int {
+        return if (lista[position].tipo == "avaliacao_servico") VIEW_AVALIACAO else VIEW_NORMAL
+    }
+
+    // ============================================================
+    // VIEW HOLDERS
+    // ============================================================
+
+    inner class NormalVH(val b: ItemNotificacaoBinding) :
+        RecyclerView.ViewHolder(b.root)
+
+    inner class AvaliacaoVH(val b: ItemNotificacaoAvaliacaoBinding) :
+        RecyclerView.ViewHolder(b.root)
+
+    // ============================================================
+    // CREATE VIEW HOLDER
+    // ============================================================
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_NORMAL) {
+
+            val b = ItemNotificacaoBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+            NormalVH(b)
+
+        } else {
+
+            val b = ItemNotificacaoAvaliacaoBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+            AvaliacaoVH(b)
         }
     }
 
-    private fun carregarNotificacoes() {
-        database.child("notificacoes").child(uid)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
+    // ============================================================
+    // BIND VIEW HOLDER
+    // ============================================================
 
-                    val lista = snapshot.children.toList()
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val n = lista[position]
 
-                    if (lista.isEmpty()) {
-                        binding.layoutVazio.visibility = View.VISIBLE
-                        binding.recyclerNotificacoes.visibility = View.GONE
-                        return
-                    }
+        // ⭐ VIEW NORMAL
+        if (holder is NormalVH) {
+            val b = holder.b
 
-                    binding.layoutVazio.visibility = View.GONE
-                    binding.recyclerNotificacoes.visibility = View.VISIBLE
+            b.txtTitulo.text = n.mensagem ?: "Notificação"
+            b.txtDescricao.text = n.mensagem ?: ""
 
-                    binding.recyclerNotificacoes.adapter = NotificacaoAdapter(
-                        lista,
-                        onAceitar = { notifId -> aceitarSolicitacao(notifId) },
-                        onRecusar = { notifId -> recusarSolicitacao(notifId) }
-                    )
+            // reset
+            b.layoutDetalhes.visibility = View.GONE
+            b.layoutConfirmacao.visibility = View.GONE
+
+            when (n.tipo) {
+
+                "solicitacao_servico" -> {
+                    b.txtTitulo.text = "Novo pedido de serviço"
+
+                    b.layoutDetalhes.visibility = View.VISIBLE
+                    b.txtNomeUsuario.text = "Cliente: ${n.nome_usuario}"
+                    b.txtEndereco.text = "Endereço: ${n.endereco}"
+                    b.txtServico.text = "Serviço: ${n.servico}"
+                    b.txtDataHora.text = "Data: ${n.data ?: "-"} • ${n.hora ?: "-"}"
+                    b.txtValor.text = "R$ ${n.valor ?: "0"}"
+
+                    b.layoutConfirmacao.visibility = View.VISIBLE
+
+                    val id = n.id ?: ""
+                    b.btnSim.setOnClickListener { onAceitar(id) }
+                    b.btnNao.setOnClickListener { onRecusar(id) }
                 }
 
-                override fun onCancelled(error: DatabaseError) {}
-            })
-    }
+                "confirmado" -> {
+                    b.txtTitulo.text = "Seu agendamento foi confirmado!"
+                }
 
-    private fun aceitarSolicitacao(notifId: String) {
-        val notifRef = database.child("notificacoes").child(uid).child(notifId)
-
-        notifRef.get().addOnSuccessListener { snap ->
-            val agendamentoId = snap.child("agendamento_id").value.toString()
-
-            database.child("prestacoes").child(agendamentoId)
-                .child("status")
-                .setValue("agendado")
-
-            notifRef.removeValue()
-            Toast.makeText(requireContext(), "Serviço aceito!", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun recusarSolicitacao(notifId: String) {
-        val notifRef = database.child("notificacoes").child(uid).child(notifId)
-
-        notifRef.get().addOnSuccessListener { snap ->
-
-            val agendamentoId = snap.child("agendamento_id").value.toString()
-
-            val prestRef = database.child("prestacoes").child(agendamentoId)
-
-            prestRef.child("status").setValue("recusado")
-
-            prestRef.get().addOnSuccessListener { agSnap ->
-                val usuarioId = agSnap.child("usuario_id").value.toString()
-
-                database.child("notificacoes").child(usuarioId)
-                    .push()
-                    .setValue(
-                        mapOf(
-                            "tipo" to "recusado",
-                            "mensagem" to "Seu pedido de serviço foi recusado",
-                            "data_hora" to System.currentTimeMillis(),
-                            "agendamento_id" to agendamentoId,
-                            "lido" to false
-                        )
-                    )
+                "recusado" -> {
+                    b.txtTitulo.text = "Seu pedido de serviço foi recusado"
+                }
             }
 
-            notifRef.removeValue()
-
-            Toast.makeText(requireContext(), "Solicitação recusada!", Toast.LENGTH_SHORT).show()
+            // Marcar como lido → remove
+            b.btnMarcarLido.setOnClickListener {
+                if (!n.id.isNullOrEmpty()) onMarcarLido(n.id!!)
+            }
         }
-    }
 
-    private fun configurarMenuLateral() {
-        val btnMenu = binding.topBar.root.findViewById<ImageView>(R.id.ic_menu)
-        val drawerLayout = binding.root.findViewById<DrawerLayout>(R.id.drawerLayout)
+        // ⭐ VIEW AVALIAÇÃO
+        if (holder is AvaliacaoVH) {
+            val b = holder.b
 
-        btnMenu.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
+            b.txtTitulo.text = "Avalie o serviço realizado"
+            b.txtDescricao.text = "Ajude outros usuários deixando uma avaliação."
+
+            b.txtServico.text = "Serviço: ${n.servico ?: "-"}"
+            b.txtDataHora.text = "Data: ${n.data ?: "-"} • ${n.hora ?: "-"}"
+
+            val id = n.id ?: ""
+
+            b.btnAvaliar.setOnClickListener {
+                val estrelas = b.ratingBar.rating.toInt()
+
+                if (estrelas == 0) {
+                    android.widget.Toast.makeText(
+                        b.root.context,
+                        "Selecione uma nota!",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+
+                onAvaliar(id, estrelas)
+            }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

@@ -2,10 +2,13 @@ package com.example.projetointegrador.registro.cadastro
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -26,6 +29,31 @@ class TelaCadastroFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initListeners()
+
+        // ----------- MÁSCARA DE TELEFONE -----------
+        binding.editTextTelefone.addTextChangedListener(
+            TelefoneMask(binding.editTextTelefone)
+        )
+        binding.editTextFacebook.addTextChangedListener(object : TextWatcher {
+            private var isUpdating = false
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                if (isUpdating) return
+
+                val texto = s.toString()
+
+                if (texto.isNotEmpty() && !texto.startsWith("@")) {
+                    isUpdating = true
+                    binding.editTextFacebook.setText("@$texto")
+                    binding.editTextFacebook.setSelection(binding.editTextFacebook.text!!.length)
+                    isUpdating = false
+                }
+            }
+        })
+
     }
 
     // -------------------------------------------------------------------------
@@ -55,7 +83,6 @@ class TelaCadastroFragment : Fragment() {
             }, ano, mes, dia
         )
 
-        // Só permite datas até 18 anos atrás
         val limite = Calendar.getInstance().apply { add(Calendar.YEAR, -18) }
         picker.datePicker.maxDate = limite.timeInMillis
 
@@ -73,9 +100,10 @@ class TelaCadastroFragment : Fragment() {
         val nascimento = editTextTextNascimento.text.toString().trim()
         val senha = editTextTextSenha.text?.toString()?.trim().orEmpty()
         val senha2 = editTextTextRepitaSenha.text?.toString()?.trim().orEmpty()
+        val telefone = editTextTelefone.text.toString().trim()
+        val facebook = editTextFacebook.text.toString().trim()
 
-        // Verifica campos vazios
-        if (listOf(nome, email, cpf, nascimento, senha, senha2).any { it.isEmpty() }) {
+        if (listOf(nome, email, telefone, facebook, cpf, nascimento, senha, senha2).any { it.isEmpty() }) {
             toast("Preencha todos os campos.")
             return
         }
@@ -87,6 +115,13 @@ class TelaCadastroFragment : Fragment() {
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             toast("Insira um email válido.")
+            return
+        }
+
+        // TELEFONE PRECISA TER 11 DÍGITOS
+        val telefoneDigits = telefone.filter { it.isDigit() }
+        if (telefoneDigits.length != 11) {
+            toast("O telefone precisa ter 11 dígitos (DDD + número).")
             return
         }
 
@@ -167,13 +202,18 @@ class TelaCadastroFragment : Fragment() {
     //  ENVIO PARA PRÓXIMA TELA
     // -------------------------------------------------------------------------
     private fun mandarDados() = with(binding) {
+        val nomeCorrigido = editTextTextNome.text.toString()
+            .lowercase()
+            .replaceFirstChar { it.uppercase() }
 
         val user = User(
-            nome = editTextTextNome.text.toString().trim(),
+            nome = nomeCorrigido,
             email = editTextTextEmail.text.toString().trim(),
             dataNascimento = editTextTextNascimento.text.toString().trim(),
             cpf = editTextTextCPF.text.toString().trim(),
             senha = editTextTextSenha.text.toString().trim(),
+            telefone = editTextTelefone.text.toString().trim(),
+            facebook = editTextFacebook.text.toString().trim(),
             cep = "",
             logradouro = "",
             numero = "",
@@ -189,12 +229,47 @@ class TelaCadastroFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    // -------------------------------------------------------------------------
     private fun toast(msg: String) =
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+}
+
+class TelefoneMask(private val editText: EditText) : TextWatcher {
+
+    private var isUpdating = false
+
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+    override fun afterTextChanged(s: Editable?) {
+        if (isUpdating) return
+
+        val digits = s.toString().filter { it.isDigit() }
+
+        val formatted = when {
+            digits.length >= 11 ->
+                "(${digits.substring(0,2)}) ${digits.substring(2,7)}-${digits.substring(7,11)}"
+
+            digits.length >= 7 ->
+                "(${digits.substring(0,2)}) ${digits.substring(2,6)}-${digits.substring(6)}"
+
+            digits.length >= 3 ->
+                "(${digits.substring(0,2)}) ${digits.substring(2)}"
+
+            digits.length >= 1 ->
+                "(${digits}"
+
+            else -> ""
+        }
+
+        isUpdating = true
+        editText.setText(formatted)
+        editText.setSelection(formatted.length)
+        isUpdating = false
     }
 }

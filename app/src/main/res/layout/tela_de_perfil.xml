@@ -226,7 +226,7 @@
             android:layout_marginTop="4dp"
             android:max="100"
             android:progress="90"
-            android:progressDrawable="@drawable/barra_nivel_de_cadastro" />
+            android:progressDrawable="@drawable/bg_progress_prata" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -243,31 +243,35 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-
                 <TextView
+                    android:id="@+id/txtEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="✓ Endereço de e-mail"
+                    android:text="✓ Endereço de e-mail:"
                     android:fontFamily="@font/anekkannadalight"
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/txtTelefone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="✓ Número de telefone"
+                    android:text="✓ Número de telefone:"
                     android:fontFamily="@font/anekkannadalight"
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/txtFacebook"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="✓ Facebook"
+                    android:text="✓ Facebook:"
                     android:fontFamily="@font/anekkannadalight"
                     android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>
+
+
 
         <TextView
             android:layout_width="wrap_content"

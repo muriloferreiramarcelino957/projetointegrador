@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.example.projetointegrador.R
+import com.google.firebase.auth.FirebaseAuth
 
 object MenuLateralHelper {
 
@@ -17,29 +18,27 @@ object MenuLateralHelper {
     ) {
 
         val header = navigationView.getHeaderView(0)
+        val nav = fragment.findNavController()
 
         // SETA DE VOLTAR
         header.findViewById<View>(R.id.btnVoltar).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
-            fragment.findNavController().navigateUp()
+            nav.navigateUp()
         }
 
-        // HOME
+        // PÁGINA INICIAL
         header.findViewById<View>(R.id.btnHome).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
-            fragment.findNavController().navigate(R.id.fragmentTelaPrincipal)
+            nav.navigate(R.id.fragmentTelaPrincipal)
         }
 
-        // AGENDAMENTOS
-        header.findViewById<View>(R.id.btnAgendamentos).setOnClickListener {
-            drawerLayout.closeDrawer(GravityCompat.START)
-            fragment.findNavController().navigate(R.id.telaAgendaFragment)
-        }
-
-        // SAIR
+        // SAIR → deslogar + ir para telaInicialFragment
         header.findViewById<View>(R.id.btnSair).setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
-            fragment.findNavController().navigate(R.id.telaInicialFragment)
+
+            FirebaseAuth.getInstance().signOut()
+
+            nav.navigate(R.id.telaInicialFragment)
         }
     }
 }

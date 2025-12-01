@@ -6,11 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Aqui sua tela real será inflada -->
+    <!-- CONTEÚDO DOS FRAGMENTS -->
     <FrameLayout
         android:id="@+id/baseContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <!-- MENU LATERAL -->
     <com.google.android.material.navigation.NavigationView
@@ -18,7 +18,6 @@
         android:layout_width="260dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#4B007D"
         app:headerLayout="@layout/menu_lateral" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

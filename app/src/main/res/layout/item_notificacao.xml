@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="12dp"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="12dp">
+    app:cardCornerRadius="14dp"
+    app:cardElevation="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,54 +13,126 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- MENSAGEM -->
+        <!-- Título -->
         <TextView
-            android:id="@+id/tvMensagem"
+            android:id="@+id/txtTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Novo agendamento!"
-            android:textColor="#000"
+            android:text="Novo pedido de serviço"
+            android:textColor="#000000"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <!-- DATA/HORA -->
+        <!-- Mensagem principal -->
         <TextView
-            android:id="@+id/tvData"
+            android:id="@+id/txtDescricao"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="07/11/2025 14:00"
-            android:textColor="#888"
-            android:textSize="13sp"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            android:textColor="#444444"
+            android:textSize="14sp" />
 
-        <!-- AÇÕES -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- “chip” opcional (tipo) -->
+        <TextView
+            android:id="@+id/txtChipTipo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="4dp"
+            android:textColor="#5A0275"
+            android:textSize="12sp" />
 
-            <Button
-                android:id="@+id/btnRecusar"
+        <!-- BLOCO DE DETALHES – só aparece em solicitacao_servico -->
+        <LinearLayout
+            android:id="@+id/layoutDetalhes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtNomeUsuario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recusar"
-                android:textColor="#FFF"
-                android:backgroundTint="#B00020"/>
+                android:textColor="#000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-            <Space
-                android:layout_width="12dp"
-                android:layout_height="match_parent"/>
-
-            <Button
-                android:id="@+id/btnAceitar"
+            <TextView
+                android:id="@+id/txtEndereco"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Aceitar"
-                android:textColor="#FFF"
-                android:backgroundTint="#5A0275"/>
+                android:layout_marginTop="4dp"
+                android:textColor="#555"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/txtServico"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#555"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/txtDataHora"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#555"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/txtValor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#5A0275"
+                android:textSize="14sp"
+                android:textStyle="bold" />
         </LinearLayout>
+
+        <!-- BOTÕES – só aparecem em solicitacao_servico -->
+        <LinearLayout
+            android:id="@+id/layoutConfirmacao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+
+            <Button
+                android:id="@+id/btnSim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:text="Sim"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#5A0275" />
+
+            <Button
+                android:id="@+id/btnNao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:paddingHorizontal="20dp"
+                android:text="Não"
+                android:textColor="#000000"
+                android:backgroundTint="#E0E0E0" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/btnMarcarLido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Marcar como lido"
+            android:textColor="#5A0275"
+            android:textSize="12sp"
+            android:layout_gravity="end"
+            android:paddingTop="8dp"
+            android:clickable="true"
+            android:focusable="true" />
+
 
     </LinearLayout>
 
