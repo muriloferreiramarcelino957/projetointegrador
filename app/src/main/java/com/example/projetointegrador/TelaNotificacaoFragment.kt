@@ -228,7 +228,7 @@ class TelaNotificacaoFragment : Fragment() {
 
                 val updates = mapOf(
                     "quantidade_de_servicos" to novaQtd,
-                    "notaMedia" to novaMedia // SEMPRE Double
+                    "notaMedia" to novaMedia
                 )
 
                 ref.updateChildren(updates)

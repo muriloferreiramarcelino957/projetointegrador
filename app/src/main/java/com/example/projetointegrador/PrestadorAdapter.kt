@@ -19,12 +19,13 @@ class PrestadorAdapter(
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PrestadorViewHolder {
-        val binding = ItemPrestadorAvaliadoBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+        return PrestadorViewHolder(
+            ItemPrestadorAvaliadoBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
-        return PrestadorViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PrestadorViewHolder, position: Int) {
@@ -32,67 +33,34 @@ class PrestadorAdapter(
 
         with(holder.binding) {
 
-            tvNome.text = p.user.nome.ifBlank { "Prestador" }
-
-            val nota = p.prestador.info_prestador?.notaMedia ?: 0.0
-            tvNota.text = String.format(Locale("pt", "BR"), "%.1f", nota)
+            tvNome.text = p.nome
+            tvNota.text = String.format("%.1f", p.info_prestador.notaMedia)
+            tvLocalizacao.text = p.cidade
 
             tvDataInicio.text =
-                if (p.dataCadastro.isNotBlank())
-                    "Na AllService desde ${formatarDataCadastro(p.dataCadastro)}"
-                else
-                    "Data de cadastro desconhecida"
-
-            tvLocalizacao.text = listOfNotNull(
-                p.user.bairro.takeIf { it.isNotBlank() },
-                p.user.cidade.takeIf { it.isNotBlank() },
-                p.user.estado.takeIf { it.isNotBlank() }
-            ).joinToString(", ")
+                if (p.data_cadastro.isNotBlank()) "Desde ${p.data_cadastro}"
+                else "Data não informada"
 
             tvUltimoAcesso.text =
-                "Último acesso ${calcularTempoDesdeUltimoAcesso(p.ultimoAcesso)}"
+                "Último acesso ${calcularTempoDesde(p.ultimo_acesso)}"
 
             root.setOnClickListener { onItemClick(p) }
         }
     }
 
-    private fun formatarDataCadastro(data: String?): String {
-        return runCatching {
-            if (data.isNullOrBlank()) return "data desconhecida"
-
-            val inFmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-            val outFmt = SimpleDateFormat("MMMM 'de' yyyy", Locale("pt", "BR"))
-
-            val dateObj = inFmt.parse(data) ?: return data
-
-            return outFmt.format(dateObj).replaceFirstChar { it.titlecase(Locale("pt", "BR")) }
-        }.getOrElse { data ?: "data inválida" }
-    }
-
-    private fun calcularTempoDesdeUltimoAcesso(dataHora: String?): String {
-        if (dataHora.isNullOrBlank()) return "indisponível"
-
+    private fun calcularTempoDesde(data: String): String {
         return try {
-            val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            val ultimoAcesso = format.parse(dataHora)
-            val agora = Date()
+            val f = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val d = f.parse(data) ?: return "indisponível"
 
-            if (ultimoAcesso == null) return "indisponível"
+            val diff = Date().time - d.time
+            val horas = TimeUnit.MILLISECONDS.toHours(diff)
+            val dias = TimeUnit.MILLISECONDS.toDays(diff)
 
-            val diffMillis = agora.time - ultimoAcesso.time
-
-            val minutes = TimeUnit.MILLISECONDS.toMinutes(diffMillis)
-            val hours = TimeUnit.MILLISECONDS.toHours(diffMillis)
-            val days = TimeUnit.MILLISECONDS.toDays(diffMillis)
-
-            return when {
-                minutes < 60 -> "há ${minutes} minuto(s)"
-                hours < 24 -> "há ${hours} hora(s)"
-                days <= 7 -> "há ${days} dia(s)"
-                else -> {
-                    val specificFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                    "em ${specificFormat.format(ultimoAcesso)}"
-                }
+            when {
+                horas < 24 -> "há $horas hora(s)"
+                dias < 7 -> "há $dias dia(s)"
+                else -> SimpleDateFormat("dd/MM HH:mm", Locale.getDefault()).format(d)
             }
         } catch (e: Exception) {
             "indisponível"

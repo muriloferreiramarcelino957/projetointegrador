@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:orientation="vertical">
 
         <!-- Título -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Filtros"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#001F4D"
-            android:layout_marginBottom="20dp" />
+            android:textColor="#2A1A4A"
+            android:layout_marginBottom="16dp" />
 
-        <!-- Nível de Cadastro -->
+        <!-- Nível de cadastro -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nível de Cadastro"
-            android:textColor="#000"
+            android:textColor="#333"
             android:textSize="14sp" />
 
         <Spinner
@@ -33,27 +33,35 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp" />
 
-        <!-- Serviços Prestados -->
+        <!-- Serviço prestado -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Serviços Prestados"
-            android:textColor="#000"
+            android:text="Serviço Prestado"
+            android:textColor="#333"
             android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/etServico"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutServicos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ex: Encanador, Eletricista"
-            android:layout_marginBottom="20dp" />
+            android:hint="Selecione um serviço"
+            android:layout_marginBottom="20dp">
 
-        <!-- Avaliação Geral -->
+            <AutoCompleteTextView
+                android:id="@+id/etServicos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Avaliação -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Avaliação Geral"
-            android:textColor="#000"
+            android:text="Avaliação Mínima:"
+            android:textColor="#333"
             android:textSize="14sp" />
 
         <RatingBar
@@ -64,19 +72,19 @@
             android:stepSize="0.5"
             android:layout_marginBottom="20dp" />
 
-        <!-- Localização -->
+        <!-- Cidade -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Localização (Cidade)"
-            android:textColor="#000"
+            android:text="Cidade"
+            android:textColor="#333"
             android:textSize="14sp" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/tvLocalizacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ex: São Paulo, Rio de Janeiro"
+            android:hint="Digite a cidade"
             android:layout_marginBottom="25dp" />
 
         <!-- Botão aplicar -->
@@ -85,9 +93,9 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:text="Aplicar Filtros"
-            android:backgroundTint="#5A0275"
+            android:textStyle="bold"
             android:textColor="#FFF"
-            android:textStyle="bold" />
+            android:backgroundTint="#5A0275" />
 
     </LinearLayout>
 

@@ -1,13 +1,19 @@
 package com.example.projetointegrador
 
-import com.example.projetointegrador.registro.cadastro.Prestador
-import com.example.projetointegrador.registro.cadastro.User
-
 data class PrestadorDisplay(
     val uid: String = "",
-    val user: User = User(),
-    val prestador: Prestador = Prestador(),
-    val servicos: Map<String, String> = emptyMap(),
-    val dataCadastro: String = "",
-    val ultimoAcesso: String = "",
+    val nome: String = "",
+    val cidade: String = "",
+    val info_prestador: InfoPrestador = InfoPrestador(),
+    val servicos: List<String> = emptyList(),
+
+    val data_cadastro: String = "",
+    val ultimo_acesso: String = ""
+)
+
+data class InfoPrestador(
+    val descricao: String = "",
+    val notaMedia: Double = 0.0,
+    val quantidade_de_servicos: Int = 0,
+    val nivel_cadastro: String = ""
 )

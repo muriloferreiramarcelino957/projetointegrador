@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.example.projetointegrador.databinding.DialogFiltrosBinding
+import com.google.firebase.database.FirebaseDatabase
 import com.projetointegrador.app.model.FiltrosModel
 
 class FiltroBottomSheet(
@@ -15,6 +16,15 @@ class FiltroBottomSheet(
 
     private var _binding: DialogFiltrosBinding? = null
     private val binding get() = _binding!!
+    private val db = FirebaseDatabase.getInstance().reference
+
+    private val mapaServicos = mutableMapOf<String, String>()  // id -> nome
+    private var selectedServiceId: String = ""                 // id escolhido
+
+    private var filtroNivel = "Todos"
+    private var filtroServico = ""
+    private var filtroAvaliacao = 0.0
+    private var filtroCidade = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,36 +32,122 @@ class FiltroBottomSheet(
         savedInstanceState: Bundle?
     ): View {
         _binding = DialogFiltrosBinding.inflate(inflater, container, false)
+
+        val args = arguments
+        filtroNivel = args?.getString("nivel", "Todos") ?: "Todos"
+        filtroServico = args?.getString("servico", "") ?: ""
+        filtroAvaliacao = args?.getString("avaliacao", "0")?.toDoubleOrNull() ?: 0.0
+        filtroCidade = args?.getString("cidade", "") ?: ""
+
+        configurarSpinnerNivel()
+        carregarServicos()
+        carregarCidades()
+
+        binding.ratingMin.rating = filtroAvaliacao.toFloat()
+        binding.tvLocalizacao.setText(filtroCidade, false)
+
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    // ============================================
+    // SERVIÇOS — agora pegando **KEY como ID**
+    // ============================================
+    private fun carregarServicos() {
+        db.child("tipos_de_servico").get().addOnSuccessListener { snap ->
 
-        configurarSpinnerNivel()
-        configurarClickAplicar()
+            val nomesServicos = mutableListOf("Nenhum serviço especificado")
+            mapaServicos.clear()
+
+            snap.children.forEach { tipo ->
+                val id = tipo.key ?: return@forEach
+                val nome = tipo.child("dscr_servico").value?.toString() ?: ""
+                if (nome.isNotBlank()) {
+                    mapaServicos[id] = nome
+                    nomesServicos.add(nome)
+                }
+            }
+
+            val adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_list_item_1,
+                nomesServicos
+            )
+
+            binding.etServicos.setAdapter(adapter)
+            binding.etServicos.isFocusable = false
+
+            // Seleção no dropdown
+            binding.etServicos.setOnItemClickListener { _, _, pos, _ ->
+                if (pos == 0) {
+                    selectedServiceId = ""
+                } else {
+                    val nome = nomesServicos[pos]
+                    selectedServiceId = mapaServicos.entries.first { it.value == nome }.key
+                }
+            }
+
+            // Preencher automaticamente o serviço salvo
+            if (filtroServico.isNotBlank()) {
+                val nome = mapaServicos[filtroServico]
+                if (!nome.isNullOrBlank()) {
+                    binding.etServicos.setText(nome, false)
+                    selectedServiceId = filtroServico
+                }
+            }
+
+            // Abrir dropdown ao clicar
+            binding.etServicos.setOnClickListener { binding.etServicos.showDropDown() }
+        }
     }
 
+    // ============================================
+    // CIDADES
+    // ============================================
+    private fun carregarCidades() {
+        db.child("usuarios").get().addOnSuccessListener { snap ->
+
+            val cidades = snap.children
+                .mapNotNull { it.child("cidade").value?.toString() }
+                .distinct()
+                .sorted()
+
+            val adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_list_item_1,
+                cidades
+            )
+
+            binding.tvLocalizacao.setAdapter(adapter)
+        }
+    }
+
+    // ============================================
+    // NÍVEL
+    // ============================================
     private fun configurarSpinnerNivel() {
 
         val niveis = listOf("Todos", "Bronze", "Prata", "Ouro")
 
-        binding.spNivel.adapter = ArrayAdapter(
+        val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
             niveis
-        ).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
+        )
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spNivel.adapter = adapter
+
+        val pos = niveis.indexOf(filtroNivel)
+        if (pos >= 0) binding.spNivel.setSelection(pos)
     }
 
-    private fun configurarClickAplicar() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         binding.btnAplicar.setOnClickListener {
 
             val filtros = FiltrosModel(
                 nivelCadastro = binding.spNivel.selectedItem.toString(),
-                servico = binding.etServico.text.toString(),
+                servico = selectedServiceId,
                 avaliacaoMinima = binding.ratingMin.rating.toString(),
                 localizacao = binding.tvLocalizacao.text.toString()
             )
