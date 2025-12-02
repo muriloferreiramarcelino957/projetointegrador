@@ -109,7 +109,7 @@ class TelaBuscaFragment : Fragment() {
 
         val filtrados = listaCompleta.filter { p ->
 
-            val nivelPrestador = p.prestador.info_prestador?.nivel_cadastro ?: ""
+            val nivelPrestador = p.prestador.nivel_cadastro ?: ""
 
             val nivelOk =
                 f.nivelCadastro == "Todos" ||
@@ -120,7 +120,7 @@ class TelaBuscaFragment : Fragment() {
                         p.servicos.keys.any { it.contains(f.servico, ignoreCase = true) }
 
             val avaliacaoOk =
-                (p.prestador.notaMedia ?: 0.0) >= f.avaliacaoMinima.toDouble()
+                (p.prestador.info_prestador?.notaMedia ?: 0.0) >= f.avaliacaoMinima.toDouble()
 
             val localOk =
                 f.localizacao.isBlank() ||

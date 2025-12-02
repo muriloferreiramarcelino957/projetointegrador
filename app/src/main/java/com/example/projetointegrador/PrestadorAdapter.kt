@@ -34,7 +34,7 @@ class PrestadorAdapter(
 
             tvNome.text = p.user.nome.ifBlank { "Prestador" }
 
-            val nota = p.prestador.notaMedia ?: 0.0
+            val nota = p.prestador.info_prestador?.notaMedia ?: 0.0
             tvNota.text = String.format(Locale("pt", "BR"), "%.1f", nota)
 
             tvDataInicio.text =

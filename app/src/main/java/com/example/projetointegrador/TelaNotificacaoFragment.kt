@@ -1,151 +1,250 @@
-package com.example.projetointegrador.adapters
+package com.example.projetointegrador
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.example.projetointegrador.databinding.ItemNotificacaoBinding
-import com.example.projetointegrador.databinding.ItemNotificacaoAvaliacaoBinding
+import android.os.Bundle
+import android.view.*
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.projetointegrador.adapters.NotificacaoAdapter
+import com.example.projetointegrador.databinding.TelaDeNotificacoesBinding
 import com.example.projetointegrador.model.Notificacao
+import com.example.projetointegrador.navigation.TopNavigationBarHelper
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.*
 
-class NotificacaoAdapter(
-    private val onAceitar: (String) -> Unit,
-    private val onRecusar: (String) -> Unit,
-    private val onMarcarLido: (String) -> Unit,
-    private val onAvaliar: (String, Int) -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class TelaNotificacaoFragment : Fragment() {
 
-    companion object {
-        private const val VIEW_NORMAL = 0
-        private const val VIEW_AVALIACAO = 1
+    private var _binding: TelaDeNotificacoesBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var db: DatabaseReference
+    private lateinit var adapter: NotificacaoAdapter
+    private val uid by lazy { FirebaseAuth.getInstance().uid ?: "" }
+    private var listener: ValueEventListener? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = TelaDeNotificacoesBinding.inflate(inflater, container, false)
+        db = FirebaseDatabase.getInstance().reference
+        return binding.root
     }
 
-    private var lista = listOf<Notificacao>()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-    fun atualizar(novas: List<Notificacao>) {
-        lista = novas.sortedByDescending { it.data_hora ?: 0 }
-        notifyDataSetChanged()
+        TopNavigationBarHelper.setupNavigationBar(binding.root, this)
+
+        adapter = NotificacaoAdapter(
+            onAceitar = { aceitar(it) },
+            onRecusar = { recusar(it) },
+            onMarcarLido = { marcarComoLido(it) },
+            onAvaliar = { id, nota -> avaliar(id, nota) }
+        )
+
+        binding.recyclerNotificacoes.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerNotificacoes.adapter = adapter
+
+        binding.btnMarcarComoLidas.setOnClickListener { marcarTodasLidas() }
+        binding.btnVoltar.setOnClickListener { requireActivity().onBackPressed() }
+
+        carregarNotificacoes()
     }
 
-    override fun getItemCount(): Int = lista.size
+    private fun carregarNotificacoes() {
 
-    override fun getItemViewType(position: Int): Int {
-        return if (lista[position].tipo == "avaliacao_servico") VIEW_AVALIACAO else VIEW_NORMAL
-    }
+        val ref = db.child("notificacoes").child(uid)
 
-    // ============================================================
-    // VIEW HOLDERS
-    // ============================================================
+        listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
 
-    inner class NormalVH(val b: ItemNotificacaoBinding) :
-        RecyclerView.ViewHolder(b.root)
+                if (_binding == null) return
 
-    inner class AvaliacaoVH(val b: ItemNotificacaoAvaliacaoBinding) :
-        RecyclerView.ViewHolder(b.root)
-
-    // ============================================================
-    // CREATE VIEW HOLDER
-    // ============================================================
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == VIEW_NORMAL) {
-
-            val b = ItemNotificacaoBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-            NormalVH(b)
-
-        } else {
-
-            val b = ItemNotificacaoAvaliacaoBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-            AvaliacaoVH(b)
-        }
-    }
-
-    // ============================================================
-    // BIND VIEW HOLDER
-    // ============================================================
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val n = lista[position]
-
-        // ⭐ VIEW NORMAL
-        if (holder is NormalVH) {
-            val b = holder.b
-
-            b.txtTitulo.text = n.mensagem ?: "Notificação"
-            b.txtDescricao.text = n.mensagem ?: ""
-
-            // reset
-            b.layoutDetalhes.visibility = View.GONE
-            b.layoutConfirmacao.visibility = View.GONE
-
-            when (n.tipo) {
-
-                "solicitacao_servico" -> {
-                    b.txtTitulo.text = "Novo pedido de serviço"
-
-                    b.layoutDetalhes.visibility = View.VISIBLE
-                    b.txtNomeUsuario.text = "Cliente: ${n.nome_usuario}"
-                    b.txtEndereco.text = "Endereço: ${n.endereco}"
-                    b.txtServico.text = "Serviço: ${n.servico}"
-                    b.txtDataHora.text = "Data: ${n.data ?: "-"} • ${n.hora ?: "-"}"
-                    b.txtValor.text = "R$ ${n.valor ?: "0"}"
-
-                    b.layoutConfirmacao.visibility = View.VISIBLE
-
-                    val id = n.id ?: ""
-                    b.btnSim.setOnClickListener { onAceitar(id) }
-                    b.btnNao.setOnClickListener { onRecusar(id) }
+                val lista = snapshot.children.mapNotNull { snap ->
+                    snap.getValue(Notificacao::class.java)?.apply {
+                        id = snap.key ?: ""
+                    }
                 }
 
-                "confirmado" -> {
-                    b.txtTitulo.text = "Seu agendamento foi confirmado!"
-                }
-
-                "recusado" -> {
-                    b.txtTitulo.text = "Seu pedido de serviço foi recusado"
-                }
+                adapter.atualizar(lista)
+                binding.layoutVazio.visibility =
+                    if (lista.isEmpty()) View.VISIBLE else View.GONE
             }
 
-            // Marcar como lido → remove
-            b.btnMarcarLido.setOnClickListener {
-                if (!n.id.isNullOrEmpty()) onMarcarLido(n.id!!)
-            }
+            override fun onCancelled(error: DatabaseError) {}
         }
 
-        // ⭐ VIEW AVALIAÇÃO
-        if (holder is AvaliacaoVH) {
-            val b = holder.b
+        ref.addValueEventListener(listener!!)
+    }
 
-            b.txtTitulo.text = "Avalie o serviço realizado"
-            b.txtDescricao.text = "Ajude outros usuários deixando uma avaliação."
+    private fun marcarComoLido(id: String) {
+        db.child("notificacoes").child(uid).child(id).removeValue()
+    }
 
-            b.txtServico.text = "Serviço: ${n.servico ?: "-"}"
-            b.txtDataHora.text = "Data: ${n.data ?: "-"} • ${n.hora ?: "-"}"
+    private fun marcarTodasLidas() {
+        db.child("notificacoes").child(uid).removeValue()
+    }
 
-            val id = n.id ?: ""
+    // ============================================================
+    // ACEITAR SOLICITAÇÃO
+    // ============================================================
+    private fun aceitar(idNotif: String) {
 
-            b.btnAvaliar.setOnClickListener {
-                val estrelas = b.ratingBar.rating.toInt()
+        db.child("notificacoes").child(uid).child(idNotif)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
 
-                if (estrelas == 0) {
-                    android.widget.Toast.makeText(
-                        b.root.context,
-                        "Selecione uma nota!",
-                        android.widget.Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
+                override fun onDataChange(snap: DataSnapshot) {
+
+                    val agendamentoId = snap.child("agendamento_id").value?.toString() ?: ""
+                    val clienteId = snap.child("usuario_id").value?.toString() ?: ""
+
+                    if (agendamentoId.isBlank() || clienteId.isBlank()) return
+
+                    // Marca prestação como agendada
+                    db.child("prestacoes").child(agendamentoId)
+                        .child("status").setValue("agendado")
+
+                    criarNotificacaoParaCliente(clienteId, agendamentoId)
+
+                    db.child("notificacoes").child(uid).child(idNotif).removeValue()
                 }
 
-                onAvaliar(id, estrelas)
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun criarNotificacaoParaCliente(clienteId: String, agendamentoId: String) {
+
+        val ref = db.child("notificacoes").child(clienteId).push()
+        val id = ref.key ?: return
+
+        val agora = System.currentTimeMillis()
+        val data = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR")).format(Date(agora))
+        val hora = SimpleDateFormat("HH:mm", Locale("pt", "BR")).format(Date(agora))
+
+        val dados = mapOf(
+            "id" to id,
+            "tipo" to "confirmado",
+            "mensagem" to "Seu agendamento foi aceito pelo prestador!",
+            "agendamento_id" to agendamentoId,
+            "prestador_id" to uid,
+            "data" to data,
+            "hora" to hora,
+            "data_hora" to agora,
+            "lido" to false
+        )
+
+        ref.setValue(dados)
+    }
+
+    // ============================================================
+    // RECUSAR SOLICITAÇÃO
+    // ============================================================
+    private fun recusar(idNotif: String) {
+
+        db.child("notificacoes").child(uid).child(idNotif)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+
+                override fun onDataChange(snap: DataSnapshot) {
+
+                    val agendamentoId = snap.child("agendamento_id").value?.toString() ?: ""
+                    val clienteId = snap.child("usuario_id").value?.toString() ?: ""
+
+                    if (agendamentoId.isBlank() || clienteId.isBlank()) return
+
+                    // Apaga prestação
+                    db.child("prestacoes").child(agendamentoId).removeValue()
+
+                    criarNotificacaoDeRecusa(clienteId, agendamentoId)
+
+                    db.child("notificacoes").child(uid).child(idNotif).removeValue()
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun criarNotificacaoDeRecusa(clienteId: String, agendamentoId: String) {
+
+        val ref = db.child("notificacoes").child(clienteId).push()
+        val id = ref.key ?: return
+
+        val dados = mapOf(
+            "id" to id,
+            "tipo" to "recusado",
+            "mensagem" to "O prestador recusou sua solicitação.",
+            "agendamento_id" to agendamentoId,
+            "usuario_id" to clienteId,
+            "prestador_id" to uid,
+            "lido" to false
+        )
+
+        ref.setValue(dados)
+    }
+
+    // ============================================================
+    // AVALIAÇÃO
+    // ============================================================
+    private fun avaliar(id: String, nota: Int) {
+
+        db.child("notificacoes").child(uid).child(id)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snap: DataSnapshot) {
+
+                    val prestadorId = snap.child("prestador_id").value?.toString()
+
+                    println("DEBUG prestador_id recebido = $prestadorId")
+
+                    if (prestadorId.isNullOrBlank()) {
+                        println("ERRO: prestador_id ausente! Avaliação não pode ser salva.")
+                        return
+                    }
+
+                    salvarAvaliacao(prestadorId, nota)
+
+                    // Agora sim remove
+                    db.child("notificacoes").child(uid).child(id).removeValue()
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+
+
+    private fun salvarAvaliacao(prestadorId: String, nota: Int) {
+
+        val ref = db.child("prestadores").child(prestadorId).child("info_prestador")
+
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onDataChange(snap: DataSnapshot) {
+
+                val atualMedia = snap.child("notaMedia").getValue(Double::class.java) ?: 0.0
+                val atualQtd = snap.child("quantidade_de_servicos").getValue(Int::class.java) ?: 0
+
+                val novaQtd = atualQtd + 1
+                val novaMedia = ((atualMedia * atualQtd) + nota.toDouble()) / novaQtd
+
+                val updates = mapOf(
+                    "quantidade_de_servicos" to novaQtd,
+                    "notaMedia" to novaMedia // SEMPRE Double
+                )
+
+                ref.updateChildren(updates)
             }
-        }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+
+    private fun arredondarMeiaNota(v: Double) = (Math.round(v * 2) / 2.0)
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        listener?.let { db.child("notificacoes").child(uid).removeEventListener(it) }
+        listener = null
+        _binding = null
     }
 }

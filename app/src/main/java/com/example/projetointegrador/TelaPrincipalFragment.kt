@@ -32,9 +32,9 @@ class TelaPrincipalFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTelaPrincipalBinding.inflate(inflater, container, false)
+
         TopNavigationBarHelper.setupNavigationBar(binding.root, this)
         setupRecyclerView()
-        TopNavigationBarHelper.setupNavigationBar(binding.root, this)
         carregarPrestadores()
 
         return binding.root
@@ -52,6 +52,9 @@ class TelaPrincipalFragment : Fragment() {
         binding.rvPrestadores.adapter = prestadorAdapter
     }
 
+    // ============================================================
+    // CARREGAR PRESTADORES DO FIREBASE
+    // ============================================================
     private fun carregarPrestadores() {
         val db = FirebaseDatabase.getInstance().reference
 
@@ -69,6 +72,7 @@ class TelaPrincipalFragment : Fragment() {
                         return@forEach
                     }
 
+                    // Carrega dados do usuário
                     db.child("usuarios").child(uid).get()
                         .addOnSuccessListener { userSnap ->
 
@@ -77,11 +81,7 @@ class TelaPrincipalFragment : Fragment() {
                             val dataCadastro = prestadorSnap.child("data_cadastro").value.asString()
                             val ultimoAcesso = prestadorSnap.child("ultimo_acesso").value.asString()
 
-                            // Correção: criar temp primeiro
-                            val prestadorInfoTemp = prestadorFromSnapshot(prestadorSnap)
-                            val prestadorInfo = prestadorInfoTemp.copy(
-                                notaMedia = prestadorInfoTemp.notaMedia ?: 0.0
-                            )
+                            val prestadorInfo = prestadorFromSnapshot(prestadorSnap)
 
                             val servicos = prestadorSnap.child("servicos_oferecidos")
                                 .children
@@ -104,11 +104,13 @@ class TelaPrincipalFragment : Fragment() {
                         .addOnCompleteListener {
                             carregados++
 
+                            // Quando carregar todos, exibe top 3
                             if (carregados >= total) {
 
-                                val top3 = listaCompleta
-                                    .sortedByDescending { it.prestador.notaMedia ?: 0.0 }
-                                    .take(3)
+                                val top3 =
+                                    listaCompleta.sortedByDescending {
+                                        it.prestador.info_prestador?.quantidade_de_servicos ?: 0
+                                    }.take(3)
 
                                 prestadorAdapter.atualizarLista(top3)
                             }
@@ -120,7 +122,11 @@ class TelaPrincipalFragment : Fragment() {
             }
     }
 
+    // ============================================================
+    // CONVERSORES DE SNAPSHOT -> MODEL
+    // ============================================================
     private fun userFromSnapshot(snap: DataSnapshot): User {
+
         val raw = snap.value as? Map<*, *> ?: emptyMap<Any, Any?>()
 
         return User(
@@ -140,23 +146,33 @@ class TelaPrincipalFragment : Fragment() {
     }
 
     private fun prestadorFromSnapshot(prestadorSnap: DataSnapshot): Prestador {
+
         val raw = prestadorSnap.value as? Map<*, *> ?: emptyMap<Any, Any?>()
-        val infoRaw = (raw["info_prestador"] as? Map<*, *>) ?: emptyMap<Any, Any?>()
+        val infoRaw = raw["info_prestador"] as? Map<*, *> ?: emptyMap<Any, Any?>()
+
+        val info = InfoPrestador(
+            descricao = infoRaw["descricao"].asString(),
+            notaMedia = infoRaw["notaMedia"].asDouble() ?: 0.0,
+            quantidade_de_servicos = infoRaw["quantidade_de_servicos"].asLong()?.toInt() ?: 0
+        )
 
         return Prestador(
-            notaMedia = (raw["notaMedia"].asDouble() ?: infoRaw["notaMedia"].asDouble()),
-            data_cadastro = raw["data_cadastro"].asString(),
+            nivel_cadastro = raw["nivel_cadastro"].asString(),
             ultimo_acesso = raw["ultimo_acesso"].asString(),
-            info_prestador = InfoPrestador(
-                descricao = infoRaw["descricao"].asString(),
-                nivel_cadastro = infoRaw["nivel_cadastro"].asString(),
-                quantidade_de_servicos = infoRaw["quantidade_de_servicos"].asLong()
-            ),
+            data_cadastro = raw["data_cadastro"].asString(),
+
+            // ***** IMPORTANTE ***** LISTA, NÃO MAP
+            servicos_oferecidos = (raw["servicos_oferecidos"] as? List<*>)?.map { it.asString() },
+
             disponibilidade = raw["disponibilidade"] as? Map<String, Any?>,
-            servicos_oferecidos = raw["servicos_oferecidos"] as? Map<String, Any?>
+            info_prestador = info
         )
     }
 
+
+    // ============================================================
+    // EXTENSÕES PARA LEITURA SEGURA
+    // ============================================================
     private fun Any?.asString(): String = when (this) {
         null -> ""
         is String -> this
@@ -168,7 +184,7 @@ class TelaPrincipalFragment : Fragment() {
     private fun Any?.asBoolean(): Boolean = when (this) {
         is Boolean -> this
         is Number -> this.toInt() != 0
-        is String -> this == "true" || this == "1"
+        is String -> this.equals("true", true) || this == "1"
         else -> false
     }
 

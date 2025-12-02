@@ -148,26 +148,18 @@ class TipoDeServico3Fragment : Fragment() {
 
     private fun enviarTodosParaFirebase() {
 
-        // Mapa de serviços: "1" -> "300", "2" -> "100"
         val servicosMap = listaServicosTemp.associate { it.id to it.valor }
-
-        // Quantidade inicial sempre zero
-        val quantidadeInicial = 0
-
-        // Nota inicial sempre zerada
-        val notaMediaInicial = 0.0
-
-        // Descrição padrão
-        val descricaoPadrao = "Olá, sou um prestador da AllService!"
 
         val updates = mapOf(
             "servicos_oferecidos" to servicosMap,
             "nivel_cadastro" to "bronze",
 
-            // 🔹 ESTRUTURA NOVA SOLICITADA
-            "info_prestador/quantidade_de_servicos" to quantidadeInicial,
-            "info_prestador/notaMedia" to notaMediaInicial,
-            "info_prestador/descricao" to descricaoPadrao
+            // Criação correta de info_prestador
+            "info_prestador" to mapOf(
+                "descricao" to "Olá, sou um prestador da AllService!",
+                "notaMedia" to 0.0,
+                "quantidade_de_servicos" to 0
+            )
         )
 
         prestadorRef.updateChildren(updates)
@@ -177,6 +169,7 @@ class TipoDeServico3Fragment : Fragment() {
                 findNavController().navigate(R.id.navigation)
             }
     }
+
 
 
     private fun toast(msg: String) =

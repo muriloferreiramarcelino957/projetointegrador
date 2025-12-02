@@ -2,9 +2,7 @@ package com.example.projetointegrador
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.GravityCompat
@@ -24,51 +22,44 @@ class TelaAgenda3Fragment : Fragment() {
     private var _binding: TelaDeAgenda3Binding? = null
     private val binding get() = _binding!!
 
-    private lateinit var database: DatabaseReference
+    private lateinit var db: DatabaseReference
     private val args by navArgs<TelaAgenda3FragmentArgs>()
 
     private lateinit var agendamentoId: String
+    private var usuarioIdPrestacao = ""   // cliente
+    private var prestadorIdPrestacao = "" // prestador
 
-    // ids da prestação (preenchidos ao carregar a prestação)
-    private var usuarioIdPrestacao: String = ""
-    private var prestadorIdPrestacao: String = ""
+    private val uid by lazy { FirebaseAuth.getInstance().currentUser?.uid ?: "" }
 
-    private val uidLogado by lazy {
-        FirebaseAuth.getInstance().currentUser?.uid ?: ""
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = TelaDeAgenda3Binding.inflate(inflater, container, false)
-        database = FirebaseDatabase.getInstance().reference
+        db = FirebaseDatabase.getInstance().reference
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         TopNavigationBarHelper.setupNavigationBar(binding.root, this)
+        configurarMenuLateral()
 
         agendamentoId = args.agendamentoId
+
         binding.btnArrowBack.setOnClickListener { findNavController().navigateUp() }
 
-        configurarMenuLateral()
-        carregarDadosAgendamento()
+        carregarPrestacao()
 
-        // ----------------------------------------
-        // BOTÃO CONCLUIR SERVIÇO
-        // ----------------------------------------
+        // =================================================
+        // BOTÃO DE CONCLUIR SERVIÇO (SOMENTE CLIENTE)
+        // =================================================
         binding.btnConcluir.setOnClickListener {
 
-            // segurança: só o CLIENTE pode concluir e gerar avaliação
-            if (uidLogado != usuarioIdPrestacao) {
-                toast("Somente o cliente pode concluir e avaliar este serviço.")
+            if (uid != usuarioIdPrestacao) {
+                toast("Somente o cliente pode concluir este serviço.")
                 return@setOnClickListener
             }
 
             if (usuarioIdPrestacao.isBlank() || prestadorIdPrestacao.isBlank()) {
-                toast("Dados ainda não carregados. Tente novamente.")
+                toast("Dados ainda não carregados.")
                 return@setOnClickListener
             }
 
@@ -76,208 +67,140 @@ class TelaAgenda3Fragment : Fragment() {
 
             criarNotificacaoDeAvaliacao(
                 onSuccess = {
-                    // vai direto para tela de notificações
-                    irParaTelaDeNotificacoes()
+                    db.child("prestacoes").child(agendamentoId).child("status").setValue("concluido")
+                    toast("Serviço concluído! Avalie o prestador.")
+                    irParaNotificacoes()
                 },
                 onError = {
                     binding.btnConcluir.isEnabled = true
-                    toast("Erro ao registrar notificação de avaliação.")
+                    toast("Erro ao enviar notificação.")
                 }
             )
         }
     }
 
     // =======================================================
-    // CRIA NOTIFICAÇÃO DE AVALIAÇÃO PARA O CLIENTE
+    // LER PRESTAÇÃO DO FIREBASE
     // =======================================================
-    private fun criarNotificacaoDeAvaliacao(
-        onSuccess: () -> Unit,
-        onError: () -> Unit
-    ) {
-        // nó: notificacoes/{usuarioIdPrestacao}/{id_notificacao}
-        val notifRef = database
-            .child("notificacoes")
-            .child(usuarioIdPrestacao)
-            .push()
+    private fun carregarPrestacao() {
 
-        val notifId = notifRef.key
-        if (notifId == null) {
-            onError()
-            return
+        db.child("prestacoes").child(agendamentoId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+
+                override fun onDataChange(snap: DataSnapshot) {
+
+                    if (!snap.exists()) {
+                        toast("Agendamento não encontrado.")
+                        return
+                    }
+
+                    val tipo = snap.child("tipo_servico").value?.toString() ?: ""
+                    val dataIso = snap.child("data").value?.toString() ?: ""
+                    val hora = snap.child("hora").value?.toString() ?: ""
+
+                    usuarioIdPrestacao = snap.child("usuario_id").value?.toString() ?: ""
+                    prestadorIdPrestacao =
+                        snap.child("prestador_id").value?.toString()
+                            ?: snap.child("prestador").value?.toString()
+                                    ?: ""
+
+                    binding.tvTipoServico.text = tipo
+                    binding.tvDataHora.text = "${formatarData(dataIso)} - $hora"
+
+                    val status = snap.child("status").value?.toString()?.lowercase() ?: ""
+
+                    atualizarStatus(status)
+
+                    decidirVisao(usuarioIdPrestacao, prestadorIdPrestacao)
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    private fun atualizarStatus(status: String) {
+
+        when (status) {
+
+            "aguardando_confirmacao" -> {
+                binding.tvStatusServico.text = " • aguardando confirmação"
+                binding.tvStatusServico.setTextColor(Color.parseColor("#F39C12"))
+                binding.btnConcluir.visibility = View.GONE
+            }
+
+            "agendado" -> {
+                binding.tvStatusServico.text = " • agendado"
+                binding.tvStatusServico.setTextColor(Color.parseColor("#4CAF50"))
+                binding.btnConcluir.visibility =
+                    if (uid == usuarioIdPrestacao) View.VISIBLE else View.GONE
+            }
+
+            "concluido" -> {
+                binding.tvStatusServico.text = " • concluído"
+                binding.tvStatusServico.setTextColor(Color.parseColor("#5A0275"))
+                binding.btnConcluir.visibility = View.GONE
+            }
+
+            else -> {
+                binding.tvStatusServico.text = " • status desconhecido"
+                binding.tvStatusServico.setTextColor(Color.GRAY)
+                binding.btnConcluir.visibility = View.GONE
+            }
         }
-
-        val dados = mapOf(
-            "id" to notifId,
-            "tipo" to "avaliacao_servico",
-            "titulo" to "Avalie o serviço realizado",
-            "descricao" to "Conte como foi a experiência com o prestador.",
-            "chipTipo" to "Avaliação",
-            "agendamentoId" to agendamentoId,
-            "prestadorId" to prestadorIdPrestacao,
-            "lido" to false,
-            "timestamp" to ServerValue.TIMESTAMP
-        )
-
-        notifRef.setValue(dados)
-            .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener { onError() }
-    }
-
-    private fun irParaTelaDeNotificacoes() {
-        // tela de notificações está dentro do mesmo graph (navigation)
-        findNavController().navigate(R.id.telaNotificacaoFragment)
     }
 
     // =======================================================
-    // BUSCA DADOS DO AGENDAMENTO
+    // MOSTRAR DADOS DO CLIENTE OU PRESTADOR
     // =======================================================
-    private fun carregarDadosAgendamento() {
+    private fun decidirVisao(uidCliente: String, uidPrestador: String) {
+        if (uid == uidPrestador)
+            carregarDadosCliente(uidCliente)
+        else
+            carregarDadosPrestador(uidPrestador)
+    }
 
-        val ref = database.child("prestacoes").child(agendamentoId)
+    private fun carregarDadosCliente(uidCliente: String) {
+
+        val ref = db.child("usuarios").child(uidCliente)
 
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-                if (!snapshot.exists()) {
-                    toast("Agendamento não encontrado.")
-                    return
-                }
-
-                val tipoServico = snapshot.child("tipo_servico").value?.toString() ?: ""
-                val dataIso = snapshot.child("data").value?.toString() ?: ""
-                val hora = snapshot.child("hora").value?.toString() ?: ""
-                val usuarioId = snapshot.child("usuario_id").value?.toString() ?: ""
-                val prestadorId = snapshot.child("prestador").value?.toString() ?: ""
-
-                usuarioIdPrestacao = usuarioId
-                prestadorIdPrestacao = prestadorId
-
-                binding.tvTipoServico.text = tipoServico
-                binding.tvDataHora.text = "${converterData(dataIso)} - $hora"
-
-                val statusRaw = snapshot.child("status").value?.toString()?.trim() ?: ""
-
-                when (statusRaw) {
-
-                    "aguardando_confirmacao" -> {
-                        binding.tvStatusServico.text = " • aguardando confirmação"
-                        binding.tvStatusServico.setTextColor(Color.parseColor("#F39C12"))
-                        binding.btnConcluir.visibility = View.GONE
-                    }
-
-                    "agendado" -> {
-                        binding.tvStatusServico.text = " • agendado"
-                        binding.tvStatusServico.setTextColor(Color.parseColor("#4CAF50"))
-
-                        // botão só aparece para o CLIENTE
-                        binding.btnConcluir.visibility =
-                            if (uidLogado == usuarioIdPrestacao) View.VISIBLE else View.GONE
-                    }
-
-                    else -> {
-                        binding.tvStatusServico.text = " • status desconhecido"
-                        binding.tvStatusServico.setTextColor(Color.GRAY)
-                        binding.btnConcluir.visibility = View.GONE
-                    }
-                }
-
-                decidirVisao(usuarioId, prestadorId)
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    // =======================================================
-    // LÓGICA PRINCIPAL → MOSTRAR DADOS DO CLIENTE OU PRESTADOR
-    // =======================================================
-    private fun decidirVisao(usuarioId: String, prestadorId: String) {
-        when (uidLogado) {
-            prestadorId -> carregarDadosContratante(usuarioId) // prestador logado
-            else        -> carregarDadosPrestador(prestadorId) // cliente logado
-        }
-    }
-
-    // =======================================================
-    // EXIBIR DADOS DO CONTRATANTE (quando PRESTADOR está logado)
-    // =======================================================
-    private fun carregarDadosContratante(uid: String) {
-
-        val usuarioRef = database.child("usuarios").child(uid)
-
-        usuarioRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
 
-                val nome = snap.child("nome").value?.toString() ?: "Usuário"
-                val telefone = snap.child("telefone").value?.toString() ?: "Não informado"
-                val email = snap.child("email").value?.toString() ?: "Não informado"
-
-                val logradouro = snap.child("logradouro").value?.toString() ?: ""
-                val numero = snap.child("numero").value?.toString() ?: ""
-                val bairro = snap.child("bairro").value?.toString() ?: ""
-                val cidade = snap.child("cidade").value?.toString() ?: ""
-                val estado = snap.child("estado").value?.toString() ?: ""
-
-                binding.txtNome.text = nome
-
-                // OCULTAR "usuário desde xxx"
+                binding.txtNome.text = snap.child("nome").value?.toString() ?: "Usuário"
                 binding.txtDesde.visibility = View.GONE
 
-                val linha1 = "$logradouro, $numero".trim().trim(',')
-                val linha2 = "$bairro - $cidade, $estado".trim().trim(',')
+                val endereco = construirEndereco(snap)
+                binding.tvEnderecoCompleto.text = endereco
 
-                binding.tvEnderecoCompleto.text =
-                    if (linha1.isBlank() && linha2.isBlank()) "Endereço não informado"
-                    else "$linha1\n$linha2"
-
-                binding.txtTelefone.text = "Telefone: ${formatarTelefone(telefone)}"
-                binding.txtEmail.text = "E-mail: $email"
-                binding.txtRating.text = "★ 5.0"
+                val tel = snap.child("telefone").value?.toString() ?: "Não informado"
+                binding.txtTelefone.text = "Telefone: $tel"
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
     }
 
-    // =======================================================
-    // EXIBIR DADOS DO PRESTADOR (quando CLIENTE está logado)
-    // =======================================================
-    private fun carregarDadosPrestador(uid: String) {
+    private fun carregarDadosPrestador(uidPrestador: String) {
 
-        val usuarioRef = database.child("usuarios").child(uid)
-        val prestadorRef = database.child("prestadores").child(uid)
+        val refUser = db.child("usuarios").child(uidPrestador)
+        val refPrest = db.child("prestadores").child(uidPrestador)
 
-        usuarioRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        refUser.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
 
-                val nome = snap.child("nome").value?.toString() ?: "Prestador"
-                val telefone = snap.child("telefone").value?.toString() ?: "Não informado"
-                val email = snap.child("email").value?.toString() ?: "Não informado"
-
-                val logradouro = snap.child("logradouro").value?.toString() ?: ""
-                val numero = snap.child("numero").value?.toString() ?: ""
-                val bairro = snap.child("bairro").value?.toString() ?: ""
-                val cidade = snap.child("cidade").value?.toString() ?: ""
-                val estado = snap.child("estado").value?.toString() ?: ""
-
-                binding.txtNome.text = nome
+                binding.txtNome.text = snap.child("nome").value?.toString() ?: "Prestador"
                 binding.txtDesde.text = "Prestador na AllService"
 
-                val linha1 = "$logradouro, $numero".trim().trim(',')
-                val linha2 = "$bairro - $cidade, $estado".trim().trim(',')
+                binding.tvEnderecoCompleto.text = construirEndereco(snap)
 
-                binding.tvEnderecoCompleto.text =
-                    if (linha1.isBlank() && linha2.isBlank()) "Endereço não informado"
-                    else "$linha1\n$linha2"
-
-                binding.txtTelefone.text = "Telefone: ${formatarTelefone(telefone)}"
-                binding.txtEmail.text = "E-mail: $email"
+                val tel = snap.child("telefone").value?.toString() ?: "Não informado"
+                binding.txtTelefone.text = "Telefone: $tel"
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
 
-        prestadorRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        refPrest.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
 
                 val nota = snap.child("info_prestador/notaMedia")
@@ -291,23 +214,67 @@ class TelaAgenda3Fragment : Fragment() {
     }
 
     // =======================================================
-    // FORMATADORES
+    // CRIAR NOTIFICAÇÃO DE AVALIAÇÃO
     // =======================================================
-    private fun converterData(dataIso: String): String {
-        return try {
-            val input = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
-            val output = SimpleDateFormat("dd MMM yyyy", Locale("pt", "BR"))
-            output.format(input.parse(dataIso)!!)
-        } catch (e: Exception) {
-            dataIso
-        }
+    private fun criarNotificacaoDeAvaliacao(
+        onSuccess: () -> Unit,
+        onError: () -> Unit
+    ) {
+        val ref = db.child("notificacoes").child(usuarioIdPrestacao).push()
+        val id = ref.key ?: return onError()
+
+        val agora = System.currentTimeMillis()
+        val data = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR")).format(Date(agora))
+        val hora = SimpleDateFormat("HH:mm", Locale("pt", "BR")).format(Date(agora))
+
+        val dados = mapOf(
+            "id" to id,
+            "tipo" to "avaliacao_servico",
+            "mensagem" to "Avalie o serviço realizado",
+            "servico" to binding.tvTipoServico.text.toString(),
+            "usuario_id" to usuarioIdPrestacao,
+            "prestador_id" to prestadorIdPrestacao,
+            "agendamento_id" to agendamentoId,
+            "data" to data,
+            "hora" to hora,
+            "data_hora" to agora,
+            "lido" to false
+        )
+
+        ref.setValue(dados)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onError() }
     }
 
-    private fun formatarTelefone(tel: String): String {
-        val digitos = tel.replace(Regex("\\D"), "")
-        return if (digitos.length >= 10) {
-            "(${digitos.substring(0, 2)}) ${digitos.substring(2, 7)}-${digitos.substring(7)}"
-        } else tel
+    private fun irParaNotificacoes() {
+        findNavController().navigate(R.id.telaNotificacaoFragment)
+    }
+
+    // =======================================================
+    // 🔧 UTILITÁRIOS
+    // =======================================================
+    private fun construirEndereco(snap: DataSnapshot): String {
+        val log = snap.child("logradouro").value?.toString() ?: ""
+        val num = snap.child("numero").value?.toString() ?: ""
+        val bairro = snap.child("bairro").value?.toString() ?: ""
+        val cidade = snap.child("cidade").value?.toString() ?: ""
+        val estado = snap.child("estado").value?.toString() ?: ""
+
+        val l1 = "$log, $num".trim().trim(',')
+        val l2 = "$bairro - $cidade, $estado".trim().trim(',')
+
+        return if (l1.isBlank() && l2.isBlank()) "Endereço não informado"
+        else "$l1\n$l2"
+    }
+
+    private fun formatarData(dataIso: String): String {
+        return try {
+            val i = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+            val o = SimpleDateFormat("dd/MM/yyyy", Locale("pt", "BR"))
+            o.format(i.parse(dataIso)!!)
+        } catch (_: Exception) {
+            dataIso
+        }
     }
 
     private fun configurarMenuLateral() {
