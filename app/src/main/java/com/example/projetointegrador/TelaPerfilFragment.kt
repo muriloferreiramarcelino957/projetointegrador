@@ -180,27 +180,42 @@ class TelaPerfilFragment : Fragment() {
 
     private fun carregarDescricoesServicos(ids: List<Int>) {
 
-        val refTipos = FirebaseDatabase.getInstance().reference.child("tipos_de_servico")
+        val ref = FirebaseDatabase.getInstance().reference.child("tipos_de_servico")
 
         val descricoes = mutableListOf<String>()
+        var total = ids.size
         var carregados = 0
 
         ids.forEach { id ->
 
-            refTipos.child(id.toString()).child("dscr_servico")
+            ref.child(id.toString()).child("dscr_servico")
                 .get()
                 .addOnSuccessListener { snap ->
-                    snap.getValue(String::class.java)?.let { descricoes.add(it) }
+
+                    val desc = snap.getValue(String::class.java)
+
+                    if (!desc.isNullOrBlank()) {
+                        descricoes.add(desc)
+                    }
+
                 }
                 .addOnCompleteListener {
+
                     carregados++
 
-                    if (carregados == ids.size) {
-                        binding.servicosTags.text = descricoes.joinToString(" | ")
+                    // Quando todas as consultas terminarem → monta o texto
+                    if (carregados == total) {
+
+                        if (descricoes.isEmpty()) {
+                            binding.servicosTags.text = "Nenhum serviço"
+                        } else {
+                            binding.servicosTags.text = descricoes.joinToString(" | ")
+                        }
                     }
                 }
         }
     }
+
 
     // -------------------------------------------------------------------------
     // FORMATAR DATA
