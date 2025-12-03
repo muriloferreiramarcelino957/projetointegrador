@@ -23,6 +23,9 @@ class TelaPerfilFragment : Fragment() {
     private lateinit var database: DatabaseReference
     private var listenerPrestador: ValueEventListener? = null
 
+    // evita corrida entre várias cargas
+    private var servicosReqVersion = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,11 +53,7 @@ class TelaPerfilFragment : Fragment() {
         }
     }
 
-    // -------------------------------------------------------------
-    // CARREGAR DADOS DO USUÁRIO
-    // -------------------------------------------------------------
     private fun carregarDadosUsuario(uid: String) {
-
         val ref = FirebaseDatabase.getInstance().reference
             .child("usuarios")
             .child(uid)
@@ -76,9 +75,6 @@ class TelaPerfilFragment : Fragment() {
         })
     }
 
-    // -------------------------------------------------------------
-    // CARREGAR DADOS DO PRESTADOR
-    // -------------------------------------------------------------
     private fun carregarDadosPrestador(uid: String) {
 
         database = FirebaseDatabase.getInstance().reference
@@ -87,18 +83,15 @@ class TelaPerfilFragment : Fragment() {
         listenerPrestador = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
 
-                // DESCRIÇÃO
                 binding.txtDescricao.text =
                     snap.child("info_prestador/descricao")
                         .getValue(String::class.java)
                         ?: "Sem descrição cadastrada"
 
-                // NOTA
                 val nota = snap.child("info_prestador/notaMedia")
                     .getValue(Double::class.java) ?: 0.0
                 binding.txtRatingMediaValor.text = String.format("%.1f", nota)
 
-                // NÍVEL DE CADASTRO
                 val nivel = snap.child("info_prestador/nivel_cadastro")
                     .getValue(String::class.java)?.lowercase() ?: "bronze"
 
@@ -119,24 +112,20 @@ class TelaPerfilFragment : Fragment() {
                     else -> 10
                 }
 
-                // DATA DE CADASTRO
                 val dataBruta = snap.child("data_cadastro").getValue(String::class.java)
                 if (!dataBruta.isNullOrEmpty()) {
                     binding.txtDesde.text = "Na AllService desde ${formatarData(dataBruta)}"
                 }
 
-                // QUANTIDADE DE SERVIÇOS
                 val qtd = snap.child("info_prestador/quantidade_de_servicos")
                     .getValue(Int::class.java) ?: 0
                 binding.quantidadeServicos.text = "Quantidade de serviços prestados: $qtd"
 
-                // -----------------------------------------------------
-                // SERVIÇOS OFERECIDOS — PEGAR SOMENTE KEYS 1..25
-                // -----------------------------------------------------
+                // KEYS (1..25) — ignorando valores ("150")
                 val ids = snap.child("servicos_oferecidos").children
-                    .mapNotNull { it.key }
-                    .mapNotNull { it.toIntOrNull() }
+                    .mapNotNull { it.key?.toIntOrNull() }
                     .filter { it in 1..25 }
+                    .distinct()
 
                 if (ids.isEmpty()) {
                     binding.servicosTags.text = "Nenhum serviço"
@@ -144,7 +133,6 @@ class TelaPerfilFragment : Fragment() {
                     carregarDescricoesServicos(ids)
                 }
 
-                // DISPONIBILIDADE
                 val inicio = snap.child("disponibilidade/segunda/inicio")
                     .getValue(String::class.java)
                 val fim = snap.child("disponibilidade/segunda/fim")
@@ -162,50 +150,36 @@ class TelaPerfilFragment : Fragment() {
         refPrestador.addValueEventListener(listenerPrestador!!)
     }
 
-
+    // ✅ revisada: 1 request só + proteção contra corrida
     private fun carregarDescricoesServicos(ids: List<Int>) {
 
-        val ref = FirebaseDatabase.getInstance()
-            .reference.child("tipos_de_servico")
-
-        // Evita mostrar IDs antes da hora
+        val req = ++servicosReqVersion
         binding.servicosTags.text = "Carregando..."
 
-        val descricoes = mutableMapOf<Int, String>()
-        var carregados = 0
+        // ATENÇÃO: confirme o nome do nó no seu banco:
+        // "tipos_de_servico" vs "tipos_de_servicos"
+        val refTipos = FirebaseDatabase.getInstance()
+            .reference.child("tipos_de_servico")
 
-        ids.forEach { id ->
+        refTipos.get()
+            .addOnSuccessListener { tiposSnap ->
+                if (_binding == null || req != servicosReqVersion) return@addOnSuccessListener
 
-            ref.child(id.toString()).child("dscr_servico")
-                .get()
-                .addOnSuccessListener { snap ->
-
-                    val descricao = snap.getValue(String::class.java)
-
-                    if (descricao != null)
-                        descricoes[id] = descricao
-                    else
-                        descricoes[id] = "Serviço $id não encontrado"
-
-                }
-                .addOnFailureListener {
-                    descricoes[id] = "Erro ao carregar serviço $id"
-                }
-                .addOnCompleteListener {
-
-                    carregados++
-
-                    if (carregados == ids.size) {
-
-                        // mantém a ordem dos IDs originais
-                        val ordered = ids.map { id ->
-                            descricoes[id] ?: "Serviço $id"
-                        }
-
-                        binding.servicosTags.text = ordered.joinToString(" | ")
+                val nomes = ids
+                    .sorted()
+                    .map { id ->
+                        tiposSnap.child(id.toString())
+                            .child("dscr_servico")
+                            .getValue(String::class.java)
+                            ?: "Serviço $id"
                     }
-                }
-        }
+
+                binding.servicosTags.text = nomes.joinToString(" | ")
+            }
+            .addOnFailureListener {
+                if (_binding == null || req != servicosReqVersion) return@addOnFailureListener
+                binding.servicosTags.text = "Erro ao carregar serviços"
+            }
     }
 
     private fun formatarData(data: String): String = try {
@@ -217,9 +191,11 @@ class TelaPerfilFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         listenerPrestador?.let {
-            database.child("prestadores")
-                .child(args.uidPrestador)
-                .removeEventListener(it)
+            if (::database.isInitialized) {
+                database.child("prestadores")
+                    .child(args.uidPrestador)
+                    .removeEventListener(it)
+            }
         }
         _binding = null
     }
