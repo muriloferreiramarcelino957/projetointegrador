@@ -7,8 +7,8 @@ data class PrestadorDisplay(
     val info_prestador: InfoPrestador = InfoPrestador(),
     val servicos: List<String> = emptyList(),
 
-    val data_cadastro: String = "",
-    val ultimo_acesso: String = ""
+    var data_cadastro: String = "",
+    var ultimo_acesso: String = ""
 )
 
 data class InfoPrestador(

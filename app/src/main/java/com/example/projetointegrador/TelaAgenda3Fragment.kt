@@ -26,8 +26,8 @@ class TelaAgenda3Fragment : Fragment() {
     private val args by navArgs<TelaAgenda3FragmentArgs>()
 
     private lateinit var agendamentoId: String
-    private var usuarioIdPrestacao = ""   // cliente
-    private var prestadorIdPrestacao = "" // prestador
+    private var usuarioIdPrestacao = ""
+    private var prestadorIdPrestacao = ""
 
     private val uid by lazy { FirebaseAuth.getInstance().currentUser?.uid ?: "" }
 
@@ -48,9 +48,6 @@ class TelaAgenda3Fragment : Fragment() {
 
         carregarPrestacao()
 
-        // =================================================
-        // BOTÃO DE CONCLUIR SERVIÇO (SOMENTE CLIENTE)
-        // =================================================
         binding.btnConcluir.setOnClickListener {
 
             if (uid != usuarioIdPrestacao) {
@@ -79,9 +76,6 @@ class TelaAgenda3Fragment : Fragment() {
         }
     }
 
-    // =======================================================
-    // LER PRESTAÇÃO DO FIREBASE
-    // =======================================================
     private fun carregarPrestacao() {
 
         db.child("prestacoes").child(agendamentoId)
@@ -149,9 +143,6 @@ class TelaAgenda3Fragment : Fragment() {
         }
     }
 
-    // =======================================================
-    // MOSTRAR DADOS DO CLIENTE OU PRESTADOR
-    // =======================================================
     private fun decidirVisao(uidCliente: String, uidPrestador: String) {
         if (uid == uidPrestador)
             carregarDadosCliente(uidCliente)
@@ -213,9 +204,6 @@ class TelaAgenda3Fragment : Fragment() {
         })
     }
 
-    // =======================================================
-    // CRIAR NOTIFICAÇÃO DE AVALIAÇÃO
-    // =======================================================
     private fun criarNotificacaoDeAvaliacao(
         onSuccess: () -> Unit,
         onError: () -> Unit
@@ -250,9 +238,6 @@ class TelaAgenda3Fragment : Fragment() {
         findNavController().navigate(R.id.telaNotificacaoFragment)
     }
 
-    // =======================================================
-    // 🔧 UTILITÁRIOS
-    // =======================================================
     private fun construirEndereco(snap: DataSnapshot): String {
         val log = snap.child("logradouro").value?.toString() ?: ""
         val num = snap.child("numero").value?.toString() ?: ""

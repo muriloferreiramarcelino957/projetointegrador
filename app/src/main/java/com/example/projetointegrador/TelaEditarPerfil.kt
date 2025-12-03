@@ -20,7 +20,6 @@ class TelaEditarPerfil : Fragment() {
     private var _binding: TelaDeEditarPerfilBinding? = null
     private val binding get() = _binding!!
 
-    // Firestore e Auth
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
@@ -56,7 +55,6 @@ class TelaEditarPerfil : Fragment() {
         }
     }
 
-    // Carrega os dados do Firestore para preencher os campos
     private fun carregarDadosUsuario() {
         val usuarioId = auth.currentUser?.uid ?: return
 
@@ -72,7 +70,6 @@ class TelaEditarPerfil : Fragment() {
             }
     }
 
-    // Salva os dados no Firestore
     private fun salvarNoFirestore(nome: String, descricao: String) {
         val usuarioId = auth.currentUser?.uid ?: return
         val dados = hashMapOf(

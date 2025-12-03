@@ -18,8 +18,8 @@ class FiltroBottomSheet(
     private val binding get() = _binding!!
     private val db = FirebaseDatabase.getInstance().reference
 
-    private val mapaServicos = mutableMapOf<String, String>()  // id -> nome
-    private var selectedServiceId: String = ""                 // id escolhido
+    private val mapaServicos = mutableMapOf<String, String>()
+    private var selectedServiceId: String = ""
 
     private var filtroNivel = "Todos"
     private var filtroServico = ""
@@ -49,9 +49,6 @@ class FiltroBottomSheet(
         return binding.root
     }
 
-    // ============================================
-    // SERVIÇOS — agora pegando **KEY como ID**
-    // ============================================
     private fun carregarServicos() {
         db.child("tipos_de_servico").get().addOnSuccessListener { snap ->
 
@@ -76,7 +73,6 @@ class FiltroBottomSheet(
             binding.etServicos.setAdapter(adapter)
             binding.etServicos.isFocusable = false
 
-            // Seleção no dropdown
             binding.etServicos.setOnItemClickListener { _, _, pos, _ ->
                 if (pos == 0) {
                     selectedServiceId = ""
@@ -86,7 +82,6 @@ class FiltroBottomSheet(
                 }
             }
 
-            // Preencher automaticamente o serviço salvo
             if (filtroServico.isNotBlank()) {
                 val nome = mapaServicos[filtroServico]
                 if (!nome.isNullOrBlank()) {
@@ -95,14 +90,9 @@ class FiltroBottomSheet(
                 }
             }
 
-            // Abrir dropdown ao clicar
             binding.etServicos.setOnClickListener { binding.etServicos.showDropDown() }
         }
     }
-
-    // ============================================
-    // CIDADES
-    // ============================================
     private fun carregarCidades() {
         db.child("usuarios").get().addOnSuccessListener { snap ->
 
@@ -121,9 +111,6 @@ class FiltroBottomSheet(
         }
     }
 
-    // ============================================
-    // NÍVEL
-    // ============================================
     private fun configurarSpinnerNivel() {
 
         val niveis = listOf("Todos", "Bronze", "Prata", "Ouro")

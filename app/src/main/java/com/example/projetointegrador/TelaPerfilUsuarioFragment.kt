@@ -37,7 +37,6 @@ class TelaPerfilUsuarioFragment : Fragment() {
         database = FirebaseDatabase.getInstance().reference
         uid = auth.currentUser?.uid ?: return
 
-        // ✅ AGENDA SEMPRE APARECE (usuário comum OU prestador)
         binding.blocoValidacoes.visibility = View.VISIBLE
         binding.btnAgenda.visibility = View.VISIBLE
         binding.btnAgenda.setOnClickListener {
@@ -47,10 +46,6 @@ class TelaPerfilUsuarioFragment : Fragment() {
         carregarUsuario()
         verificarSeEhPrestador()
     }
-
-    // =============================================================
-    // 1 — CARREGA DADOS BÁSICOS DO USUÁRIO (nome, local)
-    // =============================================================
     private fun carregarUsuario() {
         database.child("usuarios").child(uid)
             .get().addOnSuccessListener { snap ->
@@ -65,10 +60,6 @@ class TelaPerfilUsuarioFragment : Fragment() {
                     else "$bairro - $cidade"
             }
     }
-
-    // =============================================================
-    // 2 — VERIFICA SE O USUÁRIO É PRESTADOR
-    // =============================================================
     private fun verificarSeEhPrestador() {
         val ref = database.child("prestadores").child(uid)
 
@@ -80,10 +71,6 @@ class TelaPerfilUsuarioFragment : Fragment() {
             carregarDadosPrestador(snap)
         }
     }
-
-    // =============================================================
-    // 3 — CARREGA INFORMAÇÕES DO PRESTADOR
-    // =============================================================
     private fun carregarDadosPrestador(snap: DataSnapshot) {
 
         val desde =
@@ -116,10 +103,6 @@ class TelaPerfilUsuarioFragment : Fragment() {
 
         mostrarPartesDePrestador()
     }
-
-    // =============================================================
-    // OCULTAR PARTES EXCLUSIVAS DO PRESTADOR
-    // =============================================================
     private fun ocultarPartesDePrestador() {
 
         binding.servicosTags.visibility = View.GONE
@@ -127,7 +110,6 @@ class TelaPerfilUsuarioFragment : Fragment() {
         binding.ratingMedia.visibility = View.GONE
         binding.blocoNivelCadastro.visibility = View.GONE
 
-        // ✅ esse bloco é só de prestador
         binding.blocoValidacoes.visibility = View.GONE
 
         binding.labelDescricao.visibility = View.GONE
@@ -136,14 +118,10 @@ class TelaPerfilUsuarioFragment : Fragment() {
         binding.blocoFotos.visibility = View.GONE
         binding.quantidadeServicos.visibility = View.GONE
 
-        // ✅ agenda fica ligada
         binding.blocoValidacoes.visibility = View.VISIBLE
         binding.btnAgenda.visibility = View.VISIBLE
     }
 
-    // =============================================================
-    // MOSTRAR PARTES DO PRESTADOR
-    // =============================================================
     private fun mostrarPartesDePrestador() {
 
         binding.servicosTags.visibility = View.VISIBLE
@@ -151,7 +129,6 @@ class TelaPerfilUsuarioFragment : Fragment() {
         binding.ratingMedia.visibility = View.VISIBLE
         binding.blocoNivelCadastro.visibility = View.VISIBLE
 
-        // ✅ só prestador
         binding.blocoValidacoes.visibility = View.VISIBLE
 
         binding.labelDescricao.visibility = View.VISIBLE
@@ -160,7 +137,6 @@ class TelaPerfilUsuarioFragment : Fragment() {
         binding.blocoFotos.visibility = View.VISIBLE
         binding.quantidadeServicos.visibility = View.VISIBLE
 
-        // ✅ agenda também
         binding.blocoValidacoes.visibility = View.VISIBLE
         binding.btnAgenda.visibility = View.VISIBLE
     }

@@ -72,8 +72,12 @@ class TelaPrincipalFragment : Fragment() {
                     val nome = userSnap.child("nome").value?.toString() ?: ""
                     val cidade = userSnap.child("cidade").value?.toString() ?: ""
 
+                    val dataCadastro = snap.child("data_cadastro").value?.toString() ?: ""
+                    val ultimoAcesso = snap.child("ultimo_acesso").value?.toString() ?: ""
+
                     val info = InfoPrestador(
-                        notaMedia = snap.child("info_prestador/notaMedia").getValue(Double::class.java) ?: 0.0,
+                        notaMedia = snap.child("info_prestador/notaMedia")
+                            .getValue(Double::class.java) ?: 0.0,
                         nivel_cadastro = snap.child("info_prestador/nivel_cadastro").value?.toString() ?: "",
                         quantidade_de_servicos = snap.child("info_prestador/quantidade_de_servicos")
                             .getValue(Int::class.java) ?: 0
@@ -88,19 +92,23 @@ class TelaPrincipalFragment : Fragment() {
                             nome = nome,
                             cidade = cidade,
                             info_prestador = info,
-                            servicos = servicosIds
+                            servicos = servicosIds,
+                            data_cadastro = dataCadastro,
+                            ultimo_acesso = ultimoAcesso
                         )
                     )
                 }
 
-                val top3 = listaCompleta.sortedByDescending {
-                    it.info_prestador.quantidade_de_servicos
-                }.take(3)
+                val top3 = listaCompleta.sortedWith(
+                    compareByDescending<PrestadorDisplay> { it.info_prestador.notaMedia }
+                        .thenByDescending { it.info_prestador.quantidade_de_servicos }
+                ).take(3)
 
                 prestadorAdapter.atualizarLista(top3)
             }
         }
     }
+
 
     private fun abrirBuscaComFiltro(servicoId: String) {
         val action = TelaPrincipalFragmentDirections

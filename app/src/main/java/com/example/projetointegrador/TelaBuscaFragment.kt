@@ -119,9 +119,6 @@ class TelaBuscaFragment : Fragment() {
         btnMenu.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
     }
 
-    // ==========================================================
-    // BUSCA REAL — filtrando por KEY correta do serviço ("1","2","3","4")
-    // ==========================================================
     private fun buscarPrestadores(
         nome: String = "",
         servicoId: String = "",
@@ -151,12 +148,9 @@ class TelaBuscaFragment : Fragment() {
                             .getValue(Int::class.java) ?: 0
                     )
 
-                    // ------------- AQUI ESTÁ A CORREÇÃO FINAL -------------
-                    // Pega **a KEY**, que é o ID do serviço (1,2,3,4)
                     val servicosIds = prestSnap.child("servicos_oferecidos")
                         .children.mapNotNull { it.key }
 
-                    // ================ FILTROS =================
                     val filtroNome = nome.isBlank() || nomeUser.contains(nome, ignoreCase = true)
                     val filtroCidade = cidade.isBlank() || cidadeUser.contains(cidade, ignoreCase = true)
                     val filtroNivel = nivel.isBlank() || nivel == "Todos" ||
@@ -166,7 +160,6 @@ class TelaBuscaFragment : Fragment() {
                     val filtroServico =
                         servicoId.isBlank() || servicosIds.contains(servicoId)
 
-                    // ========================================
                     if (filtroNome && filtroCidade && filtroNivel && filtroAvaliacao && filtroServico) {
                         listaFinal.add(
                             PrestadorDisplay(

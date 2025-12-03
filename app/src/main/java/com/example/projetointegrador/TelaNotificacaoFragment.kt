@@ -85,9 +85,6 @@ class TelaNotificacaoFragment : Fragment() {
         db.child("notificacoes").child(uid).removeValue()
     }
 
-    // ============================================================
-    // ACEITAR SOLICITAÇÃO
-    // ============================================================
     private fun aceitar(idNotif: String) {
 
         db.child("notificacoes").child(uid).child(idNotif)
@@ -100,7 +97,6 @@ class TelaNotificacaoFragment : Fragment() {
 
                     if (agendamentoId.isBlank() || clienteId.isBlank()) return
 
-                    // Marca prestação como agendada
                     db.child("prestacoes").child(agendamentoId)
                         .child("status").setValue("agendado")
 
@@ -137,9 +133,6 @@ class TelaNotificacaoFragment : Fragment() {
         ref.setValue(dados)
     }
 
-    // ============================================================
-    // RECUSAR SOLICITAÇÃO
-    // ============================================================
     private fun recusar(idNotif: String) {
 
         db.child("notificacoes").child(uid).child(idNotif)
@@ -152,7 +145,6 @@ class TelaNotificacaoFragment : Fragment() {
 
                     if (agendamentoId.isBlank() || clienteId.isBlank()) return
 
-                    // Apaga prestação
                     db.child("prestacoes").child(agendamentoId).removeValue()
 
                     criarNotificacaoDeRecusa(clienteId, agendamentoId)
@@ -182,9 +174,6 @@ class TelaNotificacaoFragment : Fragment() {
         ref.setValue(dados)
     }
 
-    // ============================================================
-    // AVALIAÇÃO
-    // ============================================================
     private fun avaliar(id: String, nota: Int) {
 
         db.child("notificacoes").child(uid).child(id)
@@ -202,7 +191,6 @@ class TelaNotificacaoFragment : Fragment() {
 
                     salvarAvaliacao(prestadorId, nota)
 
-                    // Agora sim remove
                     db.child("notificacoes").child(uid).child(id).removeValue()
                 }
 

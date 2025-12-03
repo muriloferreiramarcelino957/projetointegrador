@@ -1,4 +1,4 @@
-package com.projetointegrador.app.ui
+package com.example.projetointegrador.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -32,14 +32,15 @@ class PrestadorAdapter(
         val p = listaPrestadores[position]
 
         with(holder.binding) {
-
             tvNome.text = p.nome
             tvNota.text = String.format("%.1f", p.info_prestador.notaMedia)
             tvLocalizacao.text = p.cidade
 
             tvDataInicio.text =
-                if (p.data_cadastro.isNotBlank()) "Desde ${p.data_cadastro}"
-                else "Data não informada"
+                if (p.data_cadastro.isNotBlank())
+                    "Desde ${p.data_cadastro}"
+                else
+                    "Data não informada"
 
             tvUltimoAcesso.text =
                 "Último acesso ${calcularTempoDesde(p.ultimo_acesso)}"
@@ -50,24 +51,24 @@ class PrestadorAdapter(
 
     private fun calcularTempoDesde(data: String): String {
         return try {
-            val f = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            val d = f.parse(data) ?: return "indisponível"
+            val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val dataAcesso = formatter.parse(data) ?: return "indisponível"
 
-            val diff = Date().time - d.time
+            val diff = Date().time - dataAcesso.time
             val horas = TimeUnit.MILLISECONDS.toHours(diff)
             val dias = TimeUnit.MILLISECONDS.toDays(diff)
 
             when {
                 horas < 24 -> "há $horas hora(s)"
                 dias < 7 -> "há $dias dia(s)"
-                else -> SimpleDateFormat("dd/MM HH:mm", Locale.getDefault()).format(d)
+                else -> SimpleDateFormat("dd/MM HH:mm", Locale.getDefault()).format(dataAcesso)
             }
         } catch (e: Exception) {
             "indisponível"
         }
     }
 
-    override fun getItemCount() = listaPrestadores.size
+    override fun getItemCount(): Int = listaPrestadores.size
 
     fun atualizarLista(novaLista: List<PrestadorDisplay>) {
         listaPrestadores = novaLista

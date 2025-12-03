@@ -52,9 +52,6 @@ class TelaAgenda2Fragment : Fragment() {
         carregarTodosAgendamentosDoUsuario()
     }
 
-    // =======================================================
-    // LER TODOS AGENDAMENTOS DO CLIENTE + PRESTADOR
-    // =======================================================
     private fun carregarTodosAgendamentosDoUsuario() {
         val uid = auth.currentUser?.uid ?: return
         val ref = database.child("prestacoes")
@@ -76,7 +73,6 @@ class TelaAgenda2Fragment : Fragment() {
             binding.txtSemAgendamentos.visibility = View.GONE
             binding.recyclerAgenda.visibility = View.VISIBLE
 
-            // Ordena todos os agendamentos por data+hora
             val listaOrdenada = lista.sortedBy { ag ->
                 juntarDataHora(ag.data, ag.hora)
             }
@@ -92,9 +88,6 @@ class TelaAgenda2Fragment : Fragment() {
 
         }
 
-        // ===============================
-        // COMO CLIENTE
-        // ===============================
         ref.orderByChild("usuario_id").equalTo(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -109,9 +102,6 @@ class TelaAgenda2Fragment : Fragment() {
                 }
             })
 
-        // ===============================
-        // COMO PRESTADOR
-        // ===============================
         ref.orderByChild("prestador").equalTo(uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -127,9 +117,6 @@ class TelaAgenda2Fragment : Fragment() {
             })
     }
 
-    // =======================================================
-    // PARSE SEGURO DO AGENDAMENTO
-    // =======================================================
     private fun parseAgendamentoSeguro(s: DataSnapshot): Agendamento? {
         val id = s.key ?: return null
 
@@ -153,9 +140,6 @@ class TelaAgenda2Fragment : Fragment() {
         )
     }
 
-    // =======================================================
-    // CONVERTE "2025/12/01" -> "01/12/2025"
-    // =======================================================
     private fun converterDataParaBR(data: String): String {
         val p = data.split("/")
         return if (p.size == 3) "${p[2]}/${p[1]}/${p[0]}" else data

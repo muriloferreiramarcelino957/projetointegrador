@@ -51,9 +51,6 @@ class NotificacaoAdapter(
         if (holder is VHAvaliacao) holder.bind(notif)
     }
 
-    // -------------------------------------------------------------------------
-    // VIEW NORMAL
-    // -------------------------------------------------------------------------
     inner class VHNormal(private val b: ItemNotificacaoBinding)
         : RecyclerView.ViewHolder(b.root) {
 
@@ -96,10 +93,8 @@ class NotificacaoAdapter(
             }
         }
 
-        // Carrega USUÁRIO e PRESTAÇÃO
         private fun carregarDadosDinamicos(n: Notificacao) {
 
-            // PRESTAÇÃO
             db.child("prestacoes").child(n.agendamento_id)
                 .get().addOnSuccessListener { prestacao ->
 
@@ -113,7 +108,6 @@ class NotificacaoAdapter(
                     b.txtValor.text = "R$ $valor"
                 }
 
-            // USUÁRIO (cliente)
             db.child("usuarios").child(n.usuario_id)
                 .get().addOnSuccessListener { usuario ->
 
@@ -130,9 +124,6 @@ class NotificacaoAdapter(
         }
     }
 
-    // -------------------------------------------------------------------------
-    // VIEW AVALIAÇÃO
-    // -------------------------------------------------------------------------
     inner class VHAvaliacao(private val b: ItemNotificacaoAvaliacaoBinding)
         : RecyclerView.ViewHolder(b.root) {
 

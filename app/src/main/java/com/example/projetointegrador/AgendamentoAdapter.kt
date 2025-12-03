@@ -26,17 +26,13 @@ class AgendamentoAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val ag = lista[position]
 
-        // DATA + HORA
         holder.b.txtDataHora.text = "${ag.data} • ${ag.hora}"
 
-        // SERVIÇO
         holder.b.txtServico.text = ag.tipoServico
 
-        // LOCAL
         holder.b.txtLocal.text =
             ag.local.ifBlank { "Local informado no momento da contratação" }
 
-        // CLIQUE NO CARD
         holder.b.root.setOnClickListener { onClick(ag) }
     }
 }

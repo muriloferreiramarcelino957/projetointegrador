@@ -15,7 +15,7 @@ import com.google.firebase.FirebaseApp
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navController: NavController   // ← FALTAVA ISSO
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,9 +28,6 @@ class MainActivity : AppCompatActivity() {
         initMenu()
     }
 
-    // ---------------------------------------------
-    // INICIALIZAÇÃO DO NAVIGATION COMPONENT
-    // ---------------------------------------------
     private fun initNavigation() {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -38,14 +35,10 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
     }
 
-    // ---------------------------------------------
-    // CONFIGURAÇÃO DO MENU LATERAL
-    // ---------------------------------------------
     private fun initMenu() {
 
         val navigationView = findViewById<NavigationView>(R.id.navigationView)
 
-        // pega o header do menu lateral
         val header = navigationView.getHeaderView(0)
 
         val btnHome = header.findViewById<LinearLayout>(R.id.btnHome)
@@ -54,18 +47,15 @@ class MainActivity : AppCompatActivity() {
 
         val drawer = findViewById<DrawerLayout>(R.id.drawerLayout)
 
-        // botão voltar fecha o drawer
         btnVoltar.setOnClickListener {
             drawer.closeDrawers()
         }
 
-        // página inicial
         btnHome.setOnClickListener {
             navController.navigate(R.id.fragmentTelaPrincipal)
             drawer.closeDrawers()
         }
 
-        // sair
         btnSair.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             navController.navigate(R.id.telaInicialFragment)

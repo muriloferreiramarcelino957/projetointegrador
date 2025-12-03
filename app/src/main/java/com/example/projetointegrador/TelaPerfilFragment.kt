@@ -44,10 +44,6 @@ class TelaPerfilFragment : Fragment() {
         carregarDadosPrestador(uid)
     }
 
-    // -------------------------------------------------------------------------
-    // BOTÕES / NAVBAR
-    // -------------------------------------------------------------------------
-
     private fun setupListeners() {
         binding.btnArrowBack.setOnClickListener { findNavController().navigateUp() }
 
@@ -57,11 +53,6 @@ class TelaPerfilFragment : Fragment() {
             findNavController().navigate(action)
         }
     }
-
-    // -------------------------------------------------------------------------
-    // CARREGAR CAMPOS DO USUÁRIO (nome, email, telefone, facebook)
-    // /usuarios/UID
-    // -------------------------------------------------------------------------
 
     private fun carregarDadosUsuario(uid: String) {
         val ref = FirebaseDatabase.getInstance().reference
@@ -86,11 +77,6 @@ class TelaPerfilFragment : Fragment() {
         })
     }
 
-    // -------------------------------------------------------------------------
-    // CARREGAR CAMPOS DE PRESTADOR (descrição, nota, nivel, serviços, etc)
-    // /prestadores/UID
-    // -------------------------------------------------------------------------
-
     private fun carregarDadosPrestador(uid: String) {
 
         database = FirebaseDatabase.getInstance().reference
@@ -100,17 +86,14 @@ class TelaPerfilFragment : Fragment() {
 
             override fun onDataChange(snap: DataSnapshot) {
 
-                // DESCRIÇÃO
                 binding.txtDescricao.text =
                     snap.child("info_prestador/descricao")
                         .getValue(String::class.java)
                         ?: "Sem descrição cadastrada"
 
-                // NOTA
                 val nota = snap.child("info_prestador/notaMedia").getValue(Double::class.java) ?: 0.0
                 binding.txtRatingMediaValor.text = String.format("%.1f", nota)
 
-                // NIVEL CADASTRO → muda cor + progress
                 val nivel = snap.child("info_prestador/nivel_cadastro")
                     .getValue(String::class.java)?.lowercase() ?: "bronze"
 
@@ -131,19 +114,17 @@ class TelaPerfilFragment : Fragment() {
                     else -> 10
                 }
 
-                // DATA DE CADASTRO
                 val dataBruta = snap.child("data_cadastro").getValue(String::class.java)
                 if (!dataBruta.isNullOrEmpty()) {
                     binding.txtDesde.text = "Na AllService desde ${formatarData(dataBruta)}"
                 }
 
-                // QUANTIDADE DE SERVIÇOS
+
                 val qtd = snap.child("info_prestador/quantidade_de_servicos")
                     .getValue(Int::class.java) ?: 0
                 binding.quantidadeServicos.text =
                     "Quantidade de serviços prestados: $qtd"
 
-                // SERVIÇOS OFERECIDOS
                 val ids = snap.child("servicos_oferecidos").children
                     .mapNotNull { it.key?.toIntOrNull() }
 
@@ -153,7 +134,6 @@ class TelaPerfilFragment : Fragment() {
                     carregarDescricoesServicos(ids)
                 }
 
-                // DISPONIBILIDADE
                 val inicio = snap.child("disponibilidade/segunda/inicio").getValue(String::class.java)
                 val fim = snap.child("disponibilidade/segunda/fim").getValue(String::class.java)
 
@@ -168,10 +148,6 @@ class TelaPerfilFragment : Fragment() {
 
         refPrestador.addValueEventListener(listenerPrestador!!)
     }
-
-    // -------------------------------------------------------------------------
-    // DESCRIÇÕES DOS SERVIÇOS
-    // -------------------------------------------------------------------------
 
     private fun carregarDescricoesServicos(ids: List<Int>) {
 
@@ -195,10 +171,6 @@ class TelaPerfilFragment : Fragment() {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // FORMATAR DATA
-    // -------------------------------------------------------------------------
-
     private fun formatarData(data: String): String = try {
         val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val out = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -206,10 +178,6 @@ class TelaPerfilFragment : Fragment() {
     } catch (e: Exception) {
         data
     }
-
-    // -------------------------------------------------------------------------
-    // LIMPAR LISTENER
-    // -------------------------------------------------------------------------
 
     override fun onDestroyView() {
         super.onDestroyView()
