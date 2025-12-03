@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -56,8 +59,7 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // USUÁRIO (NOME, EMAIL, TELEFONE)
-    // /usuarios/UID
+    // CARREGAR CAMPOS DO USUÁRIO
     // -------------------------------------------------------------------------
 
     private fun carregarDadosUsuario(uid: String) {
@@ -66,7 +68,6 @@ class TelaPerfilFragment : Fragment() {
             .child(uid)
 
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
-
             override fun onDataChange(snap: DataSnapshot) {
 
                 val nome = snap.child("nome").getValue(String::class.java) ?: "Prestador"
@@ -74,10 +75,7 @@ class TelaPerfilFragment : Fragment() {
                 val telefone = snap.child("telefone").getValue(String::class.java) ?: "Não informado"
                 val facebook = snap.child("facebook").getValue(String::class.java) ?: "Não informado"
 
-                // Nome (campo grande)
                 binding.txtNome.text = nome
-
-                // Demais informações
                 binding.txtEmail.text = "✓ Endereço de e-mail: $email"
                 binding.txtTelefone.text = "✓ Número de telefone: $telefone"
                 binding.txtFacebook.text = "✓ Facebook: $facebook"
@@ -88,8 +86,7 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // PRESTADOR (DESCRIÇÃO, NOTA, NÍVEL, SERVIÇOS ...)
-    // /prestadores/UID
+    // CARREGAR DADOS DO PRESTADOR — incl. serviços
     // -------------------------------------------------------------------------
 
     private fun carregarDadosPrestador(uid: String) {
@@ -108,11 +105,10 @@ class TelaPerfilFragment : Fragment() {
                         ?: "Sem descrição cadastrada"
 
                 // NOTA
-                val nota = snap.child("info_prestador/notaMedia")
-                    .getValue(Double::class.java) ?: 0.0
+                val nota = snap.child("info_prestador/notaMedia").getValue(Double::class.java) ?: 0.0
                 binding.txtRatingMediaValor.text = String.format("%.1f", nota)
 
-                // NÍVEL
+                // NIVEL
                 val nivel = snap.child("info_prestador/nivel_cadastro")
                     .getValue(String::class.java)?.lowercase() ?: "bronze"
 
@@ -145,7 +141,7 @@ class TelaPerfilFragment : Fragment() {
                 binding.quantidadeServicos.text =
                     "Quantidade de serviços prestados: $qtd"
 
-                // SERVIÇOS OFERECIDOS (IDs)
+                // SERVIÇOS OFERECIDOS
                 val ids = snap.child("servicos_oferecidos").children
                     .mapNotNull { it.key?.toIntOrNull() }
 
@@ -156,16 +152,13 @@ class TelaPerfilFragment : Fragment() {
                 }
 
                 // DISPONIBILIDADE
-                val inicio =
-                    snap.child("disponibilidade/segunda/inicio").getValue(String::class.java)
-                val fim =
-                    snap.child("disponibilidade/segunda/fim").getValue(String::class.java)
+                val inicio = snap.child("disponibilidade/segunda/inicio").getValue(String::class.java)
+                val fim = snap.child("disponibilidade/segunda/fim").getValue(String::class.java)
 
                 binding.txtLocal.text = if (inicio != null && fim != null)
                     "Disponível: $inicio — $fim"
                 else
                     "Disponibilidade não informada"
-
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -175,47 +168,39 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // SERVIÇOS OFERECIDOS (DESCRIÇÕES)
+    // DESCRIÇÕES DOS SERVIÇOS — CORREÇÃO FINAL
     // -------------------------------------------------------------------------
 
     private fun carregarDescricoesServicos(ids: List<Int>) {
 
-        val ref = FirebaseDatabase.getInstance().reference.child("tipos_de_servico")
+        val ref = FirebaseDatabase.getInstance()
+            .reference
+            .child("tipos_de_servico")
 
         val descricoes = mutableListOf<String>()
-        var total = ids.size
         var carregados = 0
+        val total = ids.size
 
         ids.forEach { id ->
 
             ref.child(id.toString()).child("dscr_servico")
                 .get()
                 .addOnSuccessListener { snap ->
-
                     val desc = snap.getValue(String::class.java)
-
-                    if (!desc.isNullOrBlank()) {
-                        descricoes.add(desc)
-                    }
-
+                    if (!desc.isNullOrBlank()) descricoes.add(desc)
                 }
                 .addOnCompleteListener {
 
                     carregados++
 
-                    // Quando todas as consultas terminarem → monta o texto
                     if (carregados == total) {
-
-                        if (descricoes.isEmpty()) {
-                            binding.servicosTags.text = "Nenhum serviço"
-                        } else {
-                            binding.servicosTags.text = descricoes.joinToString(" | ")
-                        }
+                        binding.servicosTags.text =
+                            if (descricoes.isEmpty()) "Nenhum serviço"
+                            else descricoes.joinToString(" | ")
                     }
                 }
         }
     }
-
 
     // -------------------------------------------------------------------------
     // FORMATAR DATA
@@ -230,7 +215,7 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // LIMPAR LISTENERS
+    // LIMPAR LISTENER
     // -------------------------------------------------------------------------
 
     override fun onDestroyView() {
