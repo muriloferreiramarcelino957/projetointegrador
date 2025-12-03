@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -63,11 +60,13 @@ class TelaPerfilFragment : Fragment() {
     // -------------------------------------------------------------------------
 
     private fun carregarDadosUsuario(uid: String) {
+
         val ref = FirebaseDatabase.getInstance().reference
             .child("usuarios")
             .child(uid)
 
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
+
             override fun onDataChange(snap: DataSnapshot) {
 
                 val nome = snap.child("nome").getValue(String::class.java) ?: "Prestador"
@@ -86,7 +85,7 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // CARREGAR DADOS DO PRESTADOR — incl. serviços
+    // CARREGAR DADOS DO PRESTADOR — INCLUINDO SERVIÇOS
     // -------------------------------------------------------------------------
 
     private fun carregarDadosPrestador(uid: String) {
@@ -105,7 +104,8 @@ class TelaPerfilFragment : Fragment() {
                         ?: "Sem descrição cadastrada"
 
                 // NOTA
-                val nota = snap.child("info_prestador/notaMedia").getValue(Double::class.java) ?: 0.0
+                val nota = snap.child("info_prestador/notaMedia")
+                    .getValue(Double::class.java) ?: 0.0
                 binding.txtRatingMediaValor.text = String.format("%.1f", nota)
 
                 // NIVEL
@@ -129,7 +129,7 @@ class TelaPerfilFragment : Fragment() {
                     else -> 10
                 }
 
-                // DATA DE CADASTRO
+                // DATA
                 val dataBruta = snap.child("data_cadastro").getValue(String::class.java)
                 if (!dataBruta.isNullOrEmpty()) {
                     binding.txtDesde.text = "Na AllService desde ${formatarData(dataBruta)}"
@@ -138,12 +138,13 @@ class TelaPerfilFragment : Fragment() {
                 // QUANTIDADE DE SERVIÇOS
                 val qtd = snap.child("info_prestador/quantidade_de_servicos")
                     .getValue(Int::class.java) ?: 0
+
                 binding.quantidadeServicos.text =
                     "Quantidade de serviços prestados: $qtd"
 
-                // SERVIÇOS OFERECIDOS
+                // SERVIÇOS OFERECIDOS: **AQUI ESTAVA O PROBLEMA**
                 val ids = snap.child("servicos_oferecidos").children
-                    .mapNotNull { it.key?.toIntOrNull() }
+                    .mapNotNull { it.key?.toIntOrNull() } // usamos somente a KEY
 
                 if (ids.isEmpty()) {
                     binding.servicosTags.text = "Nenhum serviço"
@@ -152,8 +153,10 @@ class TelaPerfilFragment : Fragment() {
                 }
 
                 // DISPONIBILIDADE
-                val inicio = snap.child("disponibilidade/segunda/inicio").getValue(String::class.java)
-                val fim = snap.child("disponibilidade/segunda/fim").getValue(String::class.java)
+                val inicio = snap.child("disponibilidade/segunda/inicio")
+                    .getValue(String::class.java)
+                val fim = snap.child("disponibilidade/segunda/fim")
+                    .getValue(String::class.java)
 
                 binding.txtLocal.text = if (inicio != null && fim != null)
                     "Disponível: $inicio — $fim"
@@ -183,13 +186,17 @@ class TelaPerfilFragment : Fragment() {
 
         ids.forEach { id ->
 
-            ref.child(id.toString()).child("dscr_servico")
+            ref.child(id.toString())
+                .child("dscr_servico")
                 .get()
                 .addOnSuccessListener { snap ->
+
                     val desc = snap.getValue(String::class.java)
-                    if (!desc.isNullOrBlank()) descricoes.add(desc)
-                }
-                .addOnCompleteListener {
+                    if (!desc.isNullOrBlank()) {
+                        descricoes.add(desc)
+                    }
+
+                }.addOnCompleteListener {
 
                     carregados++
 
@@ -215,7 +222,7 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // LIMPAR LISTENER
+    // REMOVER LISTENER
     // -------------------------------------------------------------------------
 
     override fun onDestroyView() {
