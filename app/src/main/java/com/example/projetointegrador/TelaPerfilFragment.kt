@@ -36,14 +36,9 @@ class TelaPerfilFragment : Fragment() {
         setupListeners()
 
         val uid = args.uidPrestador
-
         carregarDadosUsuario(uid)
         carregarDadosPrestador(uid)
     }
-
-    // -------------------------------------------------------------------------
-    // BOTÕES
-    // -------------------------------------------------------------------------
 
     private fun setupListeners() {
         binding.btnArrowBack.setOnClickListener { findNavController().navigateUp() }
@@ -56,19 +51,16 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // CARREGAR CAMPOS DO USUÁRIO
+    // CARREGAR DADOS DO USUÁRIO
     // -------------------------------------------------------------------------
 
     private fun carregarDadosUsuario(uid: String) {
-
         val ref = FirebaseDatabase.getInstance().reference
             .child("usuarios")
             .child(uid)
 
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
-
             override fun onDataChange(snap: DataSnapshot) {
-
                 val nome = snap.child("nome").getValue(String::class.java) ?: "Prestador"
                 val email = snap.child("email").getValue(String::class.java) ?: "Não informado"
                 val telefone = snap.child("telefone").getValue(String::class.java) ?: "Não informado"
@@ -85,7 +77,7 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // CARREGAR DADOS DO PRESTADOR — INCLUINDO SERVIÇOS
+    // CARREGAR DADOS DO PRESTADOR
     // -------------------------------------------------------------------------
 
     private fun carregarDadosPrestador(uid: String) {
@@ -94,7 +86,6 @@ class TelaPerfilFragment : Fragment() {
         val refPrestador = database.child("prestadores").child(uid)
 
         listenerPrestador = object : ValueEventListener {
-
             override fun onDataChange(snap: DataSnapshot) {
 
                 // DESCRIÇÃO
@@ -108,7 +99,7 @@ class TelaPerfilFragment : Fragment() {
                     .getValue(Double::class.java) ?: 0.0
                 binding.txtRatingMediaValor.text = String.format("%.1f", nota)
 
-                // NIVEL
+                // NÍVEL
                 val nivel = snap.child("info_prestador/nivel_cadastro")
                     .getValue(String::class.java)?.lowercase() ?: "bronze"
 
@@ -129,7 +120,7 @@ class TelaPerfilFragment : Fragment() {
                     else -> 10
                 }
 
-                // DATA
+                // DATA CADASTRO
                 val dataBruta = snap.child("data_cadastro").getValue(String::class.java)
                 if (!dataBruta.isNullOrEmpty()) {
                     binding.txtDesde.text = "Na AllService desde ${formatarData(dataBruta)}"
@@ -138,13 +129,12 @@ class TelaPerfilFragment : Fragment() {
                 // QUANTIDADE DE SERVIÇOS
                 val qtd = snap.child("info_prestador/quantidade_de_servicos")
                     .getValue(Int::class.java) ?: 0
-
                 binding.quantidadeServicos.text =
                     "Quantidade de serviços prestados: $qtd"
 
-                // SERVIÇOS OFERECIDOS: **AQUI ESTAVA O PROBLEMA**
+                // SERVIÇOS OFERECIDOS — SOMENTE AS KEYS
                 val ids = snap.child("servicos_oferecidos").children
-                    .mapNotNull { it.key?.toIntOrNull() } // usamos somente a KEY
+                    .mapNotNull { it.key?.toIntOrNull() }
 
                 if (ids.isEmpty()) {
                     binding.servicosTags.text = "Nenhum serviço"
@@ -171,36 +161,27 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // DESCRIÇÕES DOS SERVIÇOS — CORREÇÃO FINAL
+    // CARREGAR DESCRIÇÕES DOS SERVIÇOS
     // -------------------------------------------------------------------------
 
     private fun carregarDescricoesServicos(ids: List<Int>) {
 
-        val ref = FirebaseDatabase.getInstance()
-            .reference
-            .child("tipos_de_servico")
-
+        val ref = FirebaseDatabase.getInstance().reference.child("tipos_de_servico")
         val descricoes = mutableListOf<String>()
         var carregados = 0
-        val total = ids.size
 
         ids.forEach { id ->
 
-            ref.child(id.toString())
-                .child("dscr_servico")
+            ref.child(id.toString()).child("dscr_servico")
                 .get()
                 .addOnSuccessListener { snap ->
-
-                    val desc = snap.getValue(String::class.java)
-                    if (!desc.isNullOrBlank()) {
-                        descricoes.add(desc)
+                    snap.getValue(String::class.java)?.let {
+                        descricoes.add(it)
                     }
-
                 }.addOnCompleteListener {
-
                     carregados++
 
-                    if (carregados == total) {
+                    if (carregados == ids.size) {
                         binding.servicosTags.text =
                             if (descricoes.isEmpty()) "Nenhum serviço"
                             else descricoes.joinToString(" | ")
@@ -209,21 +190,11 @@ class TelaPerfilFragment : Fragment() {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // FORMATAR DATA
-    // -------------------------------------------------------------------------
-
     private fun formatarData(data: String): String = try {
         val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val out = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         out.format(parser.parse(data)!!)
-    } catch (e: Exception) {
-        data
-    }
-
-    // -------------------------------------------------------------------------
-    // REMOVER LISTENER
-    // -------------------------------------------------------------------------
+    } catch (e: Exception) { data }
 
     override fun onDestroyView() {
         super.onDestroyView()
