@@ -10,6 +10,7 @@ import android.widget.ImageView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.projetointegrador.InfoPrestador
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.projetointegrador.app.model.FiltrosModel
 import com.projetointegrador.app.ui.FiltroBottomSheet
 import com.projetointegrador.app.ui.PrestadorAdapter
+import androidx.core.os.bundleOf
 
 class TelaBuscaFragment : Fragment() {
 
@@ -66,7 +68,13 @@ class TelaBuscaFragment : Fragment() {
     }
 
     private fun configurarRecycler() {
-        adapter = PrestadorAdapter()
+        adapter = PrestadorAdapter { prestador ->
+            findNavController().navigate(
+                R.id.telaPerfilFragment,
+                bundleOf("uidPrestador" to prestador.uid)
+            )
+        }
+
         binding.recyclerPrestadores.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerPrestadores.adapter = adapter
     }
@@ -119,9 +127,6 @@ class TelaBuscaFragment : Fragment() {
         btnMenu.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
     }
 
-    // ==========================================================
-    // BUSCA REAL — filtrando por KEY correta do serviço ("1","2","3","4")
-    // ==========================================================
     private fun buscarPrestadores(
         nome: String = "",
         servicoId: String = "",
@@ -151,22 +156,16 @@ class TelaBuscaFragment : Fragment() {
                             .getValue(Int::class.java) ?: 0
                     )
 
-                    // ------------- AQUI ESTÁ A CORREÇÃO FINAL -------------
-                    // Pega **a KEY**, que é o ID do serviço (1,2,3,4)
                     val servicosIds = prestSnap.child("servicos_oferecidos")
                         .children.mapNotNull { it.key }
 
-                    // ================ FILTROS =================
                     val filtroNome = nome.isBlank() || nomeUser.contains(nome, ignoreCase = true)
                     val filtroCidade = cidade.isBlank() || cidadeUser.contains(cidade, ignoreCase = true)
                     val filtroNivel = nivel.isBlank() || nivel == "Todos" ||
                             nivel.equals(info.nivel_cadastro, ignoreCase = true)
                     val filtroAvaliacao = avaliacaoMin == null || info.notaMedia >= avaliacaoMin
+                    val filtroServico = servicoId.isBlank() || servicosIds.contains(servicoId)
 
-                    val filtroServico =
-                        servicoId.isBlank() || servicosIds.contains(servicoId)
-
-                    // ========================================
                     if (filtroNome && filtroCidade && filtroNivel && filtroAvaliacao && filtroServico) {
                         listaFinal.add(
                             PrestadorDisplay(

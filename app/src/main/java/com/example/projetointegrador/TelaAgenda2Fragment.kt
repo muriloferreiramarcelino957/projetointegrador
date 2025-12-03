@@ -49,6 +49,11 @@ class TelaAgenda2Fragment : Fragment() {
 
         binding.recyclerAgenda.layoutManager = LinearLayoutManager(requireContext())
 
+        // 🔙 BOTÃO DE VOLTAR (MESMA LÓGICA DA TELA 3)
+        binding.btnArrowBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
         carregarTodosAgendamentosDoUsuario()
     }
 
