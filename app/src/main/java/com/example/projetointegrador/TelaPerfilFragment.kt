@@ -50,9 +50,9 @@ class TelaPerfilFragment : Fragment() {
         }
     }
 
-    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------
     // CARREGAR DADOS DO USUÁRIO
-    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------
     private fun carregarDadosUsuario(uid: String) {
 
         val ref = FirebaseDatabase.getInstance().reference
@@ -76,9 +76,9 @@ class TelaPerfilFragment : Fragment() {
         })
     }
 
-    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------
     // CARREGAR DADOS DO PRESTADOR
-    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------
     private fun carregarDadosPrestador(uid: String) {
 
         database = FirebaseDatabase.getInstance().reference
@@ -93,12 +93,12 @@ class TelaPerfilFragment : Fragment() {
                         .getValue(String::class.java)
                         ?: "Sem descrição cadastrada"
 
-                // NOTA MÉDIA
+                // NOTA
                 val nota = snap.child("info_prestador/notaMedia")
                     .getValue(Double::class.java) ?: 0.0
                 binding.txtRatingMediaValor.text = String.format("%.1f", nota)
 
-                // NÍVEL (BRONZE / PRATA / OURO)
+                // NÍVEL DE CADASTRO
                 val nivel = snap.child("info_prestador/nivel_cadastro")
                     .getValue(String::class.java)?.lowercase() ?: "bronze"
 
@@ -119,7 +119,7 @@ class TelaPerfilFragment : Fragment() {
                     else -> 10
                 }
 
-                // DATA CADASTRO
+                // DATA DE CADASTRO
                 val dataBruta = snap.child("data_cadastro").getValue(String::class.java)
                 if (!dataBruta.isNullOrEmpty()) {
                     binding.txtDesde.text = "Na AllService desde ${formatarData(dataBruta)}"
@@ -130,13 +130,13 @@ class TelaPerfilFragment : Fragment() {
                     .getValue(Int::class.java) ?: 0
                 binding.quantidadeServicos.text = "Quantidade de serviços prestados: $qtd"
 
-                // ---------------------------------------------------------------------
-                // SERVIÇOS OFERECIDOS (PEGAR KEYS ENTRE 1 E 25)
-                // ---------------------------------------------------------------------
+                // -----------------------------------------------------
+                // SERVIÇOS OFERECIDOS — PEGAR SOMENTE KEYS 1..25
+                // -----------------------------------------------------
                 val ids = snap.child("servicos_oferecidos").children
                     .mapNotNull { it.key }
                     .mapNotNull { it.toIntOrNull() }
-                    .filter { it in 1..25 }        // <-- ACEITA APENAS 1..25
+                    .filter { it in 1..25 }
 
                 if (ids.isEmpty()) {
                     binding.servicosTags.text = "Nenhum serviço"
@@ -162,15 +162,16 @@ class TelaPerfilFragment : Fragment() {
         refPrestador.addValueEventListener(listenerPrestador!!)
     }
 
-    // -------------------------------------------------------------------------
-    // CARREGAR DESCRIÇÃO DOS TIPOS DE SERVIÇO (1 a 25)
-    // -------------------------------------------------------------------------
+
     private fun carregarDescricoesServicos(ids: List<Int>) {
 
         val ref = FirebaseDatabase.getInstance()
             .reference.child("tipos_de_servico")
 
-        val descricoes = mutableListOf<String>()
+        // Evita mostrar IDs antes da hora
+        binding.servicosTags.text = "Carregando..."
+
+        val descricoes = mutableMapOf<Int, String>()
         var carregados = 0
 
         ids.forEach { id ->
@@ -180,19 +181,28 @@ class TelaPerfilFragment : Fragment() {
                 .addOnSuccessListener { snap ->
 
                     val descricao = snap.getValue(String::class.java)
+
                     if (descricao != null)
-                        descricoes.add(descricao)
+                        descricoes[id] = descricao
                     else
-                        descricoes.add("Serviço $id não encontrado")
+                        descricoes[id] = "Serviço $id não encontrado"
 
                 }
                 .addOnFailureListener {
-                    descricoes.add("Erro ao carregar serviço $id")
+                    descricoes[id] = "Erro ao carregar serviço $id"
                 }
                 .addOnCompleteListener {
+
                     carregados++
+
                     if (carregados == ids.size) {
-                        binding.servicosTags.text = descricoes.joinToString(" | ")
+
+                        // mantém a ordem dos IDs originais
+                        val ordered = ids.map { id ->
+                            descricoes[id] ?: "Serviço $id"
+                        }
+
+                        binding.servicosTags.text = ordered.joinToString(" | ")
                     }
                 }
         }
@@ -202,9 +212,7 @@ class TelaPerfilFragment : Fragment() {
         val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val out = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         out.format(parser.parse(data)!!)
-    } catch (e: Exception) {
-        data
-    }
+    } catch (e: Exception) { data }
 
     override fun onDestroyView() {
         super.onDestroyView()
