@@ -166,7 +166,9 @@ class TelaPerfilFragment : Fragment() {
 
     private fun carregarDescricoesServicos(ids: List<Int>) {
 
-        val ref = FirebaseDatabase.getInstance().reference.child("tipos_de_servico")
+        val ref = FirebaseDatabase.getInstance()
+            .reference.child("tipos_de_servico")
+
         val descricoes = mutableListOf<String>()
         var carregados = 0
 
@@ -175,20 +177,29 @@ class TelaPerfilFragment : Fragment() {
             ref.child(id.toString()).child("dscr_servico")
                 .get()
                 .addOnSuccessListener { snap ->
-                    snap.getValue(String::class.java)?.let {
-                        descricoes.add(it)
-                    }
-                }.addOnCompleteListener {
-                    carregados++
+                    val descricao = snap.getValue(String::class.java)
 
+                    if (descricao != null) {
+                        descricoes.add(descricao)
+                    } else {
+                        // Evita adicionar ID por engano
+                        descricoes.add("Serviço $id não encontrado")
+                    }
+                }
+                .addOnFailureListener {
+                    descricoes.add("Erro ao carregar serviço $id")
+                }
+                .addOnCompleteListener {
+                    carregados++
                     if (carregados == ids.size) {
+
                         binding.servicosTags.text =
-                            if (descricoes.isEmpty()) "Nenhum serviço"
-                            else descricoes.joinToString(" | ")
+                            descricoes.joinToString(" | ")
                     }
                 }
         }
     }
+
 
     private fun formatarData(data: String): String = try {
         val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
