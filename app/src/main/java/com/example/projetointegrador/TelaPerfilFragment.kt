@@ -53,8 +53,8 @@ class TelaPerfilFragment : Fragment() {
     // -------------------------------------------------------------------------
     // CARREGAR DADOS DO USUÁRIO
     // -------------------------------------------------------------------------
-
     private fun carregarDadosUsuario(uid: String) {
+
         val ref = FirebaseDatabase.getInstance().reference
             .child("usuarios")
             .child(uid)
@@ -79,7 +79,6 @@ class TelaPerfilFragment : Fragment() {
     // -------------------------------------------------------------------------
     // CARREGAR DADOS DO PRESTADOR
     // -------------------------------------------------------------------------
-
     private fun carregarDadosPrestador(uid: String) {
 
         database = FirebaseDatabase.getInstance().reference
@@ -94,12 +93,12 @@ class TelaPerfilFragment : Fragment() {
                         .getValue(String::class.java)
                         ?: "Sem descrição cadastrada"
 
-                // NOTA
+                // NOTA MÉDIA
                 val nota = snap.child("info_prestador/notaMedia")
                     .getValue(Double::class.java) ?: 0.0
                 binding.txtRatingMediaValor.text = String.format("%.1f", nota)
 
-                // NÍVEL
+                // NÍVEL (BRONZE / PRATA / OURO)
                 val nivel = snap.child("info_prestador/nivel_cadastro")
                     .getValue(String::class.java)?.lowercase() ?: "bronze"
 
@@ -129,12 +128,15 @@ class TelaPerfilFragment : Fragment() {
                 // QUANTIDADE DE SERVIÇOS
                 val qtd = snap.child("info_prestador/quantidade_de_servicos")
                     .getValue(Int::class.java) ?: 0
-                binding.quantidadeServicos.text =
-                    "Quantidade de serviços prestados: $qtd"
+                binding.quantidadeServicos.text = "Quantidade de serviços prestados: $qtd"
 
-                // SERVIÇOS OFERECIDOS — SOMENTE AS KEYS
+                // ---------------------------------------------------------------------
+                // SERVIÇOS OFERECIDOS (PEGAR KEYS ENTRE 1 E 25)
+                // ---------------------------------------------------------------------
                 val ids = snap.child("servicos_oferecidos").children
-                    .mapNotNull { it.key?.toIntOrNull() }
+                    .mapNotNull { it.key }
+                    .mapNotNull { it.toIntOrNull() }
+                    .filter { it in 1..25 }        // <-- ACEITA APENAS 1..25
 
                 if (ids.isEmpty()) {
                     binding.servicosTags.text = "Nenhum serviço"
@@ -161,9 +163,8 @@ class TelaPerfilFragment : Fragment() {
     }
 
     // -------------------------------------------------------------------------
-    // CARREGAR DESCRIÇÕES DOS SERVIÇOS
+    // CARREGAR DESCRIÇÃO DOS TIPOS DE SERVIÇO (1 a 25)
     // -------------------------------------------------------------------------
-
     private fun carregarDescricoesServicos(ids: List<Int>) {
 
         val ref = FirebaseDatabase.getInstance()
@@ -177,14 +178,13 @@ class TelaPerfilFragment : Fragment() {
             ref.child(id.toString()).child("dscr_servico")
                 .get()
                 .addOnSuccessListener { snap ->
-                    val descricao = snap.getValue(String::class.java)
 
-                    if (descricao != null) {
+                    val descricao = snap.getValue(String::class.java)
+                    if (descricao != null)
                         descricoes.add(descricao)
-                    } else {
-                        // Evita adicionar ID por engano
+                    else
                         descricoes.add("Serviço $id não encontrado")
-                    }
+
                 }
                 .addOnFailureListener {
                     descricoes.add("Erro ao carregar serviço $id")
@@ -192,20 +192,19 @@ class TelaPerfilFragment : Fragment() {
                 .addOnCompleteListener {
                     carregados++
                     if (carregados == ids.size) {
-
-                        binding.servicosTags.text =
-                            descricoes.joinToString(" | ")
+                        binding.servicosTags.text = descricoes.joinToString(" | ")
                     }
                 }
         }
     }
 
-
     private fun formatarData(data: String): String = try {
         val parser = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val out = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         out.format(parser.parse(data)!!)
-    } catch (e: Exception) { data }
+    } catch (e: Exception) {
+        data
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
